@@ -1,0 +1,14 @@
+{
+  "name": "Draftline.Unity",
+  "rootNamespace": "Draftline.Unity",
+  "references": ["Draftline.Core", "Unity.InputSystem", "UnityEngine.UI", "Cinemachine", "Unity.Netcode.Runtime", "Unity.Networking.Transport", "Unity.Collections"],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
