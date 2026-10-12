@@ -45,8 +45,6 @@ public class DiceController : MonoBehaviour
     // 摇骰子：给它一个向上的力和随机的旋转力
     async void RollDice()
     {
-
-
         // 1. 给骰子一个随机的初始旋转角度，防止每次落下的轨迹一样
         transform.rotation = Random.rotation;
 

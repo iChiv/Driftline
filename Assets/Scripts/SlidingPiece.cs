@@ -7,7 +7,8 @@ public class SlidingPiece : MonoBehaviour
     [Header("网格与速度配置")]
     public float gridSize = 1.0f;
     public float slideSpeed = 12f;
-
+    [Header("出子状态")]
+    public bool isSpawned = false; // 默认在开局时为 false（在基地待命）
     private int remainingSteps = 0;
     private bool isMoving = false;
     private bool isWaitingForDirectionInput = false;
@@ -16,18 +17,26 @@ public class SlidingPiece : MonoBehaviour
     private Vector3 finalDestination;
     private bool willPortal = false;
     private Portal crossedPortal = null;
-    private float originalY; 
+    private float originalY;
+    private Outline outlineComponent;
     void Start()
     {
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null) rb.isKinematic = true;
         originalY = transform.position.y;
         transform.position = SnapPosition(transform.position);
+
+        outlineComponent = GetComponent<Outline>();
     }
 
     public void StartSlidingRoutine(int totalSteps)
     {
         remainingSteps = totalSteps;
+        Debug.Log($"【操作提示】{gameObject.name} 获得了 {remainingSteps} 步！请按键盘 W/A/S/D 选择方向。");
+        if (outlineComponent != null)
+        {
+            outlineComponent.enabled = true;
+        }
         isWaitingForRollOrInput();
     }
 
@@ -36,6 +45,10 @@ public class SlidingPiece : MonoBehaviour
         if (remainingSteps <= 0)
         {
             isWaitingForDirectionInput = false;
+            if (outlineComponent != null) 
+            {
+                outlineComponent.enabled = false;
+            }
             GameManager.Instance.SwitchToNextTurn();
             return;
         }
@@ -165,7 +178,6 @@ public class SlidingPiece : MonoBehaviour
     private IEnumerator SlideWithPortalRoutine(Vector3 initialDir)
     {
         isMoving = true;
-
         // 只有当预测可以通过、且不被堵塞时，才触发中途传送
         if (willPortal && crossedPortal != null)
         {
@@ -208,5 +220,25 @@ public class SlidingPiece : MonoBehaviour
         float x = Mathf.Round(pos.x / gridSize) * gridSize;
         float z = Mathf.Round(pos.z / gridSize) * gridSize;
         return new Vector3(x, originalY, z);
+    }
+    // 提供给 GameManager 调用的起飞函数：瞬间传送到起始点位
+    public void SpawnToStartPoint(Vector3 startPointPosition)
+    {
+        isSpawned = true;
+
+        // 借助你之前写好的高精度对齐函数，把坐标移到起始点位
+        // 并且保持住 originalY 原始高度不发生形变
+        transform.position = SnapPosition(startPointPosition);
+
+        Debug.Log($"{gameObject.name} 成功起飞！到达起始点位。由于起飞消耗了出子权，本回合不再继续滑行。");
+
+        // 缓冲 0.3 秒让玩家看清起飞动画，然后直接交还控制权，结束本回合
+        StartCoroutine(WaitAndFinishTurn());
+    }
+
+    private IEnumerator WaitAndFinishTurn()
+    {
+        yield return new WaitForSeconds(0.3f);
+        GameManager.Instance.SwitchToNextTurn();
     }
 }
