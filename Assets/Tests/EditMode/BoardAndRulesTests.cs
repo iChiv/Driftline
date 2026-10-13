@@ -360,6 +360,26 @@ namespace Draftline.Tests
             Assert.AreEqual(0, rules.FindWallKillPreview().Count);
         }
 
+        [Test]
+        public void BuriedItemTriggersRespawnOfAVisibleOne()
+        {
+            // 道具公平性：墙翻转把场上道具全部埋掉后，立即补刷一个当前可见的道具。
+            var rules = new MatchRules(new[] { PlayerColor.Red, PlayerColor.Blue }, 15);
+            ClearBoard(rules);
+            var mover = Place(rules, PlayerColor.Red, 1, 1);
+            rules.State.WallPhase = 0;
+            // (10,7) 内圈 idx1：相位 0 时空槽（道具可见），翻转到相位 1 后升墙（被埋）。
+            rules.State.FieldItems.Add(new FieldItem
+                { Id = 99, Type = ItemType.PassWall, Position = new GridPosition(10, 7) });
+
+            Assert.IsTrue(rules.TryApplyDice(1, out var error), error);
+            Assert.IsTrue(rules.TrySelectPiece(mover.Id, out error), error);
+            Assert.IsTrue(rules.TrySlide(SlideDirection.Right, null, out _, out error), error);
+            Assert.AreEqual(1, rules.State.WallPhase);
+            Assert.IsTrue(rules.State.FieldItems.Any(item => !rules.IsWall(item.Position)),
+                "After the flip buried every field item, a visible one must respawn immediately.");
+        }
+
         private static void ClearBoard(MatchRules rules)
         {
             foreach (var piece in rules.State.Pieces)

@@ -338,7 +338,10 @@ namespace Draftline.Core
             AddEvent(MatchEventType.WallRotated, State.CurrentPlayer, value: State.WallPhase);
             CaptureBlocks(NewlyDeadBlocks(beforeWall, null));
             if (CheckEliminations()) return;
-            if (State.TurnCount % 2 == 0) SpawnItem();
+            // 道具公平性：被埋的道具不占名额；每次换人后若场上没有可见道具则立即补刷。
+            var visibleItems = State.FieldItems.Count(item => !IsWall(item.Position));
+            if (visibleItems == 0 || (State.TurnCount % 2 == 0 && visibleItems < 2))
+                SpawnItem();
 
             var next = (int)State.CurrentPlayer;
             do next = (next + 1) % 4;
@@ -400,7 +403,8 @@ namespace Draftline.Core
 
         private void SpawnItem()
         {
-            if (State.FieldItems.Count >= 2) return;
+            // 名额只数可见（未被埋）的道具；被埋的道具不占位。
+            if (State.FieldItems.Count(item => !IsWall(item.Position)) >= 2) return;
             var candidates = Board.RotatingSlots.Where(position =>
                 !Board.IsScheduledWall(position, State.WallPhase) && PieceAt(position) == null &&
                 State.FieldItems.All(item => item.Position != position)).ToArray();

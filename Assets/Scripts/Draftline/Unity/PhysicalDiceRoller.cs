@@ -7,15 +7,14 @@ namespace Draftline.Unity
     /// <summary>Host-side physical 1D6 roll above the existing chessboard.</summary>
     public sealed class PhysicalDiceRoller : MonoBehaviour
     {
+        // Dice_6 模型实测映射：+Y=2、+Z=1、+X=3、-X=4、-Z=6、-Y=5（相对面和为 7）。
         private static readonly Vector3[] Normals =
             { Vector3.up, Vector3.forward, Vector3.right, Vector3.left, Vector3.back, Vector3.down };
-        private static readonly int[] Values = { 1, 2, 3, 4, 5, 6 };
+        private static readonly int[] Values = { 2, 1, 3, 4, 6, 5 };
 
         private GameObject tray;
         private Transform die;
         private Rigidbody body;
-        private Material dieMaterial;
-        private Material pipMaterial;
         private Material trayMaterial;
         private Material wallMaterial;
 
@@ -33,10 +32,6 @@ namespace Draftline.Unity
 
         private void OnDestroy()
         {
-            if (dieMaterial != null) Destroy(dieMaterial);
-            if (pipMaterial != null) Destroy(pipMaterial);
-            if (trayMaterial != null) Destroy(trayMaterial);
-            if (wallMaterial != null) Destroy(wallMaterial);
         }
 
         public IEnumerator Roll(Action<int?> finished)
@@ -133,16 +128,17 @@ namespace Draftline.Unity
             wallMaterial = NewMaterial(new Color(0.20f, 0.25f, 0.35f, 0.7f));
             // The tray sits just above the tallest board walls and is collision-only:
             // renderers stay off so nothing shows or casts shadows on the board.
+            // Walls are tall enough that an energetic throw cannot escape.
             CreateBox("Tray Floor", new Vector3(0, 1.75f, 0),
                 new Vector3(19f, 0.25f, 19f), trayMaterial);
-            CreateBox("Wall North", new Vector3(0, 2.35f, 9.5f),
-                new Vector3(19.5f, 1.2f, 0.5f), wallMaterial);
-            CreateBox("Wall South", new Vector3(0, 2.35f, -9.5f),
-                new Vector3(19.5f, 1.2f, 0.5f), wallMaterial);
-            CreateBox("Wall East", new Vector3(9.5f, 2.35f, 0),
-                new Vector3(0.5f, 1.2f, 19f), wallMaterial);
-            CreateBox("Wall West", new Vector3(-9.5f, 2.35f, 0),
-                new Vector3(0.5f, 1.2f, 19f), wallMaterial);
+            CreateBox("Wall North", new Vector3(0, 3.1f, 9.5f),
+                new Vector3(19.5f, 2.6f, 0.5f), wallMaterial);
+            CreateBox("Wall South", new Vector3(0, 3.1f, -9.5f),
+                new Vector3(19.5f, 2.6f, 0.5f), wallMaterial);
+            CreateBox("Wall East", new Vector3(9.5f, 3.1f, 0),
+                new Vector3(0.5f, 2.6f, 19f), wallMaterial);
+            CreateBox("Wall West", new Vector3(-9.5f, 3.1f, 0),
+                new Vector3(0.5f, 2.6f, 19f), wallMaterial);
         }
 
         private void CreateBox(string name, Vector3 position, Vector3 scale, Material material)
@@ -162,17 +158,32 @@ namespace Draftline.Unity
             var root = new GameObject("Physical D6");
             die = root.transform;
             die.SetParent(transform, false);
-            dieMaterial = NewMaterial(Color.white);
-            pipMaterial = NewMaterial(new Color(0.06f, 0.08f, 0.12f));
 
-            var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.name = "Die Body";
-            cube.transform.SetParent(die, false);
-            cube.transform.localScale = Vector3.one * 0.8f;
-            cube.GetComponent<Renderer>().sharedMaterial = dieMaterial;
-            Destroy(cube.GetComponent<Collider>());
+            // Dice_6 pack (from main branch): proper PBR die with texture pips.
+            var prefab = Resources.Load<GameObject>("DiceD6");
+            if (prefab != null)
+            {
+                var visual = Instantiate(prefab, die, false);
+                visual.name = "Die Visual";
+                visual.transform.localPosition = Vector3.zero;
+                foreach (var collider in visual.GetComponentsInChildren<Collider>())
+                    Destroy(collider);
+                // Normalize to the tray scale regardless of the mesh's authored size.
+                var bounds = visual.GetComponentInChildren<Renderer>().bounds;
+                var fit = 0.8f / Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
+                visual.transform.localScale = Vector3.one * fit;
+            }
+            else
+            {
+                Debug.LogWarning("DiceD6 prefab missing from Resources; falling back to a plain cube.");
+                var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                cube.name = "Die Body";
+                cube.transform.SetParent(die, false);
+                cube.transform.localScale = Vector3.one * 0.8f;
+                cube.GetComponent<Renderer>().sharedMaterial = NewMaterial(Color.white);
+                Destroy(cube.GetComponent<Collider>());
+            }
 
-            foreach (var value in Values) AddFacePips(Normals[value - 1], value);
             root.AddComponent<BoxCollider>().size = Vector3.one * 0.8f;
             body = root.AddComponent<Rigidbody>();
             body.mass = 0.4f;
@@ -180,33 +191,6 @@ namespace Draftline.Unity
             body.angularDrag = 0.25f;
             body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
             body.isKinematic = true;
-        }
-
-        private void AddFacePips(Vector3 normal, int value)
-        {
-            var right = Mathf.Abs(Vector3.Dot(normal, Vector3.up)) > 0.5f
-                ? Vector3.right : Vector3.up;
-            var up = Vector3.Cross(normal, right).normalized;
-            var points = value == 1 ? new[] { Vector2.zero }
-                : value == 2 ? new[] { new Vector2(-1, -1), new Vector2(1, 1) }
-                : value == 3 ? new[] { new Vector2(-1, -1), Vector2.zero, new Vector2(1, 1) }
-                : value == 4 ? new[] { new Vector2(-1, -1), new Vector2(-1, 1),
-                                       new Vector2(1, -1), new Vector2(1, 1) }
-                : value == 5 ? new[] { new Vector2(-1, -1), new Vector2(-1, 1), Vector2.zero,
-                                       new Vector2(1, -1), new Vector2(1, 1) }
-                : new[] { new Vector2(-1, -1), new Vector2(-1, 0), new Vector2(-1, 1),
-                          new Vector2(1, -1), new Vector2(1, 0), new Vector2(1, 1) };
-            foreach (var point in points)
-            {
-                var pip = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                pip.name = $"Face {value} Pip";
-                pip.transform.SetParent(die, false);
-                pip.transform.localPosition = normal * 0.403f +
-                                              (right * point.x + up * point.y) * 0.19f;
-                pip.transform.localScale = Vector3.one * 0.065f;
-                pip.GetComponent<Renderer>().sharedMaterial = pipMaterial;
-                Destroy(pip.GetComponent<Collider>());
-            }
         }
 
         private static Material NewMaterial(Color color)
