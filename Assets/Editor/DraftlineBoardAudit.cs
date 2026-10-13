@@ -85,6 +85,78 @@ namespace Draftline.EditorTools
                       $"setup={(root.Q("setup") != null)} hud={(root.Q("hud") != null)}");
         }
 
+        [MenuItem("Draftline/Debug Breakwall Setup")]
+        public static void DebugBreakwallSetup()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.LogWarning("[Debug] Enter play mode first.");
+                return;
+            }
+            var controller = Object.FindObjectOfType<DraftlineGameController>();
+            if (controller == null || controller.Rules == null)
+            {
+                Debug.LogWarning("[Debug] no running match.");
+                return;
+            }
+            var rules = controller.Rules;
+            var current = rules.State.CurrentPlayer;
+            var layout = rules.Board;
+            // 找一个当前升起的旋转墙槽位，把当前玩家一枚场上棋放到它旁边的普通格。
+            foreach (var slot in layout.RotatingSlots)
+            {
+                if (!rules.IsWall(slot)) continue;
+                foreach (var dir in new[] { new GridPosition(1, 0), new GridPosition(-1, 0),
+                                            new GridPosition(0, 1), new GridPosition(0, -1) })
+                {
+                    var neighbor = new GridPosition(slot.Column + dir.Column, slot.Row + dir.Row);
+                    if (!BoardLayout.Contains(neighbor)) continue;
+                    if (layout.CellAt(neighbor).Kind != CellKind.Floor) continue;
+                    if (rules.PieceAt(neighbor) != null) continue;
+                    var piece = rules.State.Pieces.Find(p => p.OnBoard && p.Owner == current);
+                    if (piece == null) continue;
+                    piece.Position = neighbor;
+                    rules.State.Players[(int)current].Items.Add(ItemType.BreakWall);
+                    Debug.Log($"[Debug] breakwall setup: piece {piece.Id} at {neighbor}, wall slot {slot}");
+                    return;
+                }
+            }
+            Debug.LogWarning("[Debug] no risen rotating wall slot available.");
+        }
+
+        [MenuItem("Draftline/Debug Input State")]
+        public static void DebugInputState()
+        {
+            var controller = Object.FindObjectOfType<DraftlineGameController>();
+            if (controller == null) return;
+            var pending = typeof(DraftlineGameController)
+                .GetField("pendingVisuals", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                ?.GetValue(controller);
+            Debug.Log($"[Debug] IsAnimating={controller.IsAnimating} pendingVisuals={pending} " +
+                      $"phase={controller.Rules?.State.Phase} remaining={controller.Rules?.State.RemainingSlides}");
+        }
+
+        [MenuItem("Draftline/Repair Toy Props")]
+        public static void RepairToyProps()
+        {
+            foreach (var propName in new[] { "Toy Block Tower", "Toy Car", "Toy Spinning Top", "Toy Hourglass" })
+            {
+                var prop = GameObject.Find(propName);
+                if (prop == null)
+                {
+                    Debug.LogWarning($"[Repair] {propName} not found");
+                    continue;
+                }
+                var removed = GameObjectUtility.RemoveMonoBehavioursWithMissingScript(prop);
+                var had = prop.GetComponent<DraftlineToyProp>() != null;
+                if (!had) Undo.AddComponent<DraftlineToyProp>(prop);
+                Debug.Log($"[Repair] {propName}: removed={removed} hadValid={had} now={prop.GetComponent<DraftlineToyProp>() != null}");
+            }
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            EditorSceneManager.SaveOpenScenes();
+            Debug.Log("[Repair] done, scene saved.");
+        }
+
         [MenuItem("Draftline/Board Audit (Log Only)")]
         public static void Audit()
         {

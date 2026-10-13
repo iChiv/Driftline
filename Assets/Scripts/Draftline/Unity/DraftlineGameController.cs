@@ -42,6 +42,7 @@ namespace Draftline.Unity
         private Material hintMaterial;
         private DraftlineWarnings warnings;
         private bool animating;
+        private float animatingSince;
         private int pendingVisuals;
         private readonly HashSet<int> exitingPieces = new HashSet<int>();
         private readonly Dictionary<Renderer, bool> wallVisualState = new Dictionary<Renderer, bool>();
@@ -390,6 +391,8 @@ namespace Draftline.Unity
 
         // Rotating/center walls rise and sink instead of popping. Logic (colliders, rules)
         // flips instantly; this is purely the visual transition.
+        // 注意：pendingVisuals 的释放必须走 OnKill——OnComplete 在补间被 DOKill 提前杀掉时
+        // 不会触发，会泄漏 pendingVisuals 导致输入永久锁定。
         private void AnimateWallTo(Renderer renderer, bool visible)
         {
             if (renderer == null || !wallVisualState.TryGetValue(renderer, out var current) || current == visible)
@@ -407,7 +410,7 @@ namespace Draftline.Unity
                 var sequence = DOTween.Sequence();
                 sequence.Append(renderer.transform.DOScaleY(baseScale.y, 0.32f).SetEase(Ease.OutBounce));
                 sequence.Join(renderer.transform.DOMoveY(basePosition.y, 0.32f).SetEase(Ease.OutQuad));
-                sequence.OnComplete(() =>
+                sequence.OnKill(() =>
                 {
                     renderer.transform.position = basePosition;
                     renderer.transform.localScale = baseScale;
@@ -420,7 +423,7 @@ namespace Draftline.Unity
                 var sequence = DOTween.Sequence();
                 sequence.Append(renderer.transform.DOScaleY(0.05f, 0.18f).SetEase(Ease.InQuad));
                 sequence.Join(renderer.transform.DOMoveY(basePosition.y - baseScale.y * 0.5f, 0.18f).SetEase(Ease.InQuad));
-                sequence.OnComplete(() =>
+                sequence.OnKill(() =>
                 {
                     renderer.enabled = false;
                     renderer.transform.position = basePosition;
@@ -548,6 +551,14 @@ namespace Draftline.Unity
 
         private void Update()
         {
+            // 看门狗：表现层异常卡死时强制释放输入锁（正常对局不会触发）。
+            if (animating && !IsDiceRolling && Time.unscaledTime - animatingSince > 4f)
+            {
+                Debug.LogWarning("[Draftline] animation watchdog released a stuck lock.");
+                animating = false;
+                pendingVisuals = 0;
+                SyncViews();
+            }
             if (rules == null || InputLocked || !CanControl) return;
             var keyboard = Keyboard.current;
             if (keyboard != null)
@@ -589,6 +600,7 @@ namespace Draftline.Unity
         private IEnumerator RollPhysicalDie()
         {
             animating = true;
+            animatingSince = Time.unscaledTime;
             cameraDirector?.ShowDice();
             sfx?.Play(SfxType.DiceRoll);
             if (lanRoom != null && lanRoom.IsHost) lanRoom.BroadcastDiceStart();
@@ -632,6 +644,7 @@ namespace Draftline.Unity
         private IEnumerator AnimateSlide(DraftlinePieceView view, SlidePlan path)
         {
             animating = true;
+            animatingSince = Time.unscaledTime;
             foreach (var marker in hintObjects)
                 if (marker != null) Destroy(marker);
             hintObjects.Clear();
@@ -680,6 +693,7 @@ namespace Draftline.Unity
         private IEnumerator PlayNetworkDicePresentation()
         {
             animating = true;
+            animatingSince = Time.unscaledTime;
             cameraDirector?.ShowDice();
             gameUI?.Refresh();
             yield return new WaitForSeconds(1.6f);
