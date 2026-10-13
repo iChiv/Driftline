@@ -5,6 +5,7 @@ using Draftline.Unity;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Draftline.EditorTools
 {
@@ -68,6 +69,20 @@ namespace Draftline.EditorTools
                     Debug.Log($"[BoardAudit] {rootName}/{child.name} center={renderer.bounds.center} size={renderer.bounds.size} cells={cells.Count}");
                 }
             }
+        }
+
+        [MenuItem("Draftline/Debug UI State")]
+        public static void DebugUiState()
+        {
+            var doc = Object.FindObjectOfType<UIDocument>();
+            if (doc == null)
+            {
+                Debug.LogWarning("[DebugUI] no UIDocument in scene.");
+                return;
+            }
+            var root = doc.rootVisualElement;
+            Debug.Log($"[DebugUI] children={root.childCount} draftline-root={(root.Q("draftline-root") != null)} " +
+                      $"setup={(root.Q("setup") != null)} hud={(root.Q("hud") != null)}");
         }
 
         [MenuItem("Draftline/Board Audit (Log Only)")]

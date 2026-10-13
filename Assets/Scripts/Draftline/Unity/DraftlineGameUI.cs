@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using Draftline.Core;
 using UnityEngine;
@@ -8,11 +7,15 @@ using UnityEngine.UIElements;
 
 namespace Draftline.Unity
 {
-    /// <summary>UI Toolkit presentation for the local Draftline match.</summary>
+    /// <summary>
+    /// UI Toolkit presentation for the local Draftline match.
+    /// The visual tree lives in Assets/Resources/UI/DraftlineHUD.uxml (editable in UI
+    /// Builder); this class only binds data and callbacks.
+    /// </summary>
     public sealed class DraftlineGameUI : MonoBehaviour
     {
         private static readonly string[] Names = { "红", "蓝", "绿", "黄" };
-        private static readonly string[] Corners = { "左上角", "右上角", "右下角", "左下角" };
+        private static readonly string[] ToggleNames = { "toggle-red", "toggle-blue", "toggle-green", "toggle-yellow" };
         private DraftlineGameController controller;
         private PanelSettings panelSettings;
         private UIDocument document;
@@ -20,10 +23,11 @@ namespace Draftline.Unity
         private VisualElement setup;
         private VisualElement hud;
         private VisualElement result;
-        private VisualElement colorChoices;
         private VisualElement players;
         private VisualElement actions;
         private VisualElement activity;
+        private VisualElement dirPad;
+        private Button[] dirButtons;
         private Label setupError;
         private Label phase;
         private Label turn;
@@ -66,18 +70,110 @@ namespace Draftline.Unity
             yield return null;
             root = document.rootVisualElement;
             root.Clear();
-            root.AddToClassList("draftline-root");
-            root.pickingMode = PickingMode.Ignore;
             var theme = Resources.Load<StyleSheet>("DraftlineTheme");
             if (theme != null) root.styleSheets.Add(theme);
-            BuildSetup();
-            BuildHud();
-            BuildResult();
+            var tree = Resources.Load<VisualTreeAsset>("UI/DraftlineHUD");
+            if (tree == null)
+            {
+                Debug.LogError("DraftlineHUD.uxml missing from Resources/UI.");
+                yield break;
+            }
+            tree.CloneTree(root);
+            Bind();
             Refresh();
         }
 
-        private void OnDestroy()
+        private void Bind()
         {
+            setup = root.Q("setup");
+            hud = root.Q("hud");
+            result = root.Q("result");
+            players = root.Q("players");
+            actions = root.Q("actions");
+            activity = root.Q("activity");
+            dirPad = root.Q("dir-pad");
+            setupError = root.Q<Label>("setup-error");
+            phase = root.Q<Label>("phase");
+            turn = root.Q<Label>("turn");
+            dice = root.Q<Label>("dice");
+            remaining = root.Q<Label>("remaining");
+            hint = root.Q<Label>("hint");
+            resultTitle = root.Q<Label>("result-title");
+            rolling = root.Q<Label>("rolling");
+            addressInput = root.Q<TextField>("address-input");
+            roomStatus = root.Q<Label>("room-status");
+
+            for (var index = 0; index < ToggleNames.Length; index++)
+            {
+                var selectedIndex = index;
+                var toggle = root.Q<Toggle>(ToggleNames[index]);
+                if (toggle == null) continue;
+                toggle.SetValueWithoutNotify(controller.SelectedColors[index]);
+                toggle.RegisterValueChangedCallback(evt =>
+                    controller.SelectedColors[selectedIndex] = evt.newValue);
+            }
+
+            cameraButton = root.Q<Button>("camera-button");
+            cameraButton.clicked += () => controller.ToggleCameraFromUI();
+
+            root.Q<Button>("start-local").clicked += () =>
+            {
+                if (controller.LanRoom != null && controller.LanRoom.IsNetworked)
+                    controller.LanRoom.Leave();
+                controller.BeginLocalMatch();
+                Refresh();
+            };
+            for (var seats = 2; seats <= 4; seats++)
+            {
+                var selectedSeats = seats;
+                root.Q<Button>("seat-" + seats).clicked += () =>
+                {
+                    roomSeats = selectedSeats;
+                    Refresh();
+                };
+            }
+            hostButton = root.Q<Button>("host-button");
+            hostButton.clicked += () =>
+            {
+                controller.LanRoom.Host(roomSeats);
+                Refresh();
+            };
+            joinButton = root.Q<Button>("join-button");
+            joinButton.clicked += () =>
+            {
+                controller.LanRoom.Join(addressInput.value);
+                Refresh();
+            };
+            startRoomButton = root.Q<Button>("start-room");
+            startRoomButton.clicked += () =>
+            {
+                controller.LanRoom.StartHostedMatch();
+                Refresh();
+            };
+            root.Q<Button>("restart-button").clicked += () =>
+            {
+                if (controller.LanRoom != null && controller.LanRoom.IsNetworked)
+                    controller.LanRoom.Leave();
+                controller.BeginLocalMatch();
+                Refresh();
+            };
+
+            dirButtons = new[]
+            {
+                root.Q<Button>("dir-up"),
+                root.Q<Button>("dir-down"),
+                root.Q<Button>("dir-left"),
+                root.Q<Button>("dir-right"),
+            };
+            var directions = new[]
+            {
+                SlideDirection.Up, SlideDirection.Down, SlideDirection.Left, SlideDirection.Right
+            };
+            for (var index = 0; index < dirButtons.Length; index++)
+            {
+                var direction = directions[index];
+                dirButtons[index].clicked += () => controller.MoveFromUI(direction);
+            }
         }
 
         private void Update()
@@ -93,174 +189,9 @@ namespace Draftline.Unity
             }
         }
 
-        private static Label Text(string value, string style)
-        {
-            var label = new Label(value);
-            label.AddToClassList(style);
-            return label;
-        }
-
-        private static VisualElement Box(string style)
-        {
-            var element = new VisualElement();
-            element.AddToClassList(style);
-            return element;
-        }
-
-        private static Button Action(string value, System.Action click, string style = "action-button")
-        {
-            var button = new Button(click) { text = value };
-            button.AddToClassList(style);
-            return button;
-        }
-
-        private void BuildSetup()
-        {
-            setup = Box("setup-screen");
-            root.Add(setup);
-            var panel = Box("setup-panel");
-            setup.Add(panel);
-            panel.Add(Text("DRAFTLINE", "brand-large"));
-            panel.Add(Text("四方棋局 · 立体策略对战", "subtitle"));
-            panel.Add(Text("选择参战的角落", "section-title"));
-            panel.Add(Text("2–4 位玩家同机轮流；颜色与角落固定绑定。", "small-copy"));
-            colorChoices = Box("choice-grid");
-            panel.Add(colorChoices);
-            for (var index = 0; index < Names.Length; index++)
-            {
-                var selectedIndex = index;
-                var choice = Box("choice-card");
-                choice.AddToClassList("choice-" + ((PlayerColor)index).ToString().ToLowerInvariant());
-                var toggle = new Toggle { value = controller.SelectedColors[index] };
-                toggle.AddToClassList("choice-toggle");
-                toggle.RegisterValueChangedCallback(evt =>
-                    controller.SelectedColors[selectedIndex] = evt.newValue);
-                choice.Add(toggle);
-                var text = Box("choice-copy");
-                text.Add(Text(Names[index], "choice-name"));
-                text.Add(Text(Corners[index], "choice-corner"));
-                choice.Add(text);
-                colorChoices.Add(choice);
-            }
-            setupError = Text("", "error-text");
-            panel.Add(setupError);
-            panel.Add(Action("开始对局  →", () =>
-            {
-                if (controller.LanRoom != null && controller.LanRoom.IsNetworked)
-                    controller.LanRoom.Leave();
-                controller.BeginLocalMatch();
-                Refresh();
-            }, "primary-button"));
-            panel.Add(Text("局域网演示", "section-title"));
-            var roomOptions = Box("room-options");
-            panel.Add(roomOptions);
-            var seatsRow = Box("seat-options");
-            for (var seats = 2; seats <= 4; seats++)
-            {
-                var selectedSeats = seats;
-                seatsRow.Add(Action(seats + " 人", () =>
-                {
-                    roomSeats = selectedSeats;
-                    Refresh();
-                }, "seat-button"));
-            }
-            roomOptions.Add(seatsRow);
-            addressInput = new TextField("房主 IP") { value = "127.0.0.1" };
-            addressInput.AddToClassList("room-address");
-            roomOptions.Add(addressInput);
-            hostButton = Action("创建房间", () =>
-            {
-                controller.LanRoom.Host(roomSeats);
-                Refresh();
-            });
-            roomOptions.Add(hostButton);
-            joinButton = Action("加入房间", () =>
-            {
-                controller.LanRoom.Join(addressInput.value);
-                Refresh();
-            });
-            roomOptions.Add(joinButton);
-            startRoomButton = Action("房主开始对局", () =>
-            {
-                controller.LanRoom.StartHostedMatch();
-                Refresh();
-            }, "primary-button");
-            roomOptions.Add(startRoomButton);
-            roomStatus = Text("", "room-status");
-            roomOptions.Add(roomStatus);
-            panel.Add(Text("掷骰决定滑行次数 · 围杀对手 · 连成五子获胜", "setup-footer"));
-            panel.Add(Text("方向键移动 · 空格掷骰 · 点击棋子选择", "setup-footer"));
-        }
-
-        private void BuildHud()
-        {
-            hud = Box("hud");
-            root.Add(hud);
-            var header = Box("header");
-            hud.Add(header);
-            var brand = Box("header-brand");
-            brand.Add(Text("DRAFTLINE", "brand-small"));
-            brand.Add(Text("BOARD STRATEGY", "header-caption"));
-            header.Add(brand);
-            phase = Text("", "phase-pill");
-            header.Add(phase);
-            cameraButton = Action("俯视视角", () => controller.ToggleCameraFromUI(), "camera-button");
-            header.Add(cameraButton);
-
-            var side = Box("side-panel");
-            hud.Add(side);
-            side.Add(Text("当前回合", "overline"));
-            turn = Text("", "turn-title");
-            side.Add(turn);
-            rolling = Text("", "rolling-label");
-            side.Add(rolling);
-            var diceRow = Box("dice-row");
-            dice = Text("–", "dice-value");
-            diceRow.Add(dice);
-            var diceInfo = Box("dice-info");
-            diceInfo.Add(Text("骰子点数", "stat-label"));
-            remaining = Text("", "remaining-value");
-            diceInfo.Add(remaining);
-            diceRow.Add(diceInfo);
-            side.Add(diceRow);
-            hint = Text("", "hint-text");
-            side.Add(hint);
-            side.Add(Text("可执行操作", "section-title"));
-            actions = Box("actions");
-            side.Add(actions);
-            side.Add(Text("玩家状态", "section-title"));
-            players = Box("player-list");
-            side.Add(players);
-            side.Add(Text("对局记录", "section-title"));
-            var log = new ScrollView();
-            log.AddToClassList("event-scroll");
-            activity = Box("event-list");
-            log.Add(activity);
-            side.Add(log);
-        }
-
-        private void BuildResult()
-        {
-            result = Box("result-screen");
-            root.Add(result);
-            var panel = Box("result-panel");
-            result.Add(panel);
-            panel.Add(Text("对局结束", "overline"));
-            resultTitle = Text("", "result-title");
-            panel.Add(resultTitle);
-            panel.Add(Text("五子连线或成为最后的存活者", "small-copy"));
-            panel.Add(Action("再来一局", () =>
-            {
-                if (controller.LanRoom != null && controller.LanRoom.IsNetworked)
-                    controller.LanRoom.Leave();
-                controller.BeginLocalMatch();
-                Refresh();
-            }, "primary-button"));
-        }
-
         public void Refresh()
         {
-            if (root == null || controller == null) return;
+            if (root == null || controller == null || turn == null) return;
             var rules = controller.Rules;
             setup.style.display = rules == null ? DisplayStyle.Flex : DisplayStyle.None;
             hud.style.display = rules == null ? DisplayStyle.None : DisplayStyle.Flex;
@@ -295,6 +226,27 @@ namespace Draftline.Unity
                 actions.Add(Text("等待当前玩家行动…", "waiting-text"));
             else
                 BuildActions(rules);
+
+            // 十字方向键：Moving 阶段显示，非法方向禁用。
+            var showPad = controller.CanControl && !controller.IsAnimating &&
+                          state.Phase == MatchPhase.Moving && !controller.PendingStopDirection.HasValue &&
+                          state.SelectedPieceId.HasValue;
+            dirPad.style.display = showPad ? DisplayStyle.Flex : DisplayStyle.None;
+            if (showPad)
+            {
+                var selected = rules.PieceById(state.SelectedPieceId.Value);
+                var legal = selected != null
+                    ? rules.LegalDirections()
+                    : (System.Collections.Generic.IReadOnlyList<SlideDirection>)new SlideDirection[0];
+                var legalSet = new System.Collections.Generic.HashSet<SlideDirection>(legal);
+                var padDirections = new[]
+                {
+                    SlideDirection.Up, SlideDirection.Down, SlideDirection.Left, SlideDirection.Right
+                };
+                for (var index = 0; index < dirButtons.Length; index++)
+                    dirButtons[index].SetEnabled(legalSet.Contains(padDirections[index]));
+            }
+
             players.Clear();
             foreach (var player in state.Players.Where(player => player.Active))
             {
@@ -362,29 +314,27 @@ namespace Draftline.Unity
                     actions.Add(Action("停在 " + plan.Steps[index].Position,
                         () => controller.StopFromUI(direction, stop)));
                 }
-                return;
             }
-            // 固定十字方向键：非法方向保留按钮但禁用，位置永远可预测。
-            var legal = new HashSet<SlideDirection>(rules.LegalDirections());
-            var pad = Box("dir-pad");
-            var rowUp = Box("dir-row");
-            rowUp.Add(DirButton(SlideDirection.Up, "↑", legal));
-            var rowMid = Box("dir-row");
-            rowMid.Add(DirButton(SlideDirection.Left, "←", legal));
-            rowMid.Add(Box("dir-gap"));
-            rowMid.Add(DirButton(SlideDirection.Right, "→", legal));
-            var rowDown = Box("dir-row");
-            rowDown.Add(DirButton(SlideDirection.Down, "↓", legal));
-            pad.Add(rowUp);
-            pad.Add(rowMid);
-            pad.Add(rowDown);
-            actions.Add(pad);
         }
 
-        private Button DirButton(SlideDirection direction, string label, HashSet<SlideDirection> legal)
+        private static Label Text(string value, string style)
         {
-            var button = Action(label, () => controller.MoveFromUI(direction), "direction-button");
-            button.SetEnabled(legal.Contains(direction));
+            var label = new Label(value);
+            label.AddToClassList(style);
+            return label;
+        }
+
+        private static VisualElement Box(string style)
+        {
+            var element = new VisualElement();
+            element.AddToClassList(style);
+            return element;
+        }
+
+        private static Button Action(string value, System.Action click, string style = "action-button")
+        {
+            var button = new Button(click) { text = value };
+            button.AddToClassList(style);
             return button;
         }
 

@@ -99,8 +99,8 @@ namespace Draftline.Unity
                        gameObject.AddComponent<DraftlineWarnings>();
             sfx = gameObject.GetComponent<DraftlineAudio>() ??
                   gameObject.AddComponent<DraftlineAudio>();
-            if (gameObject.GetComponent<DraftlineTabletopTheme>() == null)
-                gameObject.AddComponent<DraftlineTabletopTheme>();
+            if (gameObject.GetComponent<DraftlineTabletopInteraction>() == null)
+                gameObject.AddComponent<DraftlineTabletopInteraction>();
             gameUI.Initialize(this);
         }
 

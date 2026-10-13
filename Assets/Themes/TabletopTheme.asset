@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6f5818033a80b94fa2ece976b948559, type: 3}
+  m_Name: TabletopTheme
+  m_EditorClassIdentifier: 
+  ThemeName: "\u684C\u9762\u73A9\u5177"
+  WallMaterial: {fileID: 2100000, guid: 5e394cf03447e474cb6ce8709527c897, type: 2}
+  RotatingWallMaterial: {fileID: 2100000, guid: 91c6f3b2317b2014b830073fae18e836, type: 2}
+  TableMaterial: {fileID: 2100000, guid: f8398e4b68e902840b7ef81183f93b9a, type: 2}
+  RimMaterial: {fileID: 2100000, guid: 8631054f12627e7408083f6e74b620ed, type: 2}
+  PortalA: {fileID: 2100000, guid: a2e3530f9fe037e47a05b29daacbc711, type: 2}
+  PortalB: {fileID: 2100000, guid: a4e354d943f4da247b3d7c98aca3cd69, type: 2}
+  PortalC: {fileID: 2100000, guid: 81e66209ef2ceaa4590d263dd0e5492c, type: 2}
+  PortalD: {fileID: 2100000, guid: e411ea36f1132714baa2e92f77b96987, type: 2}
+  FactionMaterials:
+  - {fileID: 2100000, guid: ea14a02fc7acd4e4484c82a2e3c8f8b0, type: 2}
+  - {fileID: 2100000, guid: 72e29ca7cb697774982e2a8954d1c415, type: 2}
+  - {fileID: 2100000, guid: 2a98ff731d6521f47a3125526380bbda, type: 2}
+  - {fileID: 2100000, guid: a6eeeb261c30fc144a6009915b7ce325, type: 2}
+  Props:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

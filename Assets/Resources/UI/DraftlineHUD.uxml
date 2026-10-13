@@ -1,0 +1,118 @@
+<UXML xmlns="UnityEngine.UIElements">
+  <VisualElement name="draftline-root" class="draftline-root" picking-mode="Ignore">
+
+    <!-- ============ 开局屏 ============ -->
+    <VisualElement name="setup" class="setup-screen">
+      <VisualElement class="setup-panel">
+        <Label text="DRAFTLINE" class="brand-large"/>
+        <Label text="四方棋局 · 立体策略对战" class="subtitle"/>
+        <Label text="选择参战的角落" class="section-title"/>
+        <Label text="2–4 位玩家同机轮流；颜色与角落固定绑定。" class="small-copy"/>
+        <VisualElement name="color-choices" class="choice-grid">
+          <VisualElement name="choice-red" class="choice-card choice-red">
+            <Toggle name="toggle-red" class="choice-toggle"/>
+            <VisualElement class="choice-copy">
+              <Label text="红" class="choice-name"/>
+              <Label text="左上角" class="choice-corner"/>
+            </VisualElement>
+          </VisualElement>
+          <VisualElement name="choice-blue" class="choice-card choice-blue">
+            <Toggle name="toggle-blue" class="choice-toggle"/>
+            <VisualElement class="choice-copy">
+              <Label text="蓝" class="choice-name"/>
+              <Label text="右上角" class="choice-corner"/>
+            </VisualElement>
+          </VisualElement>
+          <VisualElement name="choice-green" class="choice-card choice-green">
+            <Toggle name="toggle-green" class="choice-toggle"/>
+            <VisualElement class="choice-copy">
+              <Label text="绿" class="choice-name"/>
+              <Label text="右下角" class="choice-corner"/>
+            </VisualElement>
+          </VisualElement>
+          <VisualElement name="choice-yellow" class="choice-card choice-yellow">
+            <Toggle name="toggle-yellow" class="choice-toggle"/>
+            <VisualElement class="choice-copy">
+              <Label text="黄" class="choice-name"/>
+              <Label text="左下角" class="choice-corner"/>
+            </VisualElement>
+          </VisualElement>
+        </VisualElement>
+        <Label name="setup-error" class="error-text"/>
+        <Button name="start-local" text="开始对局  →" class="primary-button"/>
+        <Label text="局域网演示" class="section-title"/>
+        <VisualElement name="room-options" class="room-options">
+          <VisualElement name="seat-options" class="seat-options">
+            <Button name="seat-2" text="2 人" class="seat-button"/>
+            <Button name="seat-3" text="3 人" class="seat-button"/>
+            <Button name="seat-4" text="4 人" class="seat-button"/>
+          </VisualElement>
+          <TextField name="address-input" label="房主 IP" value="127.0.0.1" class="room-address"/>
+          <Button name="host-button" text="创建房间" class="action-button"/>
+          <Button name="join-button" text="加入房间" class="action-button"/>
+          <Button name="start-room" text="房主开始对局" class="primary-button"/>
+          <Label name="room-status" class="room-status"/>
+        </VisualElement>
+        <Label text="掷骰决定滑行次数 · 围杀对手 · 连成五子获胜" class="setup-footer"/>
+        <Label text="方向键移动 · 空格掷骰 · 点击棋子选择" class="setup-footer"/>
+      </VisualElement>
+    </VisualElement>
+
+    <!-- ============ 对局 HUD ============ -->
+    <VisualElement name="hud" class="hud">
+      <VisualElement class="header">
+        <VisualElement class="header-brand">
+          <Label text="DRAFTLINE" class="brand-small"/>
+          <Label text="BOARD STRATEGY" class="header-caption"/>
+        </VisualElement>
+        <Label name="phase" class="phase-pill"/>
+        <Button name="camera-button" text="俯视视角" class="camera-button"/>
+      </VisualElement>
+      <VisualElement class="side-panel">
+        <Label text="当前回合" class="overline"/>
+        <Label name="turn" class="turn-title"/>
+        <Label name="rolling" class="rolling-label"/>
+        <VisualElement class="dice-row">
+          <Label name="dice" text="–" class="dice-value"/>
+          <VisualElement class="dice-info">
+            <Label text="骰子点数" class="stat-label"/>
+            <Label name="remaining" class="remaining-value"/>
+          </VisualElement>
+        </VisualElement>
+        <Label name="hint" class="hint-text"/>
+        <Label text="可执行操作" class="section-title"/>
+        <VisualElement name="actions" class="actions"/>
+        <VisualElement name="dir-pad" class="dir-pad">
+          <VisualElement class="dir-row">
+            <Button name="dir-up" text="↑" class="direction-button"/>
+          </VisualElement>
+          <VisualElement class="dir-row">
+            <Button name="dir-left" text="←" class="direction-button"/>
+            <VisualElement class="dir-gap"/>
+            <Button name="dir-right" text="→" class="direction-button"/>
+          </VisualElement>
+          <VisualElement class="dir-row">
+            <Button name="dir-down" text="↓" class="direction-button"/>
+          </VisualElement>
+        </VisualElement>
+        <Label text="玩家状态" class="section-title"/>
+        <VisualElement name="players" class="player-list"/>
+        <Label text="对局记录" class="section-title"/>
+        <ScrollView class="event-scroll">
+          <VisualElement name="activity" class="event-list"/>
+        </ScrollView>
+      </VisualElement>
+    </VisualElement>
+
+    <!-- ============ 结算屏 ============ -->
+    <VisualElement name="result" class="result-screen">
+      <VisualElement class="result-panel">
+        <Label text="对局结束" class="overline"/>
+        <Label name="result-title" class="result-title"/>
+        <Label text="五子连线或成为最后的存活者" class="small-copy"/>
+        <Button name="restart-button" text="再来一局" class="primary-button"/>
+      </VisualElement>
+    </VisualElement>
+
+  </VisualElement>
+</UXML>
