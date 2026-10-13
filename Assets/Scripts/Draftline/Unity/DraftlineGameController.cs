@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using Draftline.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -20,6 +21,9 @@ namespace Draftline.Unity
 
         private readonly Dictionary<int, DraftlinePieceView> pieceViews =
             new Dictionary<int, DraftlinePieceView>();
+        private readonly Dictionary<int, DraftlineItemView> itemViews =
+            new Dictionary<int, DraftlineItemView>();
+        private Transform runtimeItems;
         private readonly Dictionary<GridPosition, Renderer> rotatingWallRenderers =
             new Dictionary<GridPosition, Renderer>();
         private readonly Dictionary<GridPosition, Collider> rotatingWallColliders =
@@ -34,20 +38,30 @@ namespace Draftline.Unity
         private Renderer centerWallRenderer;
         private Collider centerWallCollider;
         private Material[] playerMaterials;
+        private Material[] itemMaterials;
         private Material hintMaterial;
+        private DraftlineWarnings warnings;
         private bool animating;
+        private int pendingVisuals;
+        private readonly HashSet<int> exitingPieces = new HashSet<int>();
+        private readonly Dictionary<Renderer, bool> wallVisualState = new Dictionary<Renderer, bool>();
+        private readonly Dictionary<Renderer, Vector3> wallBasePosition = new Dictionary<Renderer, Vector3>();
+        private readonly Dictionary<Renderer, Vector3> wallBaseScale = new Dictionary<Renderer, Vector3>();
         private SlideDirection? pendingStopDirection;
         private string setupError;
         private PhysicalDiceRoller diceRoller;
         private DraftlineCameraDirector cameraDirector;
         private DraftlineGameUI gameUI;
         private DraftlineLanRoom lanRoom;
+        private DraftlineAudio sfx;
         private bool applyingRemoteCommand;
 
         public MatchRules Rules => rules;
         public IReadOnlyList<string> RecentEvents => recentEvents;
         public bool[] SelectedColors => selectedColors;
-        public bool IsAnimating => animating;
+        public IReadOnlyDictionary<int, DraftlinePieceView> PieceViews => pieceViews;
+        public bool IsAnimating => animating || pendingVisuals > 0;
+        private bool InputLocked => IsAnimating;
         public SlideDirection? PendingStopDirection => pendingStopDirection;
         public string SetupError => setupError;
         public string DiceStatus => diceRoller != null ? diceRoller.Status : "";
@@ -81,6 +95,10 @@ namespace Draftline.Unity
                      gameObject.AddComponent<DraftlineGameUI>();
             lanRoom = gameObject.GetComponent<DraftlineLanRoom>() ??
                       gameObject.AddComponent<DraftlineLanRoom>();
+            warnings = gameObject.GetComponent<DraftlineWarnings>() ??
+                       gameObject.AddComponent<DraftlineWarnings>();
+            sfx = gameObject.GetComponent<DraftlineAudio>() ??
+                  gameObject.AddComponent<DraftlineAudio>();
             gameUI.Initialize(this);
         }
 
@@ -106,15 +124,25 @@ namespace Draftline.Unity
                 {
                     rotatingWallRenderers[cell] = renderer;
                     rotatingWallColliders[cell] = collider;
+                    RegisterWallVisual(renderer);
                 }
                 else if (cell == new GridPosition(9, 9))
                 {
                     centerWallRenderer = renderer;
                     centerWallCollider = collider;
+                    RegisterWallVisual(renderer);
                 }
             }
             if (rotatingWallRenderers.Count != 8 || centerWallRenderer == null)
                 Debug.LogWarning($"Draftline board binding found {rotatingWallRenderers.Count}/8 rotating walls.");
+        }
+
+        private void RegisterWallVisual(Renderer renderer)
+        {
+            if (renderer == null || wallVisualState.ContainsKey(renderer)) return;
+            wallVisualState[renderer] = renderer.enabled;
+            wallBasePosition[renderer] = renderer.transform.position;
+            wallBaseScale[renderer] = renderer.transform.localScale;
         }
 
         private void StartLocalMatch()
@@ -131,9 +159,19 @@ namespace Draftline.Unity
             setupError = null;
             pendingStopDirection = null;
             recentEvents.Clear();
+            exitingPieces.Clear();
+            pendingVisuals = 0;
             foreach (var view in pieceViews.Values)
-                if (view != null) Destroy(view.gameObject);
+                if (view != null)
+                {
+                    view.transform.DOKill();
+                    Destroy(view.gameObject);
+                }
             pieceViews.Clear();
+            foreach (var itemView in itemViews.Values)
+                if (itemView != null) Destroy(itemView.gameObject);
+            itemViews.Clear();
+            warnings?.ClearAll();
             CreatePieceMaterials();
             SyncViews();
         }
@@ -151,6 +189,65 @@ namespace Draftline.Unity
                     playerMaterials[index].SetColor("_BaseColor", Palette[index]);
                 if (playerMaterials[index].HasProperty("_Color"))
                     playerMaterials[index].SetColor("_Color", Palette[index]);
+                // Warnings drive per-renderer emission through MaterialPropertyBlock.
+                playerMaterials[index].EnableKeyword("_EMISSION");
+                if (playerMaterials[index].HasProperty("_EmissionColor"))
+                    playerMaterials[index].SetColor("_EmissionColor", Color.black);
+            }
+        }
+
+        private static readonly Color[] ItemPalette =
+        {
+            new Color(0.61f, 0.42f, 1.0f),  // PassWall 穿墙
+            new Color(0.21f, 0.69f, 0.88f), // EmergencyStop 急停
+            new Color(0.88f, 0.25f, 0.25f), // CollisionCapture 撞吃
+            new Color(0.88f, 0.63f, 0.21f)  // BreakWall 破墙
+        };
+
+        private void EnsureItemMaterials()
+        {
+            if (itemMaterials != null) return;
+            itemMaterials = new Material[4];
+            var shader = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Standard");
+            for (var index = 0; index < 4; index++)
+            {
+                itemMaterials[index] = new Material(shader);
+                if (itemMaterials[index].HasProperty("_BaseColor"))
+                    itemMaterials[index].SetColor("_BaseColor", ItemPalette[index]);
+                if (itemMaterials[index].HasProperty("_Color"))
+                    itemMaterials[index].SetColor("_Color", ItemPalette[index]);
+            }
+        }
+
+        private void SyncItemViews()
+        {
+            EnsureItemMaterials();
+            if (runtimeItems == null)
+            {
+                runtimeItems = new GameObject("Runtime Items").transform;
+                runtimeItems.SetParent(transform, false);
+            }
+            var alive = new HashSet<int>();
+            foreach (var item in rules.State.FieldItems)
+            {
+                alive.Add(item.Id);
+                if (!itemViews.TryGetValue(item.Id, out var view) || view == null)
+                {
+                    var typeIndex = (int)item.Type - 1; // ItemType values start at 1.
+                    if (typeIndex < 0 || typeIndex >= itemMaterials.Length) typeIndex = 0;
+                    view = DraftlineItemView.Create(runtimeItems, item, itemMaterials[typeIndex]);
+                    itemViews[item.Id] = view;
+                }
+                view.SetBuried(rules.IsWall(item.Position));
+            }
+            var stale = new List<int>();
+            foreach (var pair in itemViews)
+                if (!alive.Contains(pair.Key) || pair.Value == null)
+                    stale.Add(pair.Key);
+            foreach (var id in stale)
+            {
+                if (itemViews[id] != null) Destroy(itemViews[id].gameObject);
+                itemViews.Remove(id);
             }
         }
 
@@ -170,37 +267,159 @@ namespace Draftline.Unity
                         visual.transform.localScale = new Vector3(0.8f, 0.1f, 0.8f);
                     view = visual.AddComponent<DraftlinePieceView>();
                     view.PieceId = piece.Id;
+                    view.BaseScale = visual.transform.localScale;
                     var renderer = visual.GetComponent<Renderer>();
                     if (renderer != null) renderer.sharedMaterial = playerMaterials[(int)piece.Owner];
                     pieceViews.Add(piece.Id, view);
                 }
-                view.gameObject.SetActive(piece.OnBoard);
-                if (piece.OnBoard) view.transform.position = BoardCoordinates.ToWorld(piece.Position);
+                if (piece.OnBoard)
+                {
+                    view.gameObject.SetActive(true);
+                    view.transform.position = BoardCoordinates.ToWorld(piece.Position);
+                }
+                else if (!exitingPieces.Contains(piece.Id))
+                {
+                    // Captured pieces stay visible while their exit animation owns them.
+                    view.gameObject.SetActive(false);
+                }
             }
 
             foreach (var pair in rotatingWallRenderers)
             {
                 var visible = rules.IsWall(pair.Key);
-                if (pair.Value != null) pair.Value.enabled = visible;
                 if (rotatingWallColliders.TryGetValue(pair.Key, out var collider) && collider != null)
                     collider.enabled = visible;
+                AnimateWallTo(pair.Value, visible);
             }
             var centerVisible = rules.IsWall(new GridPosition(9, 9));
-            if (centerWallRenderer != null) centerWallRenderer.enabled = centerVisible;
             if (centerWallCollider != null) centerWallCollider.enabled = centerVisible;
+            AnimateWallTo(centerWallRenderer, centerVisible);
 
             foreach (var matchEvent in rules.Events)
             {
                 recentEvents.Insert(0, EventText(matchEvent));
                 if (recentEvents.Count > 12) recentEvents.RemoveAt(recentEvents.Count - 1);
-                if (matchEvent.Type == MatchEventType.TurnChanged && cameraDirector != null)
-                    StartCoroutine(ShowTurnCameraBriefly(matchEvent.Player));
+                switch (matchEvent.Type)
+                {
+                    case MatchEventType.TurnChanged:
+                        sfx?.Play(SfxType.TurnChange, 0.6f);
+                        if (cameraDirector != null) StartCoroutine(ShowTurnCameraBriefly(matchEvent.Player));
+                        break;
+                    case MatchEventType.PieceCaptured:
+                        sfx?.Play(SfxType.Capture);
+                        cameraDirector?.PlayEventAt(BoardCoordinates.ToWorld(matchEvent.Position));
+                        if (pieceViews.TryGetValue(matchEvent.PieceId, out var captured) && captured != null)
+                            StartCoroutine(AnimateCaptureOut(captured));
+                        break;
+                    case MatchEventType.PieceDeployed:
+                        if (pieceViews.TryGetValue(matchEvent.PieceId, out var deployed) && deployed != null)
+                        {
+                            deployed.transform.localScale = Vector3.zero;
+                            deployed.transform.DOScale(deployed.BaseScale, 0.28f).SetEase(Ease.OutBack);
+                        }
+                        break;
+                    case MatchEventType.NoMoves:
+                        if (matchEvent.PieceId >= 0 && pieceViews.TryGetValue(matchEvent.PieceId, out var stuck) && stuck != null)
+                            stuck.transform.DOShakePosition(0.35f, 0.18f, 18, 90f);
+                        break;
+                    case MatchEventType.PortalUsed:
+                        cameraDirector?.PlayEventAt(BoardCoordinates.ToWorld(matchEvent.Position));
+                        break;
+                    case MatchEventType.WallRotated:
+                        sfx?.Play(SfxType.WallRise, 0.7f);
+                        cameraDirector?.Pulse(0.25f);
+                        break;
+                    case MatchEventType.ItemActivated:
+                        sfx?.Play(SfxType.ItemActivate);
+                        break;
+                    case MatchEventType.Victory:
+                        sfx?.Play(SfxType.Victory);
+                        var focus = Vector3.zero;
+                        if (rules.State.SelectedPieceId.HasValue &&
+                            pieceViews.TryGetValue(rules.State.SelectedPieceId.Value, out var winnerView) &&
+                            winnerView != null)
+                            focus = winnerView.transform.position;
+                        cameraDirector?.PlayVictory(focus);
+                        break;
+                    case MatchEventType.ItemCollected:
+                        sfx?.Play(SfxType.ItemPickup);
+                        foreach (var pair in itemViews)
+                        {
+                            if (pair.Value == null || pair.Value.Position != matchEvent.Position) continue;
+                            var target = pieceViews.TryGetValue(matchEvent.PieceId, out var collector) && collector != null
+                                ? collector.transform.position
+                                : BoardCoordinates.ToWorld(matchEvent.Position, 1.1f);
+                            var collectedView = pair.Value;
+                            itemViews.Remove(pair.Key);
+                            collectedView.Collect(target);
+                            break;
+                        }
+                        break;
+                }
             }
             if (lanRoom != null && lanRoom.IsHost)
                 lanRoom.BroadcastState(rules.Events);
             rules.ClearEvents();
+            SyncItemViews();
             RenderMoveHints();
             gameUI?.Refresh();
+            warnings?.Refresh(rules, pieceViews);
+        }
+
+        private IEnumerator AnimateCaptureOut(DraftlinePieceView view)
+        {
+            if (!exitingPieces.Add(view.PieceId)) yield break;
+            pendingVisuals++;
+            view.transform.DOKill();
+            var tween = view.transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack);
+            yield return tween.WaitForCompletion();
+            view.gameObject.SetActive(false);
+            view.transform.localScale = view.BaseScale;
+            exitingPieces.Remove(view.PieceId);
+            pendingVisuals--;
+            gameUI?.Refresh();
+        }
+
+        // Rotating/center walls rise and sink instead of popping. Logic (colliders, rules)
+        // flips instantly; this is purely the visual transition.
+        private void AnimateWallTo(Renderer renderer, bool visible)
+        {
+            if (renderer == null || !wallVisualState.TryGetValue(renderer, out var current) || current == visible)
+                return;
+            wallVisualState[renderer] = visible;
+            var basePosition = wallBasePosition[renderer];
+            var baseScale = wallBaseScale[renderer];
+            renderer.transform.DOKill();
+            if (visible)
+            {
+                pendingVisuals++;
+                renderer.enabled = true;
+                renderer.transform.position = new Vector3(basePosition.x, basePosition.y - baseScale.y * 0.5f, basePosition.z);
+                renderer.transform.localScale = new Vector3(baseScale.x, 0.05f, baseScale.z);
+                var sequence = DOTween.Sequence();
+                sequence.Append(renderer.transform.DOScaleY(baseScale.y, 0.32f).SetEase(Ease.OutBounce));
+                sequence.Join(renderer.transform.DOMoveY(basePosition.y, 0.32f).SetEase(Ease.OutQuad));
+                sequence.OnComplete(() =>
+                {
+                    renderer.transform.position = basePosition;
+                    renderer.transform.localScale = baseScale;
+                    pendingVisuals--;
+                });
+            }
+            else
+            {
+                pendingVisuals++;
+                var sequence = DOTween.Sequence();
+                sequence.Append(renderer.transform.DOScaleY(0.05f, 0.18f).SetEase(Ease.InQuad));
+                sequence.Join(renderer.transform.DOMoveY(basePosition.y - baseScale.y * 0.5f, 0.18f).SetEase(Ease.InQuad));
+                sequence.OnComplete(() =>
+                {
+                    renderer.enabled = false;
+                    renderer.transform.position = basePosition;
+                    renderer.transform.localScale = baseScale;
+                    pendingVisuals--;
+                });
+            }
         }
 
         private void RenderMoveHints()
@@ -209,7 +428,7 @@ namespace Draftline.Unity
                 if (marker != null) Destroy(marker);
             hintObjects.Clear();
             if (rules == null || rules.State.Phase != MatchPhase.Moving ||
-                !rules.State.SelectedPieceId.HasValue || animating) return;
+                !rules.State.SelectedPieceId.HasValue || InputLocked) return;
             var piece = rules.PieceById(rules.State.SelectedPieceId.Value);
             if (piece == null || !piece.OnBoard) return;
             if (hintMaterial == null)
@@ -226,7 +445,9 @@ namespace Draftline.Unity
                 var marker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 marker.name = $"{direction} destination {destination}";
                 marker.transform.position = BoardCoordinates.ToWorld(destination, 0.53f);
-                marker.transform.localScale = new Vector3(0.54f, 0.025f, 0.54f);
+                var targetScale = new Vector3(0.54f, 0.025f, 0.54f);
+                marker.transform.localScale = targetScale * 0.4f;
+                marker.transform.DOScale(targetScale, 0.14f).SetEase(Ease.OutBack);
                 marker.GetComponent<Renderer>().sharedMaterial = hintMaterial;
                 Destroy(marker.GetComponent<Collider>());
                 hintObjects.Add(marker);
@@ -281,7 +502,7 @@ namespace Draftline.Unity
 
         private void Update()
         {
-            if (rules == null || animating || !CanControl) return;
+            if (rules == null || InputLocked || !CanControl) return;
             var keyboard = Keyboard.current;
             if (keyboard != null)
             {
@@ -309,7 +530,7 @@ namespace Draftline.Unity
 
         private void Roll()
         {
-            if (rules == null || rules.State.Phase != MatchPhase.WaitRoll || animating) return;
+            if (rules == null || rules.State.Phase != MatchPhase.WaitRoll || InputLocked) return;
             if (lanRoom != null && lanRoom.IsNetworked && !CanControl) return;
             if (lanRoom != null && lanRoom.IsClientOnly)
             {
@@ -323,13 +544,18 @@ namespace Draftline.Unity
         {
             animating = true;
             cameraDirector?.ShowDice();
+            sfx?.Play(SfxType.DiceRoll);
             if (lanRoom != null && lanRoom.IsHost) lanRoom.BroadcastDiceStart();
             int? result = null;
             var rolling = StartCoroutine(diceRoller.Roll(value => result = value));
             gameUI?.Refresh();
             yield return rolling;
             cameraDirector?.ShowBoard();
-            if (result.HasValue && rules.TryApplyDice(result.Value, out _)) SyncViews();
+            if (result.HasValue)
+            {
+                sfx?.Play(SfxType.DiceLand);
+                if (rules.TryApplyDice(result.Value, out _)) SyncViews();
+            }
             animating = false;
             gameUI?.Refresh();
         }
@@ -364,24 +590,31 @@ namespace Draftline.Unity
                 if (marker != null) Destroy(marker);
             hintObjects.Clear();
             cameraDirector?.FollowPiece(view.transform);
+
+            var sequence = DOTween.Sequence();
+            sfx?.Play(SfxType.Slide);
             foreach (var step in path.Steps)
             {
                 var destination = BoardCoordinates.ToWorld(step.Position);
                 if (step.PortalExit)
                 {
-                    view.transform.position = destination;
-                    yield return new WaitForSeconds(0.16f);
+                    var exitDestination = destination;
+                    sequence.Append(view.transform.DOScale(Vector3.zero, 0.12f).SetEase(Ease.InQuad));
+                    sequence.AppendCallback(() => view.transform.position = exitDestination);
+                    sequence.AppendCallback(() => sfx?.Play(SfxType.Portal));
+                    sequence.Append(view.transform.DOScale(view.BaseScale, 0.18f).SetEase(Ease.OutBack));
                     continue;
                 }
-                var origin = view.transform.position;
-                const float duration = 0.09f;
-                for (var elapsed = 0f; elapsed < duration; elapsed += Time.deltaTime)
-                {
-                    view.transform.position = Vector3.Lerp(origin, destination, elapsed / duration);
-                    yield return null;
-                }
-                view.transform.position = destination;
+                sequence.Append(view.transform.DOMove(destination, 0.07f).SetEase(Ease.OutQuad));
+                if (step.BrokeWall)
+                    sequence.Append(view.transform.DOPunchScale(view.BaseScale * 0.25f, 0.18f, 6, 0.6f));
+                if (step.Hit)
+                    sequence.Append(view.transform.DOPunchScale(view.BaseScale * 0.35f, 0.2f, 8, 0.7f));
             }
+            yield return sequence.WaitForCompletion();
+
+            // Brief hold on the piece so the follow view is perceptible even for short slides.
+            yield return new WaitForSeconds(0.35f);
             cameraDirector?.ShowBoard();
             animating = false;
             SyncViews();
@@ -469,7 +702,7 @@ namespace Draftline.Unity
                 lanRoom.SendCommand("select", pieceId);
                 return;
             }
-            if (rules != null && !animating && rules.TrySelectPiece(pieceId, out _)) SyncViews();
+            if (rules != null && !InputLocked && rules.TrySelectPiece(pieceId, out _)) SyncViews();
         }
         public void DeployFromUI()
         {
@@ -479,7 +712,7 @@ namespace Draftline.Unity
                 lanRoom.SendCommand("deploy");
                 return;
             }
-            if (rules != null && !animating && rules.TryDeploy(out _, out _)) SyncViews();
+            if (rules != null && !InputLocked && rules.TryDeploy(out _, out _)) SyncViews();
         }
         public void MoveFromUI(SlideDirection direction)
         {
@@ -489,7 +722,7 @@ namespace Draftline.Unity
                 lanRoom.SendCommand("move", (int)direction);
                 return;
             }
-            if (rules != null && !animating) SubmitDirection(direction);
+            if (rules != null && !InputLocked) SubmitDirection(direction);
         }
         public void StopFromUI(SlideDirection direction, int index)
         {
@@ -499,7 +732,7 @@ namespace Draftline.Unity
                 lanRoom.SendCommand("stop", (int)direction, index);
                 return;
             }
-            if (rules != null && !animating) ExecuteSlide(direction, index);
+            if (rules != null && !InputLocked) ExecuteSlide(direction, index);
         }
         public void UseItemFromUI(ItemType item)
         {
@@ -509,7 +742,7 @@ namespace Draftline.Unity
                 lanRoom.SendCommand("item", (int)item);
                 return;
             }
-            if (rules != null && !animating && rules.TryActivateItem(item, out _)) SyncViews();
+            if (rules != null && !InputLocked && rules.TryActivateItem(item, out _)) SyncViews();
         }
         public void ToggleCameraFromUI()
         {

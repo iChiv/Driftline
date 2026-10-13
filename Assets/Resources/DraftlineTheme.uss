@@ -5,6 +5,7 @@
     right: 0;
     bottom: 0;
     color: rgb(238, 241, 245);
+    -unity-font: resource('DraftlineFont');
     -unity-font-style: normal;
 }
 .setup-screen, .result-screen {

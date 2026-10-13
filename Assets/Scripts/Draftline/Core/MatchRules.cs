@@ -507,6 +507,54 @@ namespace Draftline.Core
             return false;
         }
 
+        // Four-run warning (V0.3 §7): pieces in exactly-4 contiguous lines.
+        // Five or more already wins, so only exact fours remain on the board.
+        public HashSet<int> FindFourRuns()
+        {
+            var ids = new HashSet<int>();
+            var directions = new[] { new[] { 1, 0 }, new[] { 0, 1 },
+                                     new[] { 1, 1 }, new[] { 1, -1 } };
+            foreach (var color in Enum.GetValues(typeof(PlayerColor)).Cast<PlayerColor>())
+            {
+                var player = State.Players[(int)color];
+                if (!player.Active || player.Eliminated) continue;
+                var mine = State.Pieces
+                    .Where(piece => piece.OnBoard && piece.Owner == color)
+                    .ToDictionary(piece => piece.Position, piece => piece);
+                foreach (var pair in mine)
+                    foreach (var direction in directions)
+                    {
+                        if (mine.ContainsKey(pair.Key.Offset(-direction[0], -direction[1])))
+                            continue; // Only count from the start of each run.
+                        var run = new List<PieceState> { pair.Value };
+                        var next = pair.Key.Offset(direction[0], direction[1]);
+                        while (mine.TryGetValue(next, out var chained))
+                        {
+                            run.Add(chained);
+                            next = next.Offset(direction[0], direction[1]);
+                        }
+                        if (run.Count == 4)
+                            foreach (var piece in run) ids.Add(piece.Id);
+                    }
+            }
+            return ids;
+        }
+
+        // Wall-kill preview (V0.3 §7): blocks alive under the current wall phase that
+        // would lose their last liberty if the phase flipped. Blocks already dead now
+        // are excluded — they are handled by the normal capture passes.
+        public HashSet<int> FindWallKillPreview()
+        {
+            var nowDead = new HashSet<int>(FindDeadBlocks()
+                .SelectMany(block => block).Select(piece => piece.Id));
+            State.WallPhase ^= 1;
+            var nextDead = new HashSet<int>(FindDeadBlocks()
+                .SelectMany(block => block).Select(piece => piece.Id));
+            State.WallPhase ^= 1;
+            nextDead.ExceptWith(nowDead);
+            return nextDead;
+        }
+
         private void Win(PlayerColor color)
         {
             State.Winner = color;

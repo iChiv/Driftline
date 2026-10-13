@@ -183,6 +183,168 @@ namespace Draftline.Tests
                 copy.State.Pieces.Count(piece => piece.OnBoard));
         }
 
+        [Test]
+        public void SelfCaptureIsForbiddenEvenWhenOwnBlockLosesLastLiberty()
+        {
+            // V0.3 §4 禁止自吃：当前玩家的行动使自己棋块零气，棋块仍保留。
+            var rules = new MatchRules(new[] { PlayerColor.Red, PlayerColor.Blue }, 6);
+            ClearBoard(rules);
+            // 红棋块 (2,1)(3,1) 唯一的气是出生点 (1,1)；蓝棋封住其余出口。
+            var blockA = Place(rules, PlayerColor.Red, 2, 1);
+            var blockB = Place(rules, PlayerColor.Red, 3, 1);
+            Place(rules, PlayerColor.Blue, 2, 2);
+            Place(rules, PlayerColor.Blue, 3, 2);
+            Place(rules, PlayerColor.Blue, 1, 2);
+            var mover = Place(rules, PlayerColor.Red, 5, 7);
+
+            Assert.IsTrue(rules.TryApplyDice(1, out var error), error);
+            // 红方自己的行动（此处直接落子模拟）使己方棋块失去最后一口气。
+            var ownSeal = rules.State.Pieces.First(piece => piece.Owner == PlayerColor.Red && !piece.OnBoard);
+            ownSeal.OnBoard = true;
+            ownSeal.Position = new GridPosition(1, 1);
+            Assert.IsTrue(rules.FindDeadBlocks().Any(block => block.Contains(blockA)),
+                "Setup should make the red block zero-liberty.");
+
+            Assert.IsTrue(rules.TrySelectPiece(mover.Id, out error), error);
+            Assert.IsTrue(rules.TrySlide(SlideDirection.Right, null, out _, out error), error);
+            Assert.IsTrue(blockA.OnBoard && blockB.OnBoard && ownSeal.OnBoard,
+                "The current player's own zero-liberty block must survive (no self-capture).");
+            Assert.AreEqual(0, rules.State.Players[(int)PlayerColor.Red].Consumed);
+        }
+
+        [Test]
+        public void NoMovesSkipStillRotatesWallsAndCountsTurn()
+        {
+            // V0.3 §3.7：无人可行动自动跳过时，旋转墙仍切换、回合计数仍推进、棋子不消耗。
+            var rules = new MatchRules(new[] { PlayerColor.Red, PlayerColor.Blue }, 7);
+            ClearBoard(rules);
+            Place(rules, PlayerColor.Red, 7, 7);
+            Place(rules, PlayerColor.Blue, 6, 7);
+            Place(rules, PlayerColor.Blue, 8, 7);
+            Place(rules, PlayerColor.Blue, 7, 6);
+            Place(rules, PlayerColor.Blue, 7, 8);
+            foreach (var piece in rules.State.Pieces.Where(piece => piece.Owner == PlayerColor.Red && !piece.OnBoard))
+                piece.Gone = true;
+            Assert.AreEqual(0, rules.State.WallPhase);
+            Assert.AreEqual(0, rules.State.TurnCount);
+
+            Assert.IsTrue(rules.TryApplyDice(4, out var error), error);
+            Assert.AreEqual(1, rules.State.WallPhase, "A skipped turn still flips the rotating walls.");
+            Assert.AreEqual(1, rules.State.TurnCount, "A skipped turn still advances the turn counter.");
+            Assert.AreEqual(0, rules.State.Players[(int)PlayerColor.Red].Consumed);
+            Assert.AreEqual(PlayerColor.Blue, rules.State.CurrentPlayer);
+        }
+
+        [Test]
+        public void InactiveCornerGatesBlockEveryoneInTwoPlayerMatch()
+        {
+            // V0.3 §2：未参战角落的门仍保留，参战棋子均不能通过。
+            var rules = new MatchRules(new[] { PlayerColor.Red, PlayerColor.Blue }, 8);
+            ClearBoard(rules);
+            var blue = Place(rules, PlayerColor.Blue, 13, 14);
+            Assert.IsFalse(rules.PlanSlide(blue, SlideDirection.Down).IsLegal,
+                "Green is not playing; its gate at (13,15) must block blue as well.");
+        }
+
+        [Test]
+        public void FirstPlayerIsTheEarliestActiveCorner()
+        {
+            // V0.3 §1：首手是参战角落中按红、蓝、绿、黄顺序最靠前的一方。
+            Assert.AreEqual(PlayerColor.Blue,
+                new MatchRules(new[] { PlayerColor.Green, PlayerColor.Blue }, 9).State.CurrentPlayer);
+            Assert.AreEqual(PlayerColor.Red,
+                new MatchRules(new[] { PlayerColor.Yellow, PlayerColor.Red }, 9).State.CurrentPlayer);
+            Assert.AreEqual(PlayerColor.Green,
+                new MatchRules(new[] { PlayerColor.Yellow, PlayerColor.Green }, 9).State.CurrentPlayer);
+        }
+
+        [Test]
+        public void EmergencyStopAppliesToOnlyOneSlide()
+        {
+            // V0.3 §5：急停只对下一次滑行生效，用过一次即失效。
+            var rules = new MatchRules(new[] { PlayerColor.Red, PlayerColor.Blue }, 10);
+            ClearBoard(rules);
+            var red = Place(rules, PlayerColor.Red, 7, 9);
+            rules.State.WallPhase = 1; // (7,8) 槽位为空。
+            rules.State.Players[(int)PlayerColor.Red].Items.Add(ItemType.EmergencyStop);
+
+            Assert.IsTrue(rules.TryApplyDice(3, out var error), error);
+            Assert.IsTrue(rules.TrySelectPiece(red.Id, out error), error);
+            Assert.IsTrue(rules.TryActivateItem(ItemType.EmergencyStop, out error), error);
+            Assert.IsTrue(rules.TrySlide(SlideDirection.Up, 0, out _, out error), error);
+            Assert.AreEqual(new GridPosition(7, 8), red.Position);
+            Assert.IsFalse(rules.State.EmergencyStopActive, "Emergency Stop is consumed by the first slide.");
+
+            Assert.IsFalse(rules.TrySlide(SlideDirection.Up, 1, out _, out error),
+                "A stop index is rejected once Emergency Stop is spent.");
+            Assert.IsTrue(rules.TrySlide(SlideDirection.Up, null, out _, out error), error);
+            Assert.AreEqual(new GridPosition(7, 14), red.Position,
+                "The following slide runs the full course (through the portal) without a stop choice.");
+        }
+
+        [Test]
+        public void CollisionCaptureIsImmediateBeforeTurnResolution()
+        {
+            // V0.3 §6：撞吃在碰撞时立即移除被撞棋，不等待回合末的气判定。
+            var rules = new MatchRules(new[] { PlayerColor.Red, PlayerColor.Blue }, 11);
+            ClearBoard(rules);
+            var red = Place(rules, PlayerColor.Red, 5, 7);
+            var blue = Place(rules, PlayerColor.Blue, 8, 7);
+            rules.State.Players[(int)PlayerColor.Red].Items.Add(ItemType.CollisionCapture);
+
+            Assert.IsTrue(rules.TryApplyDice(2, out var error), error);
+            Assert.IsTrue(rules.TrySelectPiece(red.Id, out error), error);
+            Assert.IsTrue(rules.TryActivateItem(ItemType.CollisionCapture, out error), error);
+            Assert.IsTrue(rules.TrySlide(SlideDirection.Right, null, out _, out error), error);
+            Assert.IsTrue(blue.Gone && !blue.OnBoard, "The hit piece is removed during the slide.");
+            Assert.AreEqual(MatchPhase.Moving, rules.State.Phase);
+            Assert.AreEqual(1, rules.State.RemainingSlides);
+            Assert.AreEqual(PlayerColor.Red, rules.State.CurrentPlayer,
+                "The turn is not resolved yet; capture did not wait for the liberty phase.");
+        }
+
+        [Test]
+        public void FourRunWarningFindsOnlyExactFours()
+        {
+            var rules = new MatchRules(new[] { PlayerColor.Red, PlayerColor.Blue }, 12);
+            ClearBoard(rules);
+            for (var column = 7; column <= 10; column++) Place(rules, PlayerColor.Red, column, 9);
+            Assert.AreEqual(4, rules.FindFourRuns().Count);
+            ClearBoard(rules);
+            Place(rules, PlayerColor.Red, 7, 9);
+            Place(rules, PlayerColor.Red, 8, 9);
+            Place(rules, PlayerColor.Red, 10, 9);
+            Place(rules, PlayerColor.Red, 12, 9);
+            Assert.AreEqual(0, rules.FindFourRuns().Count, "Disconnected fours are not a run.");
+            ClearBoard(rules);
+            for (var column = 7; column <= 11; column++) Place(rules, PlayerColor.Red, column, 9);
+            Assert.AreEqual(0, rules.FindFourRuns().Count, "Five in a row wins; it is not a four-run warning.");
+        }
+
+        [Test]
+        public void WallKillPreviewFlagsBlocksDyingOnFlipOnly()
+        {
+            var rules = new MatchRules(new[] { PlayerColor.Red, PlayerColor.Blue }, 13);
+            ClearBoard(rules);
+            var blue = Place(rules, PlayerColor.Blue, 7, 7);
+            Place(rules, PlayerColor.Red, 6, 7);
+            Place(rules, PlayerColor.Red, 8, 7);
+            Place(rules, PlayerColor.Red, 7, 6);
+            rules.State.WallPhase = 1; // (7,8) open: blue is alive now, dies when the phase flips.
+            var preview = rules.FindWallKillPreview();
+            Assert.IsTrue(preview.Contains(blue.Id));
+            Assert.AreEqual(1, rules.State.WallPhase, "Preview must not change the live wall phase.");
+
+            // A block already dead in the current phase is not a wall-kill preview.
+            ClearBoard(rules);
+            Place(rules, PlayerColor.Blue, 9, 9);
+            Place(rules, PlayerColor.Red, 9, 8);
+            Place(rules, PlayerColor.Red, 9, 10);
+            Place(rules, PlayerColor.Red, 8, 9);
+            Place(rules, PlayerColor.Red, 10, 9);
+            Assert.AreEqual(0, rules.FindWallKillPreview().Count);
+        }
+
         private static void ClearBoard(MatchRules rules)
         {
             foreach (var piece in rules.State.Pieces)
