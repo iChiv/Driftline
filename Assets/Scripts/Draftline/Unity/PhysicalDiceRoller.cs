@@ -58,7 +58,7 @@ namespace Draftline.Unity
                     elapsed += Time.fixedDeltaTime;
                     if (body.velocity.sqrMagnitude < 0.015f &&
                         body.angularVelocity.sqrMagnitude < 0.025f &&
-                        die.position.y > 5.45f && die.position.y < 7.5f)
+                        die.position.y > 1.9f && die.position.y < 3.2f)
                         stillFor += Time.fixedDeltaTime;
                     else
                         stillFor = 0f;
@@ -89,7 +89,7 @@ namespace Draftline.Unity
         private void ResetAndThrow()
         {
             body.isKinematic = true;
-            die.position = new Vector3(UnityEngine.Random.Range(-1.5f, 1.5f), 8f,
+            die.position = new Vector3(UnityEngine.Random.Range(-1.5f, 1.5f), 3.4f,
                 UnityEngine.Random.Range(-1.5f, 1.5f));
             die.rotation = UnityEngine.Random.rotation;
             body.isKinematic = false;
@@ -130,16 +130,18 @@ namespace Draftline.Unity
             trayMaterial.SetOverrideTag("RenderType", "Transparent");
             trayMaterial.renderQueue = 3000;
             wallMaterial = NewMaterial(new Color(0.20f, 0.25f, 0.35f, 0.7f));
-            CreateBox("Tray Floor", new Vector3(0, 5.25f, 0),
+            // The tray sits just above the tallest board walls and is collision-only:
+            // renderers stay off so nothing shows or casts shadows on the board.
+            CreateBox("Tray Floor", new Vector3(0, 1.75f, 0),
                 new Vector3(19f, 0.25f, 19f), trayMaterial);
-            CreateBox("Wall North", new Vector3(0, 6f, 9.5f),
-                new Vector3(19.5f, 1.5f, 0.5f), wallMaterial);
-            CreateBox("Wall South", new Vector3(0, 6f, -9.5f),
-                new Vector3(19.5f, 1.5f, 0.5f), wallMaterial);
-            CreateBox("Wall East", new Vector3(9.5f, 6f, 0),
-                new Vector3(0.5f, 1.5f, 19f), wallMaterial);
-            CreateBox("Wall West", new Vector3(-9.5f, 6f, 0),
-                new Vector3(0.5f, 1.5f, 19f), wallMaterial);
+            CreateBox("Wall North", new Vector3(0, 2.35f, 9.5f),
+                new Vector3(19.5f, 1.2f, 0.5f), wallMaterial);
+            CreateBox("Wall South", new Vector3(0, 2.35f, -9.5f),
+                new Vector3(19.5f, 1.2f, 0.5f), wallMaterial);
+            CreateBox("Wall East", new Vector3(9.5f, 2.35f, 0),
+                new Vector3(0.5f, 1.2f, 19f), wallMaterial);
+            CreateBox("Wall West", new Vector3(-9.5f, 2.35f, 0),
+                new Vector3(0.5f, 1.2f, 19f), wallMaterial);
         }
 
         private void CreateBox(string name, Vector3 position, Vector3 scale, Material material)
@@ -149,7 +151,9 @@ namespace Draftline.Unity
             box.transform.SetParent(tray.transform, false);
             box.transform.position = position;
             box.transform.localScale = scale;
-            box.GetComponent<Renderer>().sharedMaterial = material;
+            var renderer = box.GetComponent<Renderer>();
+            renderer.sharedMaterial = material;
+            renderer.enabled = false; // Collision-only tray: invisible and casts no shadows.
         }
 
         private void BuildDie()

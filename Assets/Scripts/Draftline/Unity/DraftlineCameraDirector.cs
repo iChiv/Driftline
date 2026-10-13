@@ -51,11 +51,12 @@ namespace Draftline.Unity
 
             // Angled overview keeps the whole 19x19 board and all four corners framed.
             overview = CreateCamera("Board Overview", Vector3.zero, 58f, 27f, 50f, 10);
-            // Dice tray sits above the board center (floor y=5.25); frame it from the side.
-            dice = CreateCamera("Dice Tray View", new Vector3(0, 5.5f, 0), 45f, 21f, 50f, 0);
+            // Dice tray floats just above the board (floor y=1.75); frame it low and close.
+            dice = CreateCamera("Dice Tray View", new Vector3(0, 1.9f, 0), 50f, 12f, 45f, 0);
             follow = CreateCamera("Moving Piece Follow", Vector3.zero, 55f, 7.5f, 55f, 0);
-            // Pure top-down stays available for precise cell reading (manual toggle).
-            topDown = CreateTopDown("Board Top Down", new Vector3(0, 23, 0), 49f, 0);
+            // Pure top-down stays available for precise cell reading (manual toggle);
+            // widened and shifted so the HUD no longer crops the board edges.
+            topDown = CreateTopDown("Board Top Down", new Vector3(0, 27.5f, -2f), 55f, 0);
             turnCorner = CreateCamera("Next Player Corner", Vector3.zero, 50f, 10f, 50f, 0);
             eventCam = CreateCamera("Event Cam", Vector3.zero, 45f, 9f, 50f, 0);
             // Cinemachine 2.10: impulse source is a plain MonoBehaviour, while the listener

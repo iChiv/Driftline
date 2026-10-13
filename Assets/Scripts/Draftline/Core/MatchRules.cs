@@ -243,7 +243,21 @@ namespace Draftline.Core
                     var exitItem = ItemAt(exit);
                     if (exitItem != null) exitStep.PickupItemId = exitItem.Id;
                     plan.Steps.Add(exitStep);
-                    break; // Official rule: stop at the portal exit.
+                    // Official rule: after the portal, step one cell onward in the slide
+                    // direction and stop there; only if that cell is blocked does the
+                    // piece stay on the exit portal cell.
+                    var beyond = exit.Offset(columns, rows);
+                    if (BoardLayout.Contains(beyond) &&
+                        CanEnter(Board.CellAt(beyond), beyond, piece.Owner, useActiveEffects) &&
+                        PieceAt(beyond, piece.Id) == null && !visited.Contains(beyond))
+                    {
+                        visited.Add(beyond);
+                        var beyondStep = new SlideStep { Position = beyond };
+                        var beyondItem = ItemAt(beyond);
+                        if (beyondItem != null) beyondStep.PickupItemId = beyondItem.Id;
+                        plan.Steps.Add(beyondStep);
+                    }
+                    break;
                 }
 
                 position = next;

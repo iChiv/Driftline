@@ -32,8 +32,23 @@ namespace Draftline.Tests
                 rules.PlanSlide(red, SlideDirection.Down).Destination);
             rules.State.WallPhase = 1;
             var throughPortal = rules.PlanSlide(red, SlideDirection.Down);
-            Assert.AreEqual(new GridPosition(7, 4), throughPortal.Destination);
+            // 传送门出口 (7,4) 沿滑行方向再走出相邻一格 (7,5) 停下。
+            Assert.AreEqual(new GridPosition(7, 5), throughPortal.Destination);
             Assert.IsTrue(throughPortal.Steps.Any(step => step.PortalExit));
+        }
+
+        [Test]
+        public void PortalExitStaysWhenTheAdjacentCellIsBlocked()
+        {
+            var rules = new MatchRules(new[] { PlayerColor.Red, PlayerColor.Blue }, 14);
+            ClearBoard(rules);
+            var red = Place(rules, PlayerColor.Red, 7, 6);
+            rules.State.WallPhase = 1;
+            Place(rules, PlayerColor.Blue, 7, 5); // 出口 (7,4) 沿下滑方向的相邻格被占。
+            var plan = rules.PlanSlide(red, SlideDirection.Down);
+            Assert.AreEqual(new GridPosition(7, 4), plan.Destination,
+                "The piece stays on the portal exit when the adjacent cell is blocked.");
+            Assert.IsTrue(plan.Steps.Any(step => step.PortalExit));
         }
 
         [Test]
@@ -278,8 +293,8 @@ namespace Draftline.Tests
             Assert.IsFalse(rules.TrySlide(SlideDirection.Up, 1, out _, out error),
                 "A stop index is rejected once Emergency Stop is spent.");
             Assert.IsTrue(rules.TrySlide(SlideDirection.Up, null, out _, out error), error);
-            Assert.AreEqual(new GridPosition(7, 14), red.Position,
-                "The following slide runs the full course (through the portal) without a stop choice.");
+            Assert.AreEqual(new GridPosition(7, 13), red.Position,
+                "The following slide runs the full course: through the portal and onto the cell adjacent to the exit.");
         }
 
         [Test]
