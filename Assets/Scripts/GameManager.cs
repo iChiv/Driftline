@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,17 +16,18 @@ public class GameManager : MonoBehaviour
     }
 
     [Header("4个玩家的多棋子配置")]
-    public PlayerConfig[] players = new PlayerConfig[4]; 
+    public PlayerConfig[] players = new PlayerConfig[4];
 
     [Header("当前回合状态")]
-    public int currentTurn = 0;           
-    public int currentDicePoints = 0;     
+    public int currentTurn = 0;
+    public int currentDicePoints = 0;
     public bool isDouble = false;         // 当前摇出的是否为双数
 
     public enum GameState { WaitingForRoll, WaitingForSelectPiece, PieceMoving }
     [Header("当前游戏所处阶段")]
     public GameState currentState = GameState.WaitingForRoll;
-
+    private bool wallState = false; //false->inner ring | true->outer ring
+    private List<DynamicWall> allDynamicWalls = new List<DynamicWall>();
     void Awake()
     {
         if (Instance == null) Instance = this;
@@ -35,15 +37,65 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         Debug.Log($"游戏开始！当前是【{players[currentTurn].playerName}】的回合，请摇骰子。");
-    }
+        DynamicWall[] foundWalls = FindObjectsByType<DynamicWall>(FindObjectsSortMode.None);
+        allDynamicWalls.AddRange(foundWalls);
 
+        // 开局第一回合：初始化一次地图（让外圈墙1先隐退并暗中移动）
+        InitializeMazeOnStart();
+    }
+    void Update()
+    {
+        if (Keyboard.current != null && Keyboard.current.pKey.wasPressedThisFrame)
+        {
+            Debug.LogWarning("~【开发者指令】: 强制跳过当前玩家的回合！~");
+
+            SwitchToNextTurn();
+        }
+    }
+    private void InitializeMazeOnStart()
+    {
+        foreach (DynamicWall wall in allDynamicWalls)
+        {
+            if (wall.wallType == 1) // 假设第一回合是内圈2的舞台，外圈1先退场准备
+            {
+                wall.HideAndAdvance();
+            }
+            else if (wall.wallType == 2)
+            {
+                wall.TryToSpawn();
+            }
+        }
+    }
+    private void RefreshDynamicMaze()
+    {
+        // 交替标志位
+        wallState = !wallState;
+        // 只需要一个循环，统一对总仓里的所有墙壁进行标签过滤操作
+        foreach (DynamicWall wall in allDynamicWalls)
+        {
+            if (wall.wallType == 0) continue; // 常驻墙0绝对不干预，直接跳过
+
+            if (!wallState)
+            {
+                // 当前是【内圈回合】：内圈2尝试出现，外圈1隐藏并暗中移动
+                if (wall.wallType == 2) wall.TryToSpawn();
+                if (wall.wallType == 1) wall.HideAndAdvance();
+            }
+            else
+            {
+                // 当前是【外圈回合】：外圈1尝试出现，内圈2隐藏并暗中移动
+                if (wall.wallType == 1) wall.TryToSpawn();
+                if (wall.wallType == 2) wall.HideAndAdvance();
+            }
+        }
+    }
     // 1. 骰子停稳后调用
     public void OnDiceFinished(int points)
     {
         currentDicePoints = points;
         // 判断是否为双数 (2点、4点、6点)
-        isDouble = (points % 2 == 0); 
-        
+        isDouble = (points % 2 == 0);
+
         Debug.Log($"【{players[currentTurn].playerName}】摇出了 {points} 点！(双数: {isDouble})");
 
         // 检查起始点是否被堵住
@@ -70,7 +122,7 @@ public class GameManager : MonoBehaviour
         // 这里的半径用 0.35f 刚好可以覆盖一格
         int pieceLayerMask = LayerMask.GetMask("PieceLayer");
         bool isBlocked = Physics.CheckSphere(checkPos + Vector3.up * 0.2f, 0.35f, pieceLayerMask);
-        
+
         if (isBlocked) Debug.Log($"【提示】{players[currentTurn].playerName} 的起始点位当前有棋子堵着！");
         return isBlocked;
     }
@@ -109,7 +161,7 @@ public class GameManager : MonoBehaviour
         if (IsPieceOwnedByCurrentPlayer(selectedPiece))
         {
             SlidingPiece pieceScript = selectedPiece.GetComponent<SlidingPiece>();
-            
+
             // 【核心分支 A】：点击的是在基地、未出生的棋子
             if (!pieceScript.isSpawned)
             {
@@ -151,8 +203,12 @@ public class GameManager : MonoBehaviour
     }
     public void SwitchToNextTurn()
     {
-        currentTurn = (currentTurn + 1) % 4; 
+        currentTurn = (currentTurn + 1) % 4;
         currentState = GameState.WaitingForRoll;
         Debug.Log($"【回合切换】现在轮到【{players[currentTurn].playerName}】的回合了！");
+        if (currentTurn == 0)
+        {
+            RefreshDynamicMaze();
+        }
     }
 }
