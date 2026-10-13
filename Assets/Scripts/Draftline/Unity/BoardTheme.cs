@@ -11,7 +11,13 @@ namespace Draftline.Unity
     [CreateAssetMenu(menuName = "Draftline/Board Theme", fileName = "NewBoardTheme")]
     public sealed class BoardTheme : ScriptableObject
     {
+        [Tooltip("菜单与 PlayerPrefs 使用的标识，如 tabletop / magic")]
+        public string ThemeId = "tabletop";
         public string ThemeName = "桌面玩具";
+        [Tooltip("场景里 Themes 根下的图层对象名")]
+        public string SceneLayerName = "Tabletop";
+        [Tooltip("未实现的主题选择后回退到桌面玩具")]
+        public bool Implemented = true;
         [Header("墙体与桌面")]
         public Material WallMaterial;
         public Material RotatingWallMaterial;

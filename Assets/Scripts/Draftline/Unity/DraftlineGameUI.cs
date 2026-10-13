@@ -68,17 +68,24 @@ namespace Draftline.Unity
         private System.Collections.IEnumerator BuildNextFrame()
         {
             yield return null;
-            root = document.rootVisualElement;
-            root.Clear();
-            var theme = Resources.Load<StyleSheet>("DraftlineTheme");
-            if (theme != null) root.styleSheets.Add(theme);
             var tree = Resources.Load<VisualTreeAsset>("UI/DraftlineHUD");
             if (tree == null)
             {
                 Debug.LogError("DraftlineHUD.uxml missing from Resources/UI.");
                 yield break;
             }
-            tree.CloneTree(root);
+            // 交给 UIDocument 自己重建内容（它会替换 root），下一帧再挂样式和绑定。
+            document.visualTreeAsset = tree;
+            yield return null;
+            root = document.rootVisualElement;
+            if (root == null || root.childCount == 0)
+            {
+                root = document.rootVisualElement;
+                tree.CloneTree(root);
+            }
+            var theme = Resources.Load<StyleSheet>("DraftlineTheme");
+            if (theme != null && !root.styleSheets.Contains(theme))
+                root.styleSheets.Add(theme);
             Bind();
             Refresh();
         }
@@ -115,6 +122,13 @@ namespace Draftline.Unity
 
             cameraButton = root.Q<Button>("camera-button");
             cameraButton.clicked += () => controller.ToggleCameraFromUI();
+
+            BindThemeCard("theme-tabletop", "tabletop");
+            BindThemeCard("theme-magic", "magic");
+            UpdateThemeSelection();
+            var quitButton = root.Q<Button>("quit-button");
+            if (quitButton != null)
+                quitButton.clicked += OnQuit;
 
             root.Q<Button>("start-local").clicked += () =>
             {
@@ -174,6 +188,38 @@ namespace Draftline.Unity
                 var direction = directions[index];
                 dirButtons[index].clicked += () => controller.MoveFromUI(direction);
             }
+        }
+
+        private void BindThemeCard(string elementName, string themeId)
+        {
+            var card = root.Q(elementName);
+            if (card == null) return;
+            card.RegisterCallback<ClickEvent>(_ =>
+            {
+                PlayerPrefs.SetString(DraftlineThemeApplier.PrefKey, themeId);
+                PlayerPrefs.Save();
+                UpdateThemeSelection();
+                if (themeId == "magic")
+                    Debug.Log("[Theme] 魔幻主题建设中，开局仍使用桌面玩具主题。");
+            });
+        }
+
+        private void UpdateThemeSelection()
+        {
+            var current = DraftlineThemeApplier.CurrentId;
+            var tabletop = root.Q("theme-tabletop");
+            var magic = root.Q("theme-magic");
+            tabletop?.EnableInClassList("theme-card-selected", current == "tabletop");
+            magic?.EnableInClassList("theme-card-selected", current == "magic");
+        }
+
+        private static void OnQuit()
+        {
+#if UNITY_EDITOR
+            Debug.Log("[UI] 编辑器播放模式下忽略退出按钮。");
+#else
+            Application.Quit();
+#endif
         }
 
         private void Update()

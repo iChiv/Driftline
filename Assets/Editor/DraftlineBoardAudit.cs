@@ -133,7 +133,8 @@ namespace Draftline.EditorTools
                 .GetField("pendingVisuals", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                 ?.GetValue(controller);
             Debug.Log($"[Debug] IsAnimating={controller.IsAnimating} pendingVisuals={pending} " +
-                      $"phase={controller.Rules?.State.Phase} remaining={controller.Rules?.State.RemainingSlides}");
+                      $"phase={controller.Rules?.State.Phase} remaining={controller.Rules?.State.RemainingSlides} " +
+                      $"diceRolling={controller.IsDiceRolling} diceStatus={controller.DiceStatus}");
         }
 
         [MenuItem("Draftline/Repair Toy Props")]
@@ -155,6 +156,36 @@ namespace Draftline.EditorTools
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
             EditorSceneManager.SaveOpenScenes();
             Debug.Log("[Repair] done, scene saved.");
+        }
+
+        [MenuItem("Draftline/Scan Missing Scripts")]
+        public static void ScanMissingScripts()
+        {
+            var count = 0;
+            foreach (var root in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
+            {
+                foreach (var transform in root.GetComponentsInChildren<Transform>(true))
+                {
+                    foreach (var component in transform.GetComponents<Component>())
+                    {
+                        if (component != null) continue;
+                        count++;
+                        Debug.LogWarning($"[ScanMissing] {GetPath(transform)} has a missing script.");
+                    }
+                }
+            }
+            Debug.Log($"[ScanMissing] total {count} missing components.");
+        }
+
+        private static string GetPath(Transform transform)
+        {
+            var path = transform.name;
+            while (transform.parent != null)
+            {
+                transform = transform.parent;
+                path = transform.name + "/" + path;
+            }
+            return path;
         }
 
         [MenuItem("Draftline/Board Audit (Log Only)")]
@@ -296,6 +327,36 @@ namespace Draftline.EditorTools
                 if (kind == CellKind.Portal && has)
                     covering.Add(position);
             }
+        }
+
+        [MenuItem("Draftline/Debug Spawn All Items")]
+        public static void DebugSpawnAllItems()
+        {
+            var controller = Object.FindObjectOfType<DraftlineGameController>();
+            if (controller == null || controller.Rules == null)
+            {
+                Debug.LogWarning("[DebugSpawn] no running match.");
+                return;
+            }
+            var rules = controller.Rules;
+            var state = rules.State;
+            state.FieldItems.Clear();
+            var types = (ItemType[])System.Enum.GetValues(typeof(ItemType));
+            var candidates = rules.Board.RotatingSlots.Where(position =>
+                !rules.Board.IsScheduledWall(position, state.WallPhase) &&
+                state.Pieces.All(piece => !piece.OnBoard || piece.Position != position)).ToList();
+            var placed = 0;
+            foreach (var type in types)
+            {
+                if (placed >= candidates.Count) break;
+                var position = candidates[placed++];
+                state.FieldItems.Add(new FieldItem { Id = state.NextItemId++, Type = type, Position = position });
+                Debug.Log($"[DebugSpawn] {type} at {position}");
+            }
+            var sync = typeof(DraftlineGameController).GetMethod("SyncItemViews",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            sync?.Invoke(controller, null);
+            Debug.Log($"[DebugSpawn] done, placed={placed}");
         }
 
         private static List<GridPosition> CellsCoveredBy(Bounds bounds)

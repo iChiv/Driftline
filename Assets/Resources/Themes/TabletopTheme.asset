@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6f5818033a80b94fa2ece976b948559, type: 3}
   m_Name: TabletopTheme
   m_EditorClassIdentifier: 
+  ThemeId: tabletop
   ThemeName: "\u684C\u9762\u73A9\u5177"
+  SceneLayerName: Tabletop
+  Implemented: 1
   WallMaterial: {fileID: 2100000, guid: 5e394cf03447e474cb6ce8709527c897, type: 2}
   RotatingWallMaterial: {fileID: 2100000, guid: 91c6f3b2317b2014b830073fae18e836, type: 2}
   TableMaterial: {fileID: 2100000, guid: f8398e4b68e902840b7ef81183f93b9a, type: 2}

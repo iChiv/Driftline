@@ -23,6 +23,12 @@ namespace Draftline.Unity
             if (mouse == null || !mouse.leftButton.wasPressedThisFrame || Camera.main == null) return;
             if (!Physics.Raycast(Camera.main.ScreenPointToRay(mouse.position.ReadValue()), out var hit))
                 return;
+            var rollButton = hit.collider.GetComponentInParent<DraftlineRollButton>();
+            if (rollButton != null)
+            {
+                rollButton.TryPress();
+                return;
+            }
             var prop = hit.collider.GetComponentInParent<DraftlineToyProp>();
             if (prop != null)
             {
@@ -48,18 +54,6 @@ namespace Draftline.Unity
             ring.transform.DOScale(new Vector3(2.2f, 0.01f, 2.2f), 0.55f).SetEase(Ease.OutQuad);
             ring.transform.DOScale(Vector3.zero, 0.2f).SetDelay(0.5f).SetEase(Ease.InQuad)
                 .OnComplete(() => Destroy(ring));
-        }
-    }
-
-    /// <summary>Clickable toy prop on the table; plays a small action when clicked.</summary>
-    public sealed class DraftlineToyProp : MonoBehaviour
-    {
-        public void Play()
-        {
-            transform.DOKill();
-            transform.DOPunchScale(Vector3.one * 0.2f, 0.4f, 6, 0.5f);
-            transform.DORotate(new Vector3(0, 360f, 0), 0.7f, RotateMode.LocalAxisAdd)
-                .SetEase(Ease.OutQuad);
         }
     }
 }

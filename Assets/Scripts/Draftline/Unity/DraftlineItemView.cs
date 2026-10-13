@@ -15,15 +15,42 @@ namespace Draftline.Unity
         public GridPosition Position { get; private set; }
 
         private float baseY;
+        private Vector3 baseScale;
         private Tween spin;
         private Tween bob;
         private bool buried;
+        private static Transform templateRoot;
+        private static bool templateSearched;
 
         public static DraftlineItemView Create(Transform parent, FieldItem item, Material material)
         {
-            var visual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            // 优先克隆场景里的形状模板（Themes/Tabletop/Item Templates，inactive），没有则退回小球。
+            // GameObject.Find 找不到 inactive 对象，所以用 FindObjectsOfType(true) 并缓存。
+            GameObject visual = null;
+            if (!templateSearched)
+            {
+                templateSearched = true;
+                foreach (var transform in Object.FindObjectsOfType<Transform>(true))
+                    if (transform.name == "Item Templates") { templateRoot = transform; break; }
+            }
+            if (templateRoot != null)
+            {
+                var template = templateRoot.Find("Template " + item.Type);
+                if (template != null)
+                {
+                    visual = Object.Instantiate(template.gameObject);
+                    visual.SetActive(true);
+                }
+            }
+            if (visual == null)
+            {
+                visual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                visual.transform.localScale = Vector3.one * 0.42f;
+                visual.GetComponent<Renderer>().sharedMaterial = material;
+            }
             visual.name = $"Item {item.Type} {item.Id}";
-            Destroy(visual.GetComponent<Collider>());
+            foreach (var collider in visual.GetComponentsInChildren<Collider>())
+                Object.Destroy(collider);
             visual.transform.SetParent(parent, false);
             var view = visual.AddComponent<DraftlineItemView>();
             view.ItemId = item.Id;
@@ -31,8 +58,9 @@ namespace Draftline.Unity
             view.Position = item.Position;
             view.baseY = 1.1f;
             visual.transform.position = BoardCoordinates.ToWorld(item.Position, view.baseY);
-            visual.transform.localScale = Vector3.one * 0.42f;
-            visual.GetComponent<Renderer>().sharedMaterial = material;
+            if (visual.transform.localScale == Vector3.one)
+                visual.transform.localScale = Vector3.one * 0.42f;
+            view.baseScale = visual.transform.localScale;
             view.SpawnPop();
             view.StartLoops();
             return view;
@@ -67,12 +95,12 @@ namespace Draftline.Unity
             if (isBuried)
             {
                 StopLoops();
-                transform.DOScale(Vector3.one * 0.2f, 0.2f).SetEase(Ease.InQuad);
+                transform.DOScale(baseScale * 0.5f, 0.2f).SetEase(Ease.InQuad);
                 transform.DOMoveY(baseY - 0.45f, 0.2f).SetEase(Ease.InQuad);
             }
             else
             {
-                transform.DOScale(Vector3.one * 0.42f, 0.22f).SetEase(Ease.OutBack);
+                transform.DOScale(baseScale, 0.22f).SetEase(Ease.OutBack);
                 transform.DOMoveY(baseY, 0.22f).SetEase(Ease.OutQuad)
                     .OnComplete(StartLoops);
             }

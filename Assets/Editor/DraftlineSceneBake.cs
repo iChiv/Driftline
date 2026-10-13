@@ -144,6 +144,9 @@ namespace Draftline.EditorTools
             // 骰子与隐形投骰台入场景（默认隐藏，编辑器里可直接选中调整）。
             BakeDiceRig();
 
+            // 道具图标模板：四种形状进场景，默认隐藏，供运行时克隆。
+            BakeItemTemplates(tabletop.transform);
+
             // 修复摆件上失效的 ToyProp 组件（fileID-only 的断链）再重挂。
             foreach (var propName in new[] { "Toy Block Tower", "Toy Car", "Toy Spinning Top", "Toy Hourglass" })
             {
@@ -398,5 +401,114 @@ namespace Draftline.EditorTools
 
         private static Material LoadMat(string name) =>
             AssetDatabase.LoadAssetAtPath<Material>($"{MaterialDir}/{name}.mat");
+
+        /* ---------- 道具图标模板（形状+颜色双编码，运行时克隆） ---------- */
+
+        private static void BakeItemTemplates(Transform tabletop)
+        {
+            var root = FindOrCreate("Item Templates", tabletop);
+            root.SetActive(false); // 模板隐藏，只供克隆。
+            var mats = new Dictionary<ItemType, Material>
+            {
+                { ItemType.PassWall, EnsureMaterial("ItemPassWall", new Color(0.61f, 0.42f, 1.0f), false, 0f) },
+                { ItemType.EmergencyStop, EnsureMaterial("ItemEmergencyStop", new Color(0.21f, 0.69f, 0.88f), false, 0f) },
+                { ItemType.CollisionCapture, EnsureMaterial("ItemCollisionCapture", new Color(0.88f, 0.25f, 0.25f), false, 0f) },
+                { ItemType.BreakWall, EnsureMaterial("ItemBreakWall", new Color(0.88f, 0.63f, 0.21f), false, 0f) },
+            };
+            if (root.transform.Find("Template PassWall") == null)
+                BuildPassWallTemplate(root.transform, mats[ItemType.PassWall]);
+            if (root.transform.Find("Template EmergencyStop") == null)
+                BuildEmergencyStopTemplate(root.transform, mats[ItemType.EmergencyStop]);
+            if (root.transform.Find("Template CollisionCapture") == null)
+                BuildCollisionCaptureTemplate(root.transform, mats[ItemType.CollisionCapture]);
+            if (root.transform.Find("Template BreakWall") == null)
+                BuildBreakWallTemplate(root.transform, mats[ItemType.BreakWall]);
+        }
+
+        // 穿墙：两个菱形板相对，中间留缝——“穿过去”。
+        private static void BuildPassWallTemplate(Transform parent, Material material)
+        {
+            var root = CreateEmpty("Template PassWall", parent);
+            foreach (var side in new[] { -1f, 1f })
+            {
+                var diamond = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                diamond.name = "Diamond";
+                diamond.transform.SetParent(root.transform, false);
+                diamond.transform.localPosition = new Vector3(side * 0.16f, 0.25f, 0);
+                diamond.transform.localRotation = Quaternion.Euler(0, 45f, 0);
+                diamond.transform.localScale = new Vector3(0.2f, 0.5f, 0.2f);
+                diamond.GetComponent<Renderer>().sharedMaterial = material;
+                Undo.RegisterCreatedObjectUndo(diamond, "Bake item template");
+            }
+        }
+
+        // 急停：竖起的圆牌+立杆——“停”。
+        private static void BuildEmergencyStopTemplate(Transform parent, Material material)
+        {
+            var root = CreateEmpty("Template EmergencyStop", parent);
+            var disc = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            disc.name = "Stop Disc";
+            disc.transform.SetParent(root.transform, false);
+            disc.transform.localPosition = new Vector3(0, 0.45f, 0);
+            disc.transform.localRotation = Quaternion.Euler(90f, 0, 0);
+            disc.transform.localScale = new Vector3(0.55f, 0.08f, 0.55f);
+            disc.GetComponent<Renderer>().sharedMaterial = material;
+            Undo.RegisterCreatedObjectUndo(disc, "Bake item template");
+            var pole = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            pole.name = "Pole";
+            pole.transform.SetParent(root.transform, false);
+            pole.transform.localPosition = new Vector3(0, 0.15f, 0);
+            pole.transform.localScale = new Vector3(0.08f, 0.3f, 0.08f);
+            pole.GetComponent<Renderer>().sharedMaterial = material;
+            Undo.RegisterCreatedObjectUndo(pole, "Bake item template");
+        }
+
+        // 撞吃：拳套（球）+底座。
+        private static void BuildCollisionCaptureTemplate(Transform parent, Material material)
+        {
+            var root = CreateEmpty("Template CollisionCapture", parent);
+            var fist = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            fist.name = "Fist";
+            fist.transform.SetParent(root.transform, false);
+            fist.transform.localPosition = new Vector3(0, 0.45f, 0);
+            fist.transform.localScale = Vector3.one * 0.5f;
+            fist.GetComponent<Renderer>().sharedMaterial = material;
+            Undo.RegisterCreatedObjectUndo(fist, "Bake item template");
+            var baseObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            baseObj.name = "Base";
+            baseObj.transform.SetParent(root.transform, false);
+            baseObj.transform.localPosition = new Vector3(0, 0.08f, 0);
+            baseObj.transform.localScale = new Vector3(0.5f, 0.16f, 0.5f);
+            baseObj.GetComponent<Renderer>().sharedMaterial = material;
+            Undo.RegisterCreatedObjectUndo(baseObj, "Bake item template");
+        }
+
+        // 破墙：锤子（方头+柄）。
+        private static void BuildBreakWallTemplate(Transform parent, Material material)
+        {
+            var root = CreateEmpty("Template BreakWall", parent);
+            var head = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            head.name = "Hammer Head";
+            head.transform.SetParent(root.transform, false);
+            head.transform.localPosition = new Vector3(0, 0.5f, 0);
+            head.transform.localScale = new Vector3(0.55f, 0.25f, 0.25f);
+            head.GetComponent<Renderer>().sharedMaterial = material;
+            Undo.RegisterCreatedObjectUndo(head, "Bake item template");
+            var handle = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            handle.name = "Handle";
+            handle.transform.SetParent(root.transform, false);
+            handle.transform.localPosition = new Vector3(0, 0.2f, 0);
+            handle.transform.localScale = new Vector3(0.09f, 0.45f, 0.09f);
+            handle.GetComponent<Renderer>().sharedMaterial = material;
+            Undo.RegisterCreatedObjectUndo(handle, "Bake item template");
+        }
+
+        private static GameObject CreateEmpty(string name, Transform parent)
+        {
+            var obj = new GameObject(name);
+            obj.transform.SetParent(parent, false);
+            Undo.RegisterCreatedObjectUndo(obj, "Bake " + name);
+            return obj;
+        }
     }
 }

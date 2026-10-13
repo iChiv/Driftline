@@ -75,6 +75,7 @@ namespace Draftline.Unity
         private void Awake()
         {
             Application.runInBackground = true; // Also needed for a future LAN host.
+            DraftlineThemeApplier.Apply(DraftlineThemeApplier.CurrentId);
             var piecesRoot = GameObject.Find("Pieces");
             if (piecesRoot != null)
             {
@@ -102,6 +103,8 @@ namespace Draftline.Unity
                   gameObject.AddComponent<DraftlineAudio>();
             if (gameObject.GetComponent<DraftlineTabletopInteraction>() == null)
                 gameObject.AddComponent<DraftlineTabletopInteraction>();
+            if (gameObject.GetComponent<DraftlineBoardAmbience>() == null)
+                gameObject.AddComponent<DraftlineBoardAmbience>();
             gameUI.Initialize(this);
         }
 
@@ -150,6 +153,7 @@ namespace Draftline.Unity
 
         private void StartLocalMatch()
         {
+            DraftlineThemeApplier.Apply(DraftlineThemeApplier.CurrentId);
             var active = Enumerable.Range(0, 4).Where(index => selectedColors[index])
                 .Select(index => (PlayerColor)index).ToArray();
             if (active.Length < 2)

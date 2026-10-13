@@ -1,11 +1,26 @@
 <UXML xmlns="UnityEngine.UIElements">
   <VisualElement name="draftline-root" class="draftline-root" picking-mode="Ignore">
 
-    <!-- ============ 开局屏 ============ -->
+    <!-- ============ 开局屏（左文右景） ============ -->
     <VisualElement name="setup" class="setup-screen">
       <VisualElement class="setup-panel">
+        <ScrollView class="setup-scroll">
         <Label text="DRAFTLINE" class="brand-large"/>
         <Label text="四方棋局 · 立体策略对战" class="subtitle"/>
+        <Label text="棋盘主题" class="section-title"/>
+        <VisualElement name="theme-grid" class="theme-grid">
+          <VisualElement name="theme-tabletop" class="theme-card">
+            <Label text="桌面玩具" class="theme-name"/>
+            <Label text="木质桌面 · 玩具摆件" class="theme-desc"/>
+          </VisualElement>
+          <VisualElement name="theme-magic" class="theme-card">
+            <VisualElement class="theme-title-row">
+              <Label text="魔幻" class="theme-name"/>
+              <Label text="建设中" class="theme-badge"/>
+            </VisualElement>
+            <Label text="符文石盘 · 幽蓝法阵" class="theme-desc"/>
+          </VisualElement>
+        </VisualElement>
         <Label text="选择参战的角落" class="section-title"/>
         <Label text="2–4 位玩家同机轮流；颜色与角落固定绑定。" class="small-copy"/>
         <VisualElement name="color-choices" class="choice-grid">
@@ -53,8 +68,10 @@
           <Button name="start-room" text="房主开始对局" class="primary-button"/>
           <Label name="room-status" class="room-status"/>
         </VisualElement>
+        <Button name="quit-button" text="退出游戏" class="quit-button"/>
         <Label text="掷骰决定滑行次数 · 围杀对手 · 连成五子获胜" class="setup-footer"/>
-        <Label text="方向键移动 · 空格掷骰 · 点击棋子选择" class="setup-footer"/>
+        <Label text="方向键移动 · 空格/桌上按钮掷骰 · 点击棋子选择" class="setup-footer"/>
+        </ScrollView>
       </VisualElement>
     </VisualElement>
 

@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6f5818033a80b94fa2ece976b948559, type: 3}
   m_Name: MagicTheme
   m_EditorClassIdentifier: 
+  ThemeId: magic
   ThemeName: "\u9B54\u5E7B\uFF08\u5360\u4F4D\uFF09"
+  SceneLayerName: Magic
+  Implemented: 0
   WallMaterial: {fileID: 0}
   RotatingWallMaterial: {fileID: 0}
   TableMaterial: {fileID: 0}
