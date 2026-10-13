@@ -43,6 +43,7 @@ namespace Draftline.Core
         public PlayerColor Player;
         public int PieceId = -1;
         public GridPosition Position;
+        public GridPosition Origin; // PieceSlid: cell the piece started this slide from.
         public int Value;
         public ItemType Item;
         public SlidePlan Slide;

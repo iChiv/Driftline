@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using Cinemachine;
 using Draftline.Core;
 using UnityEngine;
@@ -8,33 +7,29 @@ namespace Draftline.Unity
 {
     /// <summary>
     /// Local-only views; match state never depends on camera position.
-    /// All views keep the calibrated projection: rule "up" (row-1) at screen top,
-    /// rule "right" (column+1) at screen right — same yaw (-90), only pitch varies.
+    /// Doctrine: the camera never leaves the full-board view — no cuts for slides,
+    /// captures, portals or turn changes. Only the dice roll (lazy-follow) and the
+    /// victory moment move the camera. Projection keeps rule "up" at screen top and
+    /// rule "right" at screen right (yaw -90, pitch varies).
     /// </summary>
     public sealed class DraftlineCameraDirector : MonoBehaviour
     {
         private const float DefaultBlendTime = 0.35f;
-        private const float EventBlendTime = 0.2f;
         private const float BoardBlendTime = 0.45f;
 
         private CinemachineVirtualCamera overview;
         private CinemachineVirtualCamera dice;
-        private CinemachineVirtualCamera follow;
         private CinemachineVirtualCamera topDown;
-        private CinemachineVirtualCamera turnCorner;
-        private CinemachineVirtualCamera eventCam;
+        private CinemachineVirtualCamera victory;
         private CinemachineBrain brain;
         private CinemachineImpulseSource impulse;
+        private PhysicalDiceRoller diceRoller;
 
-        private Transform followTarget;
-        private Vector3 followVelocity;
         private bool manualTopDown;
-
-        private readonly Queue<Vector3> eventQueue = new Queue<Vector3>();
-        private bool eventPlaying;
         private bool victoryPlaying;
         private Vector3 victoryFocus;
         private float victoryAngle;
+        private Vector3 diceVelocity;
 
         private void Awake()
         {
@@ -49,19 +44,25 @@ namespace Draftline.Unity
             brain.m_DefaultBlend = new CinemachineBlendDefinition(
                 CinemachineBlendDefinition.Style.EaseInOut, DefaultBlendTime);
 
-            // Angled overview keeps the whole 19x19 board and all four corners framed.
-            overview = CreateCamera("Board Overview", Vector3.zero, 58f, 27f, 50f, 10);
-            // Dice tray floats just above the board (floor y=1.75); frame it low and close.
-            dice = CreateCamera("Dice Tray View", new Vector3(0, 1.9f, 0), 50f, 12f, 45f, 0);
-            follow = CreateCamera("Moving Piece Follow", Vector3.zero, 55f, 7.5f, 55f, 0);
-            // Pure top-down stays available for precise cell reading (manual toggle);
-            // widened and shifted so the HUD no longer crops the board edges.
-            topDown = CreateTopDown("Board Top Down", new Vector3(0, 27.5f, -2f), 55f, 0);
-            turnCorner = CreateCamera("Next Player Corner", Vector3.zero, 50f, 10f, 50f, 0);
-            eventCam = CreateCamera("Event Cam", Vector3.zero, 45f, 9f, 50f, 0);
-            // Cinemachine 2.10: impulse source is a plain MonoBehaviour, while the listener
-            // is a vcam extension — both belong on virtual cameras, not on the brain.
-            impulse = follow.gameObject.AddComponent<CinemachineImpulseSource>();
+            diceRoller = GetComponent<PhysicalDiceRoller>();
+
+            // Default: high 72° view — pieces are never occluded by walls, the whole
+            // 19x19 board and all four corners stay framed, shifted right of the HUD.
+            overview = CreateCamera("Board Overview", new Vector3(0, 0, -2f), 72f, 27f, 54f, 10);
+            // Dice: wide framing over the low tray, lazily follows the die.
+            dice = CreateCamera("Dice Lazy Follow", new Vector3(0, 1.9f, 0), 50f, 13f, 48f, 0);
+            // Manual pure top-down for precise cell reading.
+            topDown = CreateCamera("Board Top Down", new Vector3(0, 0, -2f), 89.99f, 27.5f, 55f, 0);
+            // Victory is the only cut away from the board: slow push-in and orbit.
+            victory = CreateCamera("Victory Orbit", Vector3.zero, 55f, 10f, 50f, 0);
+
+            // Cinemachine 2.10: the impulse source is a plain MonoBehaviour; listeners
+            // are vcam extensions.
+            impulse = gameObject.AddComponent<CinemachineImpulseSource>();
+            impulse.m_ImpulseDefinition.m_AmplitudeGain = 0.35f;
+            impulse.m_ImpulseDefinition.m_TimeEnvelope.m_SustainTime = 0.15f;
+            overview.gameObject.AddComponent<CinemachineImpulseListener>();
+            dice.gameObject.AddComponent<CinemachineImpulseListener>();
         }
 
         private static Quaternion BoardRotation(float pitch) => Quaternion.Euler(pitch, -90f, 0f);
@@ -81,23 +82,6 @@ namespace Draftline.Unity
             lens.FieldOfView = fieldOfView;
             virtualCamera.m_Lens = lens;
             virtualCamera.Priority = priority;
-            virtualCamera.gameObject.AddComponent<CinemachineImpulseListener>();
-            return virtualCamera;
-        }
-
-        private CinemachineVirtualCamera CreateTopDown(string name, Vector3 position,
-            float fieldOfView, int priority)
-        {
-            var cameraObject = new GameObject(name);
-            cameraObject.transform.SetParent(transform, false);
-            cameraObject.transform.position = position;
-            cameraObject.transform.rotation = Quaternion.Euler(90, -90, 0);
-            var virtualCamera = cameraObject.AddComponent<CinemachineVirtualCamera>();
-            var lens = virtualCamera.m_Lens;
-            lens.FieldOfView = fieldOfView;
-            virtualCamera.m_Lens = lens;
-            virtualCamera.Priority = priority;
-            virtualCamera.gameObject.AddComponent<CinemachineImpulseListener>();
             return virtualCamera;
         }
 
@@ -108,22 +92,28 @@ namespace Draftline.Unity
 
         private void LateUpdate()
         {
-            if (followTarget != null && follow != null)
+            // Lazy dice follow: heavy damping, the frame is wide so the die never
+            // leaves it; the camera only drifts after the die.
+            if (dice != null && dice.Priority > 0 && diceRoller != null && diceRoller.IsRolling)
             {
-                var desired = FramedPosition(followTarget.position, 55f, 7.5f);
-                follow.transform.position = Vector3.SmoothDamp(
-                    follow.transform.position, desired, ref followVelocity, 0.1f);
-                follow.transform.rotation = BoardRotation(55f);
+                var die = diceRoller.DieTransform;
+                if (die != null)
+                {
+                    var desired = FramedPosition(die.position, 50f, 13f);
+                    dice.transform.position = Vector3.SmoothDamp(
+                        dice.transform.position, desired, ref diceVelocity, 0.4f);
+                    dice.transform.rotation = BoardRotation(50f);
+                }
             }
-            if (victoryPlaying && eventCam != null)
+            if (victoryPlaying && victory != null)
             {
-                victoryAngle += Time.deltaTime * 24f;
-                var radius = Mathf.Lerp(9f, 6.5f, Mathf.Clamp01(victoryAngle / 55f));
+                victoryAngle += Time.deltaTime * 22f;
+                var radius = Mathf.Lerp(10f, 7f, Mathf.Clamp01(victoryAngle / 60f));
                 var radians = victoryAngle * Mathf.Deg2Rad;
-                var offset = new Vector3(Mathf.Cos(radians) * radius, 6f, Mathf.Sin(radians) * radius);
-                eventCam.transform.position = victoryFocus + offset;
-                eventCam.transform.rotation =
-                    Quaternion.LookRotation(victoryFocus + Vector3.up * 0.5f - eventCam.transform.position);
+                var offset = new Vector3(Mathf.Cos(radians) * radius, 7f, Mathf.Sin(radians) * radius);
+                victory.transform.position = victoryFocus + offset;
+                victory.transform.rotation = Quaternion.LookRotation(
+                    victoryFocus + Vector3.up * 0.5f - victory.transform.position);
             }
         }
 
@@ -132,46 +122,13 @@ namespace Draftline.Unity
             if (manualTopDown || dice == null || victoryPlaying) return;
             SetBlend(0.3f);
             dice.Priority = 30;
-            if (follow != null) follow.Priority = 0;
-            if (eventCam != null) eventCam.Priority = 0;
-        }
-
-        public void FollowPiece(Transform piece)
-        {
-            if (manualTopDown || follow == null || victoryPlaying) return;
-            SetBlend(0.15f); // Snap to the moving piece quickly so short slides stay visible.
-            followTarget = piece;
-            follow.transform.position = FramedPosition(piece.position, 55f, 7.5f);
-            follow.transform.rotation = BoardRotation(55f);
-            follow.Priority = 25;
-            if (dice != null) dice.Priority = 0;
         }
 
         public void ShowBoard()
         {
             if (victoryPlaying) return;
             SetBlend(BoardBlendTime);
-            followTarget = null;
-            if (follow != null) follow.Priority = 0;
             if (dice != null) dice.Priority = 0;
-        }
-
-        public void ShowNextPlayer(PlayerColor player)
-        {
-            if (manualTopDown || turnCorner == null || victoryPlaying) return;
-            var position = (int)player == 0 ? new GridPosition(1, 1)
-                : (int)player == 1 ? new GridPosition(17, 1)
-                : (int)player == 2 ? new GridPosition(17, 17)
-                : new GridPosition(1, 17);
-            var corner = BoardCoordinates.ToWorld(position, 0.6f);
-            turnCorner.transform.position = FramedPosition(corner, 50f, 10f);
-            turnCorner.transform.rotation = BoardRotation(50f);
-            turnCorner.Priority = 20;
-        }
-
-        public void EndTurnView()
-        {
-            if (turnCorner != null) turnCorner.Priority = 0;
         }
 
         public void ToggleManualTopDown()
@@ -181,44 +138,13 @@ namespace Draftline.Unity
             if (!manualTopDown) ShowBoard();
         }
 
-        // Light screen shake for captures and wall events.
+        // Light shake for captures / wall events — the camera itself does not move.
         public void Pulse(float strength = 0.35f)
         {
             impulse?.GenerateImpulse(strength);
         }
 
-        // Short angled cut to a board event (portal hop, capture, wall-kill).
-        // Bounded queue: at most two pending events, extra ones are dropped to keep tempo.
-        public void PlayEventAt(Vector3 worldPosition)
-        {
-            if (manualTopDown || victoryPlaying) return;
-            if (eventQueue.Count >= 2) return;
-            eventQueue.Enqueue(worldPosition);
-            if (!eventPlaying) StartCoroutine(RunEventQueue());
-        }
-
-        private IEnumerator RunEventQueue()
-        {
-            eventPlaying = true;
-            while (eventQueue.Count > 0)
-            {
-                var focus = eventQueue.Dequeue();
-                if (victoryPlaying) break;
-                SetBlend(EventBlendTime);
-                eventCam.transform.position = FramedPosition(focus, 45f, 9f);
-                eventCam.transform.rotation = BoardRotation(45f);
-                eventCam.Priority = 35;
-                if (follow != null) follow.Priority = 0;
-                Pulse(0.4f);
-                yield return new WaitForSeconds(0.75f);
-                eventCam.Priority = 0;
-                yield return new WaitForSeconds(0.15f);
-            }
-            eventPlaying = false;
-            ShowBoard();
-        }
-
-        // Slow push-in and partial orbit on the winning five, then the result screen.
+        // The one allowed cut: game over, slow push-in and orbit on the winning cell.
         public void PlayVictory(Vector3 focus)
         {
             if (manualTopDown) return;
@@ -228,16 +154,13 @@ namespace Draftline.Unity
         private IEnumerator VictorySequence(Vector3 focus)
         {
             victoryPlaying = true;
-            eventQueue.Clear();
-            if (follow != null) follow.Priority = 0;
             if (dice != null) dice.Priority = 0;
-            followTarget = null;
             victoryFocus = focus;
             victoryAngle = 0f;
             SetBlend(0.6f);
-            eventCam.transform.position = FramedPosition(focus, 50f, 10f);
-            eventCam.transform.rotation = BoardRotation(50f);
-            eventCam.Priority = 40;
+            victory.transform.position = FramedPosition(focus, 55f, 10f);
+            victory.transform.rotation = BoardRotation(55f);
+            victory.Priority = 40;
             yield return new WaitForSeconds(2.3f);
             // Hold the victory framing; the result screen appears on top.
         }

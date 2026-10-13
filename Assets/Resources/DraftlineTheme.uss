@@ -309,23 +309,31 @@
 }
 .action-button:hover { background-color: rgb(66, 85, 112); }
 .action-button:disabled { opacity: 0.35; }
-.direction-grid {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
+.dir-pad {
+    align-items: center;
+    margin-top: 4px;
 }
+.dir-row {
+    flex-direction: row;
+    justify-content: center;
+}
+.dir-gap { width: 70px; }
 .direction-button {
-    width: 48%;
-    height: 49px;
-    margin-bottom: 8px;
+    width: 64px;
+    height: 44px;
+    margin-bottom: 6px;
     background-color: rgb(39, 99, 73);
-    font-size: 17px;
+    font-size: 19px;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
 }
 .direction-button:hover { background-color: rgb(54, 138, 99); }
+.direction-button:disabled {
+    opacity: 0.3;
+    background-color: rgb(42, 56, 76);
+}
 .selected-label, .waiting-text {
     font-size: 14px;
     margin-bottom: 10px;

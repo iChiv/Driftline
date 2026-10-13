@@ -53,25 +53,6 @@ namespace Draftline.EditorTools
             }
         }
 
-        [MenuItem("Draftline/Debug Follow Cam")]
-        public static void DebugFollowCam()
-        {
-            if (!Application.isPlaying)
-            {
-                Debug.LogWarning("[Debug] Enter play mode first.");
-                return;
-            }
-            var director = Object.FindObjectOfType<Draftline.Unity.DraftlineCameraDirector>();
-            var piece = Object.FindObjectOfType<Draftline.Unity.DraftlinePieceView>();
-            if (director == null || piece == null)
-            {
-                Debug.LogWarning("[Debug] director or piece not found.");
-                return;
-            }
-            director.FollowPiece(piece.transform);
-            Debug.Log("[Debug] FollowPiece called on " + piece.name);
-        }
-
         [MenuItem("Draftline/Board Audit Debug Roots")]
         public static void DebugRoots()
         {

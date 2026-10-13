@@ -21,6 +21,7 @@ namespace Draftline.Unity
 
         public bool IsRolling { get; private set; }
         public string Status { get; private set; } = "Ready";
+        public Transform DieTransform => die;
 
         private void Awake()
         {

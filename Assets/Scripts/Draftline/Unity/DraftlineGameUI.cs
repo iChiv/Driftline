@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Draftline.Core;
 using UnityEngine;
@@ -12,7 +13,6 @@ namespace Draftline.Unity
     {
         private static readonly string[] Names = { "红", "蓝", "绿", "黄" };
         private static readonly string[] Corners = { "左上角", "右上角", "右下角", "左下角" };
-        private static readonly string[] Arrows = { "↑", "↓", "←", "→" };
         private DraftlineGameController controller;
         private PanelSettings panelSettings;
         private UIDocument document;
@@ -189,6 +189,7 @@ namespace Draftline.Unity
             roomStatus = Text("", "room-status");
             roomOptions.Add(roomStatus);
             panel.Add(Text("掷骰决定滑行次数 · 围杀对手 · 连成五子获胜", "setup-footer"));
+            panel.Add(Text("方向键移动 · 空格掷骰 · 点击棋子选择", "setup-footer"));
         }
 
         private void BuildHud()
@@ -236,7 +237,6 @@ namespace Draftline.Unity
             activity = Box("event-list");
             log.Add(activity);
             side.Add(log);
-            side.Add(Text("方向键移动  ·  空格掷骰  ·  点击棋子选择", "control-note"));
         }
 
         private void BuildResult()
@@ -330,11 +330,12 @@ namespace Draftline.Unity
             }
             if (state.Phase == MatchPhase.WaitSelect)
             {
-                foreach (var piece in state.Pieces.Where(piece => piece.OnBoard &&
-                         piece.Owner == state.CurrentPlayer && rules.HasLegalSlide(piece)))
+                var selectable = state.Pieces.Where(piece => piece.OnBoard &&
+                         piece.Owner == state.CurrentPlayer && rules.HasLegalSlide(piece)).ToArray();
+                for (var index = 0; index < selectable.Length; index++)
                 {
-                    var id = piece.Id;
-                    actions.Add(Action($"选择棋子  {piece.Position}", () => controller.SelectFromUI(id)));
+                    var id = selectable[index].Id;
+                    actions.Add(Action($"选择棋子 {index + 1}", () => controller.SelectFromUI(id)));
                 }
                 var deploy = Action("从出生点放置新棋", () => controller.DeployFromUI());
                 deploy.SetEnabled(rules.CanDeploy(state.CurrentPlayer));
@@ -344,7 +345,7 @@ namespace Draftline.Unity
             if (state.Phase != MatchPhase.Moving) return;
             var selected = state.SelectedPieceId.HasValue ? rules.PieceById(state.SelectedPieceId.Value) : null;
             if (selected == null) return;
-            actions.Add(Text("已选择  " + selected.Position, "selected-label"));
+            actions.Add(Text("已选择棋子，选择滑行方向", "selected-label"));
             foreach (var item in state.Players[(int)state.CurrentPlayer].Items.ToArray())
             {
                 var selectedItem = item;
@@ -363,16 +364,28 @@ namespace Draftline.Unity
                 }
                 return;
             }
-            var directions = Box("direction-grid");
-            foreach (var direction in rules.LegalDirections())
-            {
-                var move = direction;
-                var destination = rules.PlanSlide(selected, move).Destination;
-                var button = Action(Arrows[(int)move] + "  " + destination,
-                    () => controller.MoveFromUI(move), "direction-button");
-                directions.Add(button);
-            }
-            actions.Add(directions);
+            // 固定十字方向键：非法方向保留按钮但禁用，位置永远可预测。
+            var legal = new HashSet<SlideDirection>(rules.LegalDirections());
+            var pad = Box("dir-pad");
+            var rowUp = Box("dir-row");
+            rowUp.Add(DirButton(SlideDirection.Up, "↑", legal));
+            var rowMid = Box("dir-row");
+            rowMid.Add(DirButton(SlideDirection.Left, "←", legal));
+            rowMid.Add(Box("dir-gap"));
+            rowMid.Add(DirButton(SlideDirection.Right, "→", legal));
+            var rowDown = Box("dir-row");
+            rowDown.Add(DirButton(SlideDirection.Down, "↓", legal));
+            pad.Add(rowUp);
+            pad.Add(rowMid);
+            pad.Add(rowDown);
+            actions.Add(pad);
+        }
+
+        private Button DirButton(SlideDirection direction, string label, HashSet<SlideDirection> legal)
+        {
+            var button = Action(label, () => controller.MoveFromUI(direction), "direction-button");
+            button.SetEnabled(legal.Contains(direction));
+            return button;
         }
 
         private static Color PlayerTint(PlayerColor player)

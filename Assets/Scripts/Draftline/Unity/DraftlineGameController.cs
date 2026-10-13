@@ -297,17 +297,22 @@ namespace Draftline.Unity
 
             foreach (var matchEvent in rules.Events)
             {
-                recentEvents.Insert(0, EventText(matchEvent));
-                if (recentEvents.Count > 12) recentEvents.RemoveAt(recentEvents.Count - 1);
+                var text = EventText(matchEvent);
+                if (text != null)
+                {
+                    recentEvents.Insert(0, text);
+                    if (recentEvents.Count > 12) recentEvents.RemoveAt(recentEvents.Count - 1);
+                }
                 switch (matchEvent.Type)
                 {
                     case MatchEventType.TurnChanged:
                         sfx?.Play(SfxType.TurnChange, 0.6f);
-                        if (cameraDirector != null) StartCoroutine(ShowTurnCameraBriefly(matchEvent.Player));
+                        ShowTurnPulse(matchEvent.Player);
                         break;
                     case MatchEventType.PieceCaptured:
                         sfx?.Play(SfxType.Capture);
-                        cameraDirector?.PlayEventAt(BoardCoordinates.ToWorld(matchEvent.Position));
+                        cameraDirector?.Pulse(0.4f);
+                        ShowEventFlash(matchEvent.Position);
                         if (pieceViews.TryGetValue(matchEvent.PieceId, out var captured) && captured != null)
                             StartCoroutine(AnimateCaptureOut(captured));
                         break;
@@ -323,7 +328,8 @@ namespace Draftline.Unity
                             stuck.transform.DOShakePosition(0.35f, 0.18f, 18, 90f);
                         break;
                     case MatchEventType.PortalUsed:
-                        cameraDirector?.PlayEventAt(BoardCoordinates.ToWorld(matchEvent.Position));
+                        cameraDirector?.Pulse(0.3f);
+                        ShowEventFlash(matchEvent.Position);
                         break;
                     case MatchEventType.WallRotated:
                         sfx?.Play(SfxType.WallRise, 0.7f);
@@ -454,27 +460,65 @@ namespace Draftline.Unity
             }
         }
 
-        private IEnumerator ShowTurnCameraBriefly(PlayerColor player)
+        // 换人：镜头不切走，在下一玩家出生角放一个同色光环脉冲。
+        private void ShowTurnPulse(PlayerColor player)
         {
-            cameraDirector.ShowNextPlayer(player);
-            yield return new WaitForSeconds(1.1f);
-            cameraDirector.EndTurnView();
+            var spawn = rules.Board.SpawnOf(player);
+            SpawnRing(BoardCoordinates.ToWorld(spawn, 0.58f), Palette[(int)player], 1.1f, 2.4f);
         }
 
+        // 传送门/吃子等事件：镜头不动，只在事件格放一个短闪光环。
+        private void ShowEventFlash(GridPosition position)
+        {
+            SpawnRing(BoardCoordinates.ToWorld(position, 0.58f), new Color(1f, 1f, 1f), 0.5f, 1.5f);
+        }
+
+        private void SpawnRing(Vector3 position, Color color, float duration, float endScale)
+        {
+            var ring = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            ring.name = "Event Ring";
+            Destroy(ring.GetComponent<Collider>());
+            ring.transform.position = position;
+            ring.transform.localScale = new Vector3(0.5f, 0.02f, 0.5f);
+            var shader = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Standard");
+            var material = new Material(shader);
+            if (material.HasProperty("_Surface")) material.SetFloat("_Surface", 1f);
+            if (material.HasProperty("_ZWrite")) material.SetFloat("_ZWrite", 0f);
+            if (material.HasProperty("_SrcBlend"))
+                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            if (material.HasProperty("_DstBlend"))
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            material.renderQueue = 3000;
+            color.a = 0.85f;
+            material.color = color;
+            ring.GetComponent<Renderer>().sharedMaterial = material;
+            ring.transform.DOScale(new Vector3(endScale, 0.02f, endScale), duration).SetEase(Ease.OutQuad);
+            material.DOFade(0f, duration).SetEase(Ease.InQuad)
+                .OnComplete(() =>
+                {
+                    Destroy(ring);
+                    Destroy(material);
+                });
+        }
+
+        // 对局记录只保留白话条目；流程类事件（选棋/换人/穿门）不显示。
         private static string EventText(MatchEvent matchEvent)
         {
             var player = PlayerName(matchEvent.Player);
             switch (matchEvent.Type)
             {
                 case MatchEventType.DiceRolled: return $"{player}方掷出 {matchEvent.Value} 点";
-                case MatchEventType.PieceDeployed: return $"{player}方放置新棋";
-                case MatchEventType.PieceCaptured: return $"{player}方棋子被吃";
-                case MatchEventType.ItemCollected: return $"{player}方拾取 {ItemName(matchEvent.Item)}";
-                case MatchEventType.ItemSpawned: return $"{ItemName(matchEvent.Item)}出现在 {matchEvent.Position}";
+                case MatchEventType.PieceDeployed: return $"{player}方出新棋（{matchEvent.Position}）";
+                case MatchEventType.PieceSlid: return $"{player}棋 {matchEvent.Origin} → {matchEvent.Position}";
+                case MatchEventType.PieceCaptured: return $"{player}棋被吃（{matchEvent.Position}）";
+                case MatchEventType.ItemCollected: return $"{player}方拾取【{ItemName(matchEvent.Item)}】";
+                case MatchEventType.ItemActivated: return $"{player}方使用【{ItemName(matchEvent.Item)}】";
+                case MatchEventType.ItemSpawned: return $"出现道具【{ItemName(matchEvent.Item)}】";
                 case MatchEventType.WallRotated: return "旋转墙切换";
-                case MatchEventType.NoMoves: return $"{player}方没有合法移动";
-                case MatchEventType.Victory: return $"{player}方获胜";
-                default: return matchEvent.Type.ToString();
+                case MatchEventType.NoMoves: return $"{player}方无合法移动，回合跳过";
+                case MatchEventType.PlayerEliminated: return $"{player}方出局";
+                case MatchEventType.Victory: return $"{player}方获胜！";
+                default: return null;
             }
         }
 
@@ -589,7 +633,7 @@ namespace Draftline.Unity
             foreach (var marker in hintObjects)
                 if (marker != null) Destroy(marker);
             hintObjects.Clear();
-            cameraDirector?.FollowPiece(view.transform);
+            // The camera never follows slides; the 72° overview keeps everything visible.
 
             var sequence = DOTween.Sequence();
             sfx?.Play(SfxType.Slide);
@@ -613,9 +657,6 @@ namespace Draftline.Unity
             }
             yield return sequence.WaitForCompletion();
 
-            // Brief hold on the piece so the follow view is perceptible even for short slides.
-            yield return new WaitForSeconds(0.35f);
-            cameraDirector?.ShowBoard();
             animating = false;
             SyncViews();
         }

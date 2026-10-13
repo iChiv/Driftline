@@ -294,6 +294,7 @@ namespace Draftline.Core
             if (applied.Steps.Any(step => step.Hit)) applied.CapturedPieceId = planned.CapturedPieceId;
             if (applied.CapturedPieceId >= 0) CapturePiece(PieceById(applied.CapturedPieceId));
 
+            var slideOrigin = piece.Position;
             piece.Position = applied.Destination;
             if (State.EmergencyStopActive) State.EmergencyStopActive = false;
             foreach (var step in applied.Steps)
@@ -304,7 +305,7 @@ namespace Draftline.Core
             events.Add(new MatchEvent
             {
                 Type = MatchEventType.PieceSlid, Player = piece.Owner,
-                PieceId = piece.Id, Position = piece.Position, Slide = applied
+                PieceId = piece.Id, Position = piece.Position, Origin = slideOrigin, Slide = applied
             });
 
             State.RemainingSlides--;
