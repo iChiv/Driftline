@@ -79,7 +79,9 @@ namespace Draftline.Unity
             var piecesRoot = GameObject.Find("Pieces");
             if (piecesRoot != null)
             {
-                var source = piecesRoot.transform.Find("Red/Cylinder");
+                // 优先用兵棋人仔模板（场景可编辑），没有则退回扁平圆片。
+                var source = piecesRoot.transform.Find("Red/Pawn");
+                if (source == null) source = piecesRoot.transform.Find("Red/Cylinder");
                 if (source != null)
                 {
                     pieceTemplate = source.gameObject;
@@ -187,7 +189,16 @@ namespace Draftline.Unity
         {
             if (playerMaterials != null) return;
             playerMaterials = new Material[4];
-            var source = pieceTemplate != null ? pieceTemplate.GetComponent<Renderer>()?.sharedMaterial : null;
+            // 人仔模板的 Renderer 在子级（Body/Head）；严格 GetComponent 模式下
+            // 直接 GetComponent 会抛 MissingComponentException，必须用 TryGetComponent。
+            Renderer templateRenderer = null;
+            if (pieceTemplate != null)
+            {
+                pieceTemplate.TryGetComponent(out templateRenderer);
+                if (templateRenderer == null)
+                    templateRenderer = pieceTemplate.GetComponentInChildren<Renderer>(true);
+            }
+            var source = templateRenderer != null ? templateRenderer.sharedMaterial : null;
             var fallbackShader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
             for (var index = 0; index < 4; index++)
             {
@@ -275,8 +286,8 @@ namespace Draftline.Unity
                     view = visual.AddComponent<DraftlinePieceView>();
                     view.PieceId = piece.Id;
                     view.BaseScale = visual.transform.localScale;
-                    var renderer = visual.GetComponent<Renderer>();
-                    if (renderer != null) renderer.sharedMaterial = playerMaterials[(int)piece.Owner];
+                    foreach (var renderer in visual.GetComponentsInChildren<Renderer>())
+                        renderer.sharedMaterial = playerMaterials[(int)piece.Owner];
                     pieceViews.Add(piece.Id, view);
                 }
                 if (piece.OnBoard)
@@ -339,7 +350,9 @@ namespace Draftline.Unity
                         ShowEventFlash(matchEvent.Position);
                         break;
                     case MatchEventType.WallRotated:
-                        sfx?.Play(SfxType.WallRise, 0.7f);
+                        sfx?.Play(SfxType.WallFall, 0.55f);
+                        DG.Tweening.DOVirtual.DelayedCall(0.12f,
+                            () => sfx?.Play(SfxType.WallRise, 0.7f));
                         cameraDirector?.Pulse(0.25f);
                         break;
                     case MatchEventType.ItemActivated:
@@ -347,12 +360,32 @@ namespace Draftline.Unity
                         break;
                     case MatchEventType.Victory:
                         sfx?.Play(SfxType.Victory);
+                        // 五连胜利：连线上的棋子依次发光弹跳。
+                        var line = rules.FindFiveLine(matchEvent.Player);
+                        if (line != null)
+                        {
+                            var order = 0;
+                            foreach (var cell in line)
+                            {
+                                var piece = rules.State.Pieces.FirstOrDefault(candidate =>
+                                    candidate.OnBoard && candidate.Position == cell);
+                                if (piece == null ||
+                                    !pieceViews.TryGetValue(piece.Id, out var lineView) || lineView == null)
+                                    continue;
+                                lineView.transform.DOPunchScale(Vector3.one * 0.35f, 0.5f, 6, 0.6f)
+                                    .SetDelay(order++ * 0.13f);
+                            }
+                        }
                         var focus = Vector3.zero;
                         if (rules.State.SelectedPieceId.HasValue &&
                             pieceViews.TryGetValue(rules.State.SelectedPieceId.Value, out var winnerView) &&
                             winnerView != null)
                             focus = winnerView.transform.position;
                         cameraDirector?.PlayVictory(focus);
+                        break;
+                    case MatchEventType.PlayerEliminated:
+                        sfx?.Play(SfxType.Capture);
+                        cameraDirector?.Pulse(0.6f);
                         break;
                     case MatchEventType.ItemCollected:
                         sfx?.Play(SfxType.ItemPickup);
@@ -384,10 +417,15 @@ namespace Draftline.Unity
             if (!exitingPieces.Add(view.PieceId)) yield break;
             pendingVisuals++;
             view.transform.DOKill();
-            var tween = view.transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack);
+            // 先翻倒（像被碰倒的棋子），再缩没。
+            var tip = view.transform.DORotate(new Vector3(88f, 0f, 0f), 0.32f).SetEase(Ease.InQuad);
+            view.transform.DOMoveY(view.transform.position.y - 0.18f, 0.32f).SetEase(Ease.InQuad);
+            yield return tip.WaitForCompletion();
+            var tween = view.transform.DOScale(Vector3.zero, 0.25f).SetEase(Ease.InBack);
             yield return tween.WaitForCompletion();
             view.gameObject.SetActive(false);
             view.transform.localScale = view.BaseScale;
+            view.transform.rotation = Quaternion.identity;
             exitingPieces.Remove(view.PieceId);
             pendingVisuals--;
             gameUI?.Refresh();

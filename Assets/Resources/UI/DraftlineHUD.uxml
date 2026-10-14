@@ -126,6 +126,7 @@
       <VisualElement class="result-panel">
         <Label text="对局结束" class="overline"/>
         <Label name="result-title" class="result-title"/>
+        <Label name="result-stats" class="small-copy"/>
         <Label text="五子连线或成为最后的存活者" class="small-copy"/>
         <Button name="restart-button" text="再来一局" class="primary-button"/>
       </VisualElement>

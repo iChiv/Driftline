@@ -35,6 +35,7 @@ namespace Draftline.Unity
         private Label remaining;
         private Label hint;
         private Label resultTitle;
+        private Label resultStats;
         private Label rolling;
         private Button cameraButton;
         private TextField addressInput;
@@ -110,6 +111,7 @@ namespace Draftline.Unity
             remaining = root.Q<Label>("remaining");
             hint = root.Q<Label>("hint");
             resultTitle = root.Q<Label>("result-title");
+            resultStats = root.Q<Label>("result-stats");
             rolling = root.Q<Label>("rolling");
             addressInput = root.Q<TextField>("address-input");
             roomStatus = root.Q<Label>("room-status");
@@ -271,6 +273,17 @@ namespace Draftline.Unity
             hint.text = Hint(state.Phase);
             resultTitle.text = state.Winner.HasValue
                 ? Names[(int)state.Winner.Value] + " 方获胜" : "";
+            if (resultStats != null && state.Winner.HasValue)
+            {
+                var parts = new System.Collections.Generic.List<string> { $"共 {state.TurnCount} 回合" };
+                for (var index = 0; index < 4; index++)
+                {
+                    var player = state.Players[index];
+                    if (player.Active)
+                        parts.Add($"{Names[index]} 消耗 {player.Consumed}");
+                }
+                resultStats.text = string.Join(" · ", parts);
+            }
             actions.Clear();
             if (!controller.CanControl)
                 actions.Add(Text("等待当前玩家行动…", "waiting-text"));

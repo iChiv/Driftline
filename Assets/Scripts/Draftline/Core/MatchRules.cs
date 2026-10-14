@@ -525,6 +525,30 @@ namespace Draftline.Core
             return false;
         }
 
+        /// <summary>返回该玩家第一条五连线的格子序列（用于胜利演出），没有则 null。</summary>
+        public List<GridPosition> FindFiveLine(PlayerColor color)
+        {
+            var directions = new[] { new[] { 1, 0 }, new[] { 0, 1 },
+                                     new[] { 1, 1 }, new[] { 1, -1 } };
+            foreach (var piece in State.Pieces.Where(piece => piece.OnBoard && piece.Owner == color))
+                foreach (var direction in directions)
+                {
+                    var line = new List<GridPosition> { piece.Position };
+                    foreach (var sign in new[] { -1, 1 })
+                    {
+                        var next = piece.Position.Offset(direction[0] * sign, direction[1] * sign);
+                        while (BoardLayout.Contains(next) && PieceAt(next)?.Owner == color)
+                        {
+                            if (sign < 0) line.Insert(0, next);
+                            else line.Add(next);
+                            next = next.Offset(direction[0] * sign, direction[1] * sign);
+                        }
+                    }
+                    if (line.Count >= 5) return line;
+                }
+            return null;
+        }
+
         // Four-run warning (V0.3 §7): pieces in exactly-4 contiguous lines.
         // Five or more already wins, so only exact fours remain on the board.
         public HashSet<int> FindFourRuns()

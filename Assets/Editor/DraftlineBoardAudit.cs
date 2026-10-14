@@ -359,6 +359,37 @@ namespace Draftline.EditorTools
             Debug.Log($"[DebugSpawn] done, placed={placed}");
         }
 
+        [MenuItem("Draftline/Debug Force Victory")]
+        public static void DebugForceVictory()
+        {
+            var controller = Object.FindObjectOfType<DraftlineGameController>();
+            if (controller == null || controller.Rules == null)
+            {
+                Debug.LogWarning("[DebugVictory] no running match.");
+                return;
+            }
+            var rules = controller.Rules;
+            var state = rules.State;
+            // 清场后摆五子连线，再反射调用私有 Win 触发胜利事件流。
+            foreach (var piece in state.Pieces)
+            {
+                piece.OnBoard = false;
+                piece.Position = new GridPosition(-1, -1);
+            }
+            var row = 9;
+            var column = 4;
+            foreach (var piece in state.Pieces.Where(p => p.Owner == state.CurrentPlayer).Take(5))
+            {
+                piece.OnBoard = true;
+                piece.Position = new GridPosition(column++, row);
+            }
+            typeof(MatchRules).GetMethod("Win", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                ?.Invoke(rules, new object[] { state.CurrentPlayer });
+            typeof(DraftlineGameController).GetMethod("SyncViews", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                ?.Invoke(controller, null);
+            Debug.Log("[DebugVictory] forced win for " + state.CurrentPlayer);
+        }
+
         private static List<GridPosition> CellsCoveredBy(Bounds bounds)
         {
             var cells = new List<GridPosition>();
