@@ -128,6 +128,14 @@ namespace Draftline.Unity
                 if (!BoardCoordinates.TryFromWorld(child.position, out var cell)) continue;
                 var renderer = child.GetComponent<Renderer>();
                 var collider = child.GetComponent<Collider>();
+                // 地牢皮肤：块上挂了 DungeonWall 子件时，动画绑定到皮肤渲染器，
+                // 旧占位方块的渲染器保持禁用。
+                var skinned = child.Find("DungeonWall");
+                if (skinned != null)
+                {
+                    var skinnedRenderer = skinned.GetComponentInChildren<Renderer>(true);
+                    if (skinnedRenderer != null) renderer = skinnedRenderer;
+                }
                 if (layout.CellAt(cell).Kind == CellKind.RotatingWallSlot)
                 {
                     rotatingWallRenderers[cell] = renderer;
@@ -331,6 +339,8 @@ namespace Draftline.Unity
                         sfx?.Play(SfxType.Capture);
                         cameraDirector?.Pulse(0.4f);
                         ShowEventFlash(matchEvent.Position);
+                        SpawnFx("FX/CaptureExplosion",
+                            BoardCoordinates.ToWorld(matchEvent.Position, 1.0f), 2.5f);
                         if (pieceViews.TryGetValue(matchEvent.PieceId, out var captured) && captured != null)
                             StartCoroutine(AnimateCaptureOut(captured));
                         break;
@@ -382,6 +392,12 @@ namespace Draftline.Unity
                             winnerView != null)
                             focus = winnerView.transform.position;
                         cameraDirector?.PlayVictory(focus);
+                        // 胜利烟花：棋盘四角方向 staggered 三发
+                        SpawnFx("FX/VictoryFirework", focus + new Vector3(0f, 0.5f, 0f), 3.5f);
+                        DG.Tweening.DOVirtual.DelayedCall(0.4f, () =>
+                            SpawnFx("FX/VictoryFirework", focus + new Vector3(2.5f, 0.5f, -2f), 3.5f));
+                        DG.Tweening.DOVirtual.DelayedCall(0.8f, () =>
+                            SpawnFx("FX/VictoryFirework", focus + new Vector3(-2.5f, 0.5f, 2f), 3.5f));
                         break;
                     case MatchEventType.PlayerEliminated:
                         sfx?.Play(SfxType.Capture);
@@ -515,6 +531,15 @@ namespace Draftline.Unity
         }
 
         // 传送门/吃子等事件：镜头不动，只在事件格放一个短闪光环。
+        // CFXR 特效：prefab 在 Resources/FX 下（从 Cartoon FX Remaster 复制，引用关系保留）。
+        private void SpawnFx(string resourcePath, Vector3 position, float destroyAfter)
+        {
+            var prefab = Resources.Load<GameObject>(resourcePath);
+            if (prefab == null) return;
+            var fx = Instantiate(prefab, position, Quaternion.identity);
+            Destroy(fx, destroyAfter);
+        }
+
         private void ShowEventFlash(GridPosition position)
         {
             SpawnRing(BoardCoordinates.ToWorld(position, 0.58f), new Color(1f, 1f, 1f), 0.5f, 1.5f);

@@ -1,8 +1,19 @@
 ﻿<Solution>
+  <Project Path="MoreMountains.Tools.csproj" />
+  <Project Path="CFXREditor.csproj" />
+  <Project Path="Polyperfect.Common.csproj" />
   <Project Path="Draftline.Unity.csproj" />
+  <Project Path="MoreMountains.Tools.Editor.csproj" />
+  <Project Path="Lofelt.NiceVibrations.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="Assembly-CSharp-firstpass.csproj" />
   <Project Path="Draftline.Tests.EditMode.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Draftline.Core.csproj" />
-  <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="CFXRRuntime.csproj" />
+  <Project Path="Lofelt.NiceVibrations.Demo.csproj" />
+  <Project Path="CFXRDemo.csproj" />
+  <Project Path="KinoBloom.Runtime.csproj" />
+  <Project Path="Lofelt.NiceVibrations.Editor.csproj" />
+  <Project Path="ToonyColorsPro.Demo.Editor.csproj" />
 </Solution>

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TabletopTheme
   m_EditorClassIdentifier: 
   ThemeId: tabletop
-  ThemeName: "\u684C\u9762\u73A9\u5177"
+  ThemeName: "\u5730\u7262\u63A2\u9669"
   SceneLayerName: Tabletop
   Implemented: 1
   WallMaterial: {fileID: 2100000, guid: 5e394cf03447e474cb6ce8709527c897, type: 2}

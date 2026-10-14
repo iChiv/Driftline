@@ -48,7 +48,13 @@ namespace Draftline.Unity
             var walls = GameObject.Find("Walls");
             if (walls != null && theme.WallMaterial != null)
                 foreach (var renderer in walls.GetComponentsInChildren<Renderer>(true))
-                    renderer.sharedMaterial = theme.WallMaterial;
+                {
+                    // 皮肤化的 DungeonWall 子件用自己的模型材质，不上主题色。
+                    var skinned = false;
+                    for (var t = renderer.transform; t != null; t = t.parent)
+                        if (t.name == "DungeonWall") { skinned = true; break; }
+                    if (!skinned) renderer.sharedMaterial = theme.WallMaterial;
+                }
             return theme;
         }
 

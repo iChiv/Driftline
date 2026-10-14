@@ -10,8 +10,8 @@
         <Label text="棋盘主题" class="section-title"/>
         <VisualElement name="theme-grid" class="theme-grid">
           <VisualElement name="theme-tabletop" class="theme-card">
-            <Label text="桌面玩具" class="theme-name"/>
-            <Label text="木质桌面 · 玩具摆件" class="theme-desc"/>
+            <Label text="地牢探险" class="theme-name"/>
+            <Label text="石板迷宫 · 石柱暗器" class="theme-desc"/>
           </VisualElement>
           <VisualElement name="theme-magic" class="theme-card">
             <VisualElement class="theme-title-row">
