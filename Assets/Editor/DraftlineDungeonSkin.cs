@@ -94,47 +94,114 @@ namespace Draftline.EditorTools
         // ---------- 墙体：KayKit 石柱替换占位方块 ----------
         private static void SkinWalls()
         {
-            var pillar = LoadModel("pillar");
-            var decorated = LoadModel("pillar_decorated");
-            if (pillar == null) { Debug.LogWarning("[DungeonSkin] pillar.fbx missing"); return; }
+            var column = LoadModel("column");              // 旋转墙升起态：细柱
+            var wallPanel = LoadModel("wall");             // 固定墙/边界：墙板段
+            if (column == null || wallPanel == null)
+            {
+                Debug.LogWarning("[DungeonSkin] wall models missing");
+                return;
+            }
             var layout = new BoardLayout();
             var worldRoot = new GameObject("Walls Dungeon Visuals").transform;
+
+            // 1. 禁用所有旧占位方块的网格（碰撞体保留，逻辑零改动）。
             foreach (var rootName in new[] { "Walls", "Border" })
             {
                 var root = GameObject.Find(rootName);
                 if (root == null) continue;
                 foreach (Transform block in root.transform)
+                    foreach (var r in block.GetComponentsInChildren<MeshRenderer>(true))
+                        r.enabled = false;
+            }
+
+            // 2. 旋转墙槽位与中心墙：单格块上挂细柱/装饰柱，跟随升沉动画。
+            var wallsRoot = GameObject.Find("Walls");
+            if (wallsRoot != null)
+                foreach (Transform block in wallsRoot.transform)
                 {
-                    var renderers = block.GetComponentsInChildren<MeshRenderer>(true);
-                    if (renderers.Length == 0) continue;
-                    // 有些砖块的网格在子级（Cube），合并所有后代渲染器的包围盒。
-                    var bounds = renderers[0].bounds;
-                    foreach (var r in renderers) bounds.Encapsulate(r.bounds);
-                    var cells = CellsCoveredBy(bounds);
-                    var singleSlot = BoardCoordinates.TryFromWorld(block.position, out var slotCell) &&
-                                     layout.CellAt(slotCell).Kind == CellKind.RotatingWallSlot;
-                    foreach (var r in renderers) r.enabled = false; // 碰撞体保留，占位方块隐藏
-                    foreach (var cell in cells)
+                    if (!BoardCoordinates.TryFromWorld(block.position, out var cell)) continue;
+                    var kind = layout.CellAt(cell).Kind;
+                    GameObject model = null;
+                    Vector3 scale = Vector3.one;
+                    if (kind == CellKind.RotatingWallSlot)
                     {
-                        var isCenter = cell == new GridPosition(9, 9);
-                        var model = isCenter && decorated != null ? decorated : pillar;
-                        var visual = Object.Instantiate(model);
-                        visual.name = "DungeonWall";
-                        var position = BoardCoordinates.ToWorld(cell, 0.5f);
-                        visual.transform.position = position;
-                        // pillar 1.5×4×1.5 → 压进 1×1×1 格
-                        visual.transform.localScale = new Vector3(0.67f, 0.25f, 0.67f);
-                        // 旋转墙槽位的单格块：视觉挂块上，跟随升沉动画；其余挂世界根
-                        if (singleSlot || isCenter)
-                        {
-                            visual.transform.SetParent(block, true);
-                        }
-                        else
-                        {
-                            visual.transform.SetParent(worldRoot, true);
-                        }
+                        model = column;
+                        scale = new Vector3(1.0f, 0.71f, 1.0f); // 细柱：0.7×1×0.7
                     }
+                    else if (cell == new GridPosition(9, 9))
+                    {
+                        model = column;
+                        scale = new Vector3(1.3f, 1.1f, 1.3f); // 中心高塔地标
+                    }
+                    if (model == null) continue;
+                    var visual = Object.Instantiate(model);
+                    visual.name = "DungeonWall";
+                    visual.transform.SetParent(block, false);
+                    visual.transform.localPosition = Vector3.zero;
+                    visual.transform.localScale = scale;
                 }
+
+            // 3. 固定墙（含最外圈）：把连续墙格连成墙段，沿墙段铺 KayKit 墙板。
+            var fixedCells = new HashSet<GridPosition>();
+            for (var row = 0; row < BoardLayout.Size; row++)
+            for (var col = 0; col < BoardLayout.Size; col++)
+            {
+                var position = new GridPosition(col, row);
+                if (layout.CellAt(position).Kind == CellKind.FixedWall)
+                    fixedCells.Add(position);
+            }
+            var used = new HashSet<GridPosition>();
+            foreach (var start in fixedCells.OrderBy(c => c.Row).ThenBy(c => c.Column))
+            {
+                if (used.Contains(start)) continue;
+                // 优先沿世界 X（同行号 Row 方向）连段，其次世界 Z。
+                var runX = ExtendRun(fixedCells, used, start, alongRow: true);
+                var run = runX.Count >= 2 ? runX : ExtendRun(fixedCells, used, start, alongRow: false);
+                PlaceWallRun(wallPanel, run, worldRoot);
+                foreach (var cell in run) used.Add(cell);
+            }
+        }
+
+        // 从 start 出发沿一个方向吃连续墙格。alongRow=true 表示沿 Row 递增（世界 X）。
+        private static List<GridPosition> ExtendRun(HashSet<GridPosition> cells, HashSet<GridPosition> used,
+            GridPosition start, bool alongRow)
+        {
+            var run = new List<GridPosition> { start };
+            var next = alongRow ? start.Offset(1, 0) : start.Offset(0, 1);
+            while (cells.Contains(next) && !used.Contains(next))
+            {
+                run.Add(next);
+                next = alongRow ? next.Offset(1, 0) : next.Offset(0, 1);
+            }
+            return run;
+        }
+
+        // KayKit wall 墙板：4 长 × 4 高 × 1 厚，底面 pivot。沿墙段拉伸铺放。
+        private static void PlaceWallRun(GameObject wallPanel, List<GridPosition> run,
+            Transform parent)
+        {
+            if (run.Count == 0) return;
+            var first = BoardCoordinates.ToWorld(run[0], 0.5f);
+            var last = BoardCoordinates.ToWorld(run[run.Count - 1], 0.5f);
+            var center = (first + last) * 0.5f;
+            var length = run.Count; // 每格 1 单位
+            // 朝向按墙段首末格的实际世界方向（BoardCoordinates 里 Row→X、Column→Z，
+            // 不能按网格轴想当然）。
+            var runAlongX = Mathf.Abs(last.x - first.x) >= Mathf.Abs(last.z - first.z);
+            var visual = Object.Instantiate(wallPanel);
+            visual.name = "DungeonWall";
+            visual.transform.SetParent(parent, false);
+            visual.transform.rotation = runAlongX ? Quaternion.identity : Quaternion.Euler(0f, 90f, 0f);
+            visual.transform.localScale = new Vector3(length / 4f, 0.28f, 0.85f);
+            visual.transform.position = center;
+            // 用渲染包围盒对齐：底面贴地板（y=0.5），中心对墙段中心。
+            var renderer = visual.GetComponentInChildren<Renderer>();
+            if (renderer != null)
+            {
+                var bounds = renderer.bounds;
+                var offset = center - bounds.center;
+                offset.y = 0.5f - bounds.min.y;
+                visual.transform.position += offset;
             }
         }
 
@@ -223,19 +290,5 @@ namespace Draftline.EditorTools
             visual.position += Vector3.up * (0f - bounds.min.y);
         }
 
-        private static List<GridPosition> CellsCoveredBy(Bounds bounds)
-        {
-            var cells = new List<GridPosition>();
-            for (var row = 0; row < BoardLayout.Size; row++)
-            for (var col = 0; col < BoardLayout.Size; col++)
-            {
-                var position = new GridPosition(col, row);
-                var center = BoardCoordinates.ToWorld(position, bounds.center.y);
-                if (Mathf.Abs(center.x - bounds.center.x) <= bounds.extents.x - 0.02f &&
-                    Mathf.Abs(center.z - bounds.center.z) <= bounds.extents.z - 0.02f)
-                    cells.Add(position);
-            }
-            return cells;
-        }
     }
 }

@@ -54,8 +54,12 @@ namespace Draftline.Unity
                 Debug.LogError("Draftline PanelSettings asset is missing.");
                 return;
             }
-            document = gameObject.GetComponent<UIDocument>() ?? gameObject.AddComponent<UIDocument>();
-            document.panelSettings = panelSettings;
+            // 优先复用场景里摆好的 "Draftline UI"（Hierarchy 可见可编辑）；
+            // 没有才退回运行时自建。
+            document = gameObject.GetComponent<UIDocument>() ??
+                       FindObjectOfType<UIDocument>() ??
+                       gameObject.AddComponent<UIDocument>();
+            if (document.panelSettings == null) document.panelSettings = panelSettings;
             if (EventSystem.current == null)
             {
                 var events = new GameObject("Draftline UI Events");
@@ -68,7 +72,7 @@ namespace Draftline.Unity
 
         private System.Collections.IEnumerator BuildNextFrame()
         {
-            // 等 UIDocument 真正挂上面板（最初一两帧 root 可能尚未 attach）。
+            // 等 UIDocument 挂上面板（场景对象在场景加载时就已构建 UXML 内容）。
             for (var i = 0; i < 20; i++)
             {
                 yield return null;
@@ -76,17 +80,27 @@ namespace Draftline.Unity
                     break;
             }
             root = document.rootVisualElement;
-            root.Clear();
+            if (document.visualTreeAsset == null)
+            {
+                // 兼容路径：运行时自建的 document 没有配 vta，手动克隆。
+                root.Clear();
+                var tree = Resources.Load<VisualTreeAsset>("UI/DraftlineHUD");
+                if (tree == null)
+                {
+                    Debug.LogError("DraftlineHUD.uxml missing from Resources/UI.");
+                    yield break;
+                }
+                tree.CloneTree(root);
+            }
+            else
+            {
+                // 场景 UIDocument 从 vta 自行构建，等内容就位。
+                for (var i = 0; i < 20 && root.Q("setup") == null; i++)
+                    yield return null;
+            }
             var theme = Resources.Load<StyleSheet>("DraftlineTheme");
             if (theme != null && !root.styleSheets.Contains(theme))
                 root.styleSheets.Add(theme);
-            var tree = Resources.Load<VisualTreeAsset>("UI/DraftlineHUD");
-            if (tree == null)
-            {
-                Debug.LogError("DraftlineHUD.uxml missing from Resources/UI.");
-                yield break;
-            }
-            tree.CloneTree(root);
             Bind();
             Refresh();
         }

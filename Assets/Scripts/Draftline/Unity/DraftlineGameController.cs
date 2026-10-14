@@ -82,11 +82,12 @@ namespace Draftline.Unity
                 // 优先用兵棋人仔模板（场景可编辑），没有则退回扁平圆片。
                 var source = piecesRoot.transform.Find("Red/Pawn");
                 if (source == null) source = piecesRoot.transform.Find("Red/Cylinder");
+                // 模板组下的所有子件都禁用——旧圆片模板留着会渲染并挡住点击。
+                foreach (Transform group in piecesRoot.transform)
+                    foreach (Transform child in group)
+                        child.gameObject.SetActive(false);
                 if (source != null)
-                {
                     pieceTemplate = source.gameObject;
-                    pieceTemplate.SetActive(false);
-                }
                 runtimePieces = new GameObject("Runtime Pieces").transform;
                 runtimePieces.SetParent(piecesRoot.transform, false);
             }
@@ -647,7 +648,7 @@ namespace Draftline.Unity
             var screen = mouse.position.ReadValue();
             if (screen.x < 360f) return; // The control panel occupies the left edge.
             if (!Physics.Raycast(Camera.main.ScreenPointToRay(screen), out var hit)) return;
-            var pieceView = hit.collider.GetComponent<DraftlinePieceView>();
+            var pieceView = hit.collider.GetComponentInParent<DraftlinePieceView>();
             if (pieceView == null) return;
             if (rules.TrySelectPiece(pieceView.PieceId, out _)) SyncViews();
         }

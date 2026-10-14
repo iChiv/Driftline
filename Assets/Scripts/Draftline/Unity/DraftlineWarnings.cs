@@ -66,8 +66,9 @@ namespace Draftline.Unity
                                 !up && !occupied &&
                                 layout.IsScheduledWall(slot, rules.State.WallPhase ^ 1);
 
-                // 常显底座：墙升起时隐藏（实体墙盖住），其余时候都在，被压制时换红脉冲。
-                var showBase = !up;
+                // 底座与预告薄板互斥：下回合要升墙时只显示预告板，否则显示底座。
+                // 墙升起时两者都隐藏；棋子压住将升之墙时底座仍显示红色脉冲（强杀预告）。
+                var showBase = !up && !showGhost;
                 if (showBase && !bases.TryGetValue(slot, out var socket))
                 {
                     socket = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -106,8 +107,9 @@ namespace Draftline.Unity
                     ghost.name = $"Ghost wall {slot}";
                     Destroy(ghost.GetComponent<Collider>());
                     ghost.transform.SetParent(transform, false);
-                    ghost.transform.position = BoardCoordinates.ToWorld(slot, 1f);
-                    ghost.transform.localScale = new Vector3(0.92f, 0.9f, 0.92f);
+                    // 压扁贴地的预告薄板：只表意"这里会出墙"，不挡墙后棋子视线。
+                    ghost.transform.position = BoardCoordinates.ToWorld(slot, 0.56f);
+                    ghost.transform.localScale = new Vector3(0.92f, 0.12f, 0.92f);
                     ghost.GetComponent<Renderer>().sharedMaterial = ghostMaterial;
                     ghosts.Add(slot, ghost);
                 }
@@ -194,7 +196,7 @@ namespace Draftline.Unity
                 material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
             if (material.HasProperty("_ZWrite")) material.SetFloat("_ZWrite", 0f);
             material.renderQueue = 3000;
-            material.color = new Color(0.6f, 0.72f, 0.85f, 0.28f);
+            material.color = new Color(0.6f, 0.72f, 0.85f, 0.18f);
             return material;
         }
     }
