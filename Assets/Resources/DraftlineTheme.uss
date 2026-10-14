@@ -14,9 +14,11 @@
     top: 0;
     right: 0;
     bottom: 0;
-    align-items: flex-start;
-    justify-content: flex-start;
-    background-color: rgba(9, 13, 21, 0.25);
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(11, 16, 28);
+    background-image: resource('UI/MenuBackground');
+    -unity-background-scale-mode: scale-and-crop;
 }
 .result-screen {
     position: absolute;
@@ -29,18 +31,29 @@
     background-color: rgba(9, 13, 21, 0.83);
 }
 .setup-panel {
-    width: 460px;
-    height: 100%;
-    padding-top: 24px;
-    padding-bottom: 22px;
-    padding-left: 42px;
-    padding-right: 42px;
-    background-color: rgb(23, 30, 43);
+    width: 560px;
+    max-height: 94%;
+    padding-top: 26px;
+    padding-bottom: 20px;
+    padding-left: 44px;
+    padding-right: 44px;
+    background-color: rgba(19, 26, 39, 0.94);
+    border-top-width: 1px;
+    border-left-width: 1px;
     border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-top-color: rgb(71, 83, 105);
+    border-left-color: rgb(71, 83, 105);
     border-right-color: rgb(71, 83, 105);
+    border-bottom-color: rgb(71, 83, 105);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
 }
 .setup-scroll {
-    flex-grow: 1;
+    flex-grow: 0;
+    flex-shrink: 1;
 }
 .result-panel {
     width: 580px;
@@ -125,8 +138,8 @@
     margin-top: 3px;
 }
 .quit-button {
-    height: 34px;
-    margin-top: 14px;
+    height: 32px;
+    margin-top: 10px;
     background-color: rgb(59, 40, 44);
     color: rgb(235, 200, 200);
     border-top-width: 1px;
@@ -144,30 +157,30 @@
 }
 .quit-button:hover { background-color: rgb(84, 52, 58); }
 .brand-large {
-    font-size: 47px;
-    letter-spacing: 5px;
+    font-size: 38px;
+    letter-spacing: 4px;
     -unity-font-style: bold;
     color: rgb(248, 208, 126);
-    margin-bottom: 5px;
+    margin-bottom: 3px;
 }
 .subtitle {
-    font-size: 17px;
+    font-size: 15px;
     color: rgb(185, 194, 211);
-    margin-bottom: 14px;
+    margin-bottom: 4px;
 }
 .section-title {
-    font-size: 17px;
+    font-size: 15px;
     -unity-font-style: bold;
     color: rgb(229, 235, 246);
-    margin-top: 15px;
-    margin-bottom: 9px;
+    margin-top: 11px;
+    margin-bottom: 7px;
 }
 .small-copy, .setup-footer {
     font-size: 14px;
     color: rgb(151, 164, 183);
     white-space: normal;
 }
-.setup-footer { margin-top: 22px; }
+.setup-footer { margin-top: 8px; }
 .room-options {
     padding-top: 7px;
     padding-bottom: 6px;
@@ -192,7 +205,7 @@
     border-bottom-right-radius: 6px;
 }
 .room-address {
-    margin-bottom: 9px;
+    margin-bottom: 5px;
     color: rgb(217, 229, 244);
 }
 .room-status {
@@ -208,9 +221,9 @@
 }
 .choice-card {
     width: 48%;
-    height: 74px;
-    margin-bottom: 12px;
-    padding-left: 17px;
+    height: 60px;
+    margin-bottom: 8px;
+    padding-left: 15px;
     flex-direction: row;
     align-items: center;
     background-color: rgb(31, 40, 55);
@@ -257,14 +270,14 @@
     color: rgb(245, 247, 251);
 }
 .primary-button {
-    height: 54px;
-    font-size: 17px;
+    height: 46px;
+    font-size: 16px;
     background-color: rgb(57, 115, 215);
     border-top-left-radius: 9px;
     border-top-right-radius: 9px;
     border-bottom-left-radius: 9px;
     border-bottom-right-radius: 9px;
-    margin-top: 15px;
+    margin-top: 10px;
 }
 .primary-button:hover { background-color: rgb(75, 137, 237); }
 .hud {
@@ -403,8 +416,8 @@
 }
 .actions { min-height: 46px; }
 .action-button {
-    height: 40px;
-    margin-bottom: 7px;
+    height: 34px;
+    margin-bottom: 5px;
     background-color: rgb(42, 56, 76);
     font-size: 13px;
     border-top-left-radius: 7px;

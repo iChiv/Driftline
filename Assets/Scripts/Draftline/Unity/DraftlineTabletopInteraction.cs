@@ -23,10 +23,10 @@ namespace Draftline.Unity
             if (mouse == null || !mouse.leftButton.wasPressedThisFrame || Camera.main == null) return;
             if (!Physics.Raycast(Camera.main.ScreenPointToRay(mouse.position.ReadValue()), out var hit))
                 return;
-            var rollButton = hit.collider.GetComponentInParent<DraftlineRollButton>();
-            if (rollButton != null)
+            var rollDice = hit.collider.GetComponentInParent<DraftlineRollDice>();
+            if (rollDice != null)
             {
-                rollButton.TryPress();
+                rollDice.TryPress();
                 return;
             }
             var prop = hit.collider.GetComponentInParent<DraftlineToyProp>();

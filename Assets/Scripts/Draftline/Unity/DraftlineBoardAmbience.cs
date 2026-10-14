@@ -35,7 +35,7 @@ namespace Draftline.Unity
             if (hit.collider.GetComponentInParent<DraftlinePieceView>() != null) return;
             if (hit.collider.GetComponentInParent<DraftlineItemView>() != null) return;
             if (hit.collider.GetComponentInParent<DraftlineToyProp>() != null) return;
-            if (hit.collider.GetComponentInParent<DraftlineRollButton>() != null) return;
+            if (hit.collider.GetComponentInParent<DraftlineRollDice>() != null) return;
             // 命中墙体（含升起状态的旋转墙，点在墙侧面会投影到相邻地板格）不涟漪。
             for (var t = hit.collider.transform; t != null; t = t.parent)
                 if (t.name == "Walls" || t.name == "Border") return;

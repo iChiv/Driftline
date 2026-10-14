@@ -67,25 +67,25 @@ namespace Draftline.Unity
 
         private System.Collections.IEnumerator BuildNextFrame()
         {
-            yield return null;
+            // 等 UIDocument 真正挂上面板（最初一两帧 root 可能尚未 attach）。
+            for (var i = 0; i < 20; i++)
+            {
+                yield return null;
+                if (document.rootVisualElement != null && document.rootVisualElement.panel != null)
+                    break;
+            }
+            root = document.rootVisualElement;
+            root.Clear();
+            var theme = Resources.Load<StyleSheet>("DraftlineTheme");
+            if (theme != null && !root.styleSheets.Contains(theme))
+                root.styleSheets.Add(theme);
             var tree = Resources.Load<VisualTreeAsset>("UI/DraftlineHUD");
             if (tree == null)
             {
                 Debug.LogError("DraftlineHUD.uxml missing from Resources/UI.");
                 yield break;
             }
-            // 交给 UIDocument 自己重建内容（它会替换 root），下一帧再挂样式和绑定。
-            document.visualTreeAsset = tree;
-            yield return null;
-            root = document.rootVisualElement;
-            if (root == null || root.childCount == 0)
-            {
-                root = document.rootVisualElement;
-                tree.CloneTree(root);
-            }
-            var theme = Resources.Load<StyleSheet>("DraftlineTheme");
-            if (theme != null && !root.styleSheets.Contains(theme))
-                root.styleSheets.Add(theme);
+            tree.CloneTree(root);
             Bind();
             Refresh();
         }

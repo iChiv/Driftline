@@ -70,7 +70,7 @@
         </VisualElement>
         <Button name="quit-button" text="退出游戏" class="quit-button"/>
         <Label text="掷骰决定滑行次数 · 围杀对手 · 连成五子获胜" class="setup-footer"/>
-        <Label text="方向键移动 · 空格/桌上按钮掷骰 · 点击棋子选择" class="setup-footer"/>
+        <Label text="方向键移动 · 空格/桌上骰子掷骰 · 点击棋子选择" class="setup-footer"/>
         </ScrollView>
       </VisualElement>
     </VisualElement>
