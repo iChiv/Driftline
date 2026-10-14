@@ -60,6 +60,7 @@ namespace Draftline.Unity
 
             for (var attempt = 0; attempt < 4 && result == 0; attempt++)
             {
+                if (attempt == 0) yield return FlyInFromTable();
                 ResetAndThrow();
                 var elapsed = 0f;
                 var stillFor = 0f;
@@ -95,6 +96,37 @@ namespace Draftline.Unity
             tray.SetActive(false);
             IsRolling = false;
             finished?.Invoke(result == 0 ? (int?)null : result);
+        }
+
+        // 首次投掷时，骰子从桌边骰子（Roll Dice）的位置弧线飞入托盘上空。
+        private IEnumerator FlyInFromTable()
+        {
+            body.isKinematic = true;
+            var tableDice = GameObject.Find("Roll Dice");
+            var target = new Vector3(UnityEngine.Random.Range(-1.5f, 1.5f), 3.4f,
+                UnityEngine.Random.Range(-1.5f, 1.5f));
+            if (tableDice == null)
+            {
+                die.position = target;
+                die.rotation = UnityEngine.Random.rotation;
+                yield break;
+            }
+            var start = tableDice.transform.position + Vector3.up * 0.6f;
+            die.position = start;
+            die.rotation = UnityEngine.Random.rotation;
+            const float duration = 0.45f;
+            var spin = UnityEngine.Random.onUnitSphere * 540f;
+            var elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                var k = Mathf.Clamp01(elapsed / duration);
+                var position = Vector3.Lerp(start, target, k);
+                position.y += Mathf.Sin(k * Mathf.PI) * 1.8f;
+                die.position = position;
+                die.Rotate(spin * Time.deltaTime, Space.World);
+                yield return null;
+            }
         }
 
         private void ResetAndThrow()

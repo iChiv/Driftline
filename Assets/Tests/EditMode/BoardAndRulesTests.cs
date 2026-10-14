@@ -380,6 +380,33 @@ namespace Draftline.Tests
                 "After the flip buried every field item, a visible one must respawn immediately.");
         }
 
+        [Test]
+        public void DeployIsFreeAndDoesNotForceTheNewPiece()
+        {
+            // V0.3：放置新棋不消耗滑行次数，也不强制滑动它——放置后留在选子阶段。
+            var rules = new MatchRules(new[] { PlayerColor.Red, PlayerColor.Blue }, 1);
+            ClearBoard(rules);
+            var existing = Place(rules, PlayerColor.Red, 7, 7);
+            Assert.IsTrue(rules.TryApplyDice(4, out var error), error);
+            Assert.AreEqual(4, rules.State.RemainingSlides);
+
+            Assert.IsTrue(rules.TryDeploy(out var deployedId, out error), error);
+            Assert.AreEqual(MatchPhase.WaitSelect, rules.State.Phase, "放置后应留在选子阶段");
+            Assert.AreEqual(4, rules.State.RemainingSlides, "放置不消耗滑行次数");
+            Assert.IsFalse(rules.State.SelectedPieceId.HasValue, "放置后不强制选中新棋");
+            Assert.IsFalse(rules.CanDeploy(PlayerColor.Red), "出生点被占后不能再出子");
+            Assert.IsFalse(rules.TryDeploy(out _, out error));
+
+            // 可以改选场上的旧棋滑行。
+            Assert.IsTrue(rules.TrySelectPiece(existing.Id, out error), error);
+            Assert.IsTrue(rules.TrySlide(SlideDirection.Right, null, out _, out error), error);
+            Assert.AreEqual(3, rules.State.RemainingSlides);
+
+            var deployed = rules.PieceById(deployedId);
+            Assert.IsTrue(deployed.OnBoard);
+            Assert.AreEqual(rules.Board.SpawnOf(PlayerColor.Red), deployed.Position);
+        }
+
         private static void ClearBoard(MatchRules rules)
         {
             foreach (var piece in rules.State.Pieces)

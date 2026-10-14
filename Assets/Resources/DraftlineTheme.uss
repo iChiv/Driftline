@@ -518,3 +518,4 @@
     -unity-font-style: bold;
     color: rgb(248, 209, 129);
 }
+.hidden { display: none; }

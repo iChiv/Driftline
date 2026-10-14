@@ -92,6 +92,10 @@ namespace Draftline.Unity
 
         private void Bind()
         {
+            // 按钮/开关不抢键盘焦点——否则点击"开始对局"后按空格会再次触发它（重开对局）。
+            foreach (var focusable in root.Query<Button>().ToList()
+                     .Cast<Focusable>().Concat(root.Query<Toggle>().ToList()))
+                focusable.focusable = false;
             setup = root.Q("setup");
             hud = root.Q("hud");
             result = root.Q("result");
@@ -379,7 +383,7 @@ namespace Draftline.Unity
 
         private static Button Action(string value, System.Action click, string style = "action-button")
         {
-            var button = new Button(click) { text = value };
+            var button = new Button(click) { text = value, focusable = false };
             button.AddToClassList(style);
             return button;
         }

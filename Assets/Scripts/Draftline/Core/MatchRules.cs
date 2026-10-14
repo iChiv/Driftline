@@ -166,8 +166,7 @@ namespace Draftline.Core
             piece.Position = Board.SpawnOf(State.CurrentPlayer);
             piece.OnBoard = true;
             pieceId = piece.Id;
-            State.SelectedPieceId = piece.Id;
-            State.Phase = MatchPhase.Moving;
+            // V0.3：放置不消耗滑行次数，也不强制滑动新棋——留在 WaitSelect 让玩家自由选子。
             AddEvent(MatchEventType.PieceDeployed, piece.Owner, piece.Id, piece.Position);
             error = null;
             return true;

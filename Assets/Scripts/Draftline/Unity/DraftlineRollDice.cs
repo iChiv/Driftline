@@ -19,6 +19,9 @@ namespace Draftline.Unity
         private Vector3 restLocal;
         private bool ready;
         private bool pressAnimating;
+        private bool hidden;
+        private Collider clickCollider;
+        private Vector3 baseScale;
         private Tween idleSpin;
         private Tween idleBob;
 
@@ -26,6 +29,8 @@ namespace Draftline.Unity
         {
             controller = FindObjectOfType<DraftlineGameController>();
             restLocal = transform.localPosition;
+            baseScale = transform.localScale;
+            clickCollider = GetComponentInChildren<Collider>();
             renderers = GetComponentsInChildren<Renderer>();
             instances = new Material[renderers.Length];
             readyColors = new Color[renderers.Length];
@@ -43,10 +48,34 @@ namespace Draftline.Unity
 
         private void Update()
         {
+            // 物理骰子在托盘里滚动期间，桌边骰子收起来，结束后弹回。
+            var rolling = controller != null && controller.IsDiceRolling;
+            if (rolling && !hidden) SetHidden(true);
+            else if (!rolling && hidden) SetHidden(false);
+
             var canRoll = controller != null && controller.Rules != null &&
                           controller.Rules.State.Phase == MatchPhase.WaitRoll &&
                           !controller.IsAnimating && !controller.IsDiceRolling;
             if (canRoll != ready) ApplyState(canRoll, false);
+        }
+
+        private void SetHidden(bool isHidden)
+        {
+            hidden = isHidden;
+            idleSpin?.Kill();
+            idleSpin = null;
+            idleBob?.Kill();
+            idleBob = null;
+            pressAnimating = false;
+            transform.DOKill();
+            transform.DOScale(isHidden ? Vector3.zero : baseScale, 0.22f)
+                .SetEase(isHidden ? Ease.InBack : Ease.OutBack)
+                .OnComplete(() =>
+                {
+                    if (!hidden && ready) StartIdle();
+                });
+            if (clickCollider != null) clickCollider.enabled = !isHidden;
+            if (!isHidden) transform.localPosition = restLocal;
         }
 
         /// <summary>Called by DraftlineTabletopInteraction when the dice is clicked.</summary>

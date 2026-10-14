@@ -55,8 +55,8 @@
         </VisualElement>
         <Label name="setup-error" class="error-text"/>
         <Button name="start-local" text="开始对局  →" class="primary-button"/>
-        <Label text="局域网演示" class="section-title"/>
-        <VisualElement name="room-options" class="room-options">
+        <Label text="局域网演示" class="section-title hidden"/>
+        <VisualElement name="room-options" class="room-options hidden">
           <VisualElement name="seat-options" class="seat-options">
             <Button name="seat-2" text="2 人" class="seat-button"/>
             <Button name="seat-3" text="3 人" class="seat-button"/>
