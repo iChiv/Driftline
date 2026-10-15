@@ -134,7 +134,8 @@ namespace Draftline.Unity
             {
                 var view = pair.Value;
                 if (view == null || !view.gameObject.activeSelf) continue;
-                var renderer = view.GetComponent<Renderer>();
+                var appearance=view.GetComponent<ThemePieceAppearance>();
+                var renderer = appearance!=null && appearance.FactionRenderers.Length>0?appearance.FactionRenderers[0]:view.GetComponent<Renderer>();
                 if (renderer == null) continue;
                 Color? emission = null;
                 if (wallKillIds.Contains(pair.Key)) emission = Danger * (0.6f + 1.4f * pulse);

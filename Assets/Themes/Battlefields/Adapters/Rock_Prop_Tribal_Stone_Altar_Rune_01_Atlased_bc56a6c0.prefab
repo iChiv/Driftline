@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &6069300022960725196
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3760527422933946014, guid: bc56a6c0bbc010c4da29fdd949f23cae, type: 3}
+      propertyPath: m_Name
+      value: Rock_Prop_Tribal_Stone_Altar_Rune_01_Atlased_bc56a6c0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5338933735094897337, guid: bc56a6c0bbc010c4da29fdd949f23cae, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5bb0c66df132d724d88862b047630154, type: 2}
+    - target: {fileID: 6213245053648180334, guid: bc56a6c0bbc010c4da29fdd949f23cae, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6213245053648180334, guid: bc56a6c0bbc010c4da29fdd949f23cae, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6213245053648180334, guid: bc56a6c0bbc010c4da29fdd949f23cae, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6213245053648180334, guid: bc56a6c0bbc010c4da29fdd949f23cae, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6213245053648180334, guid: bc56a6c0bbc010c4da29fdd949f23cae, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6213245053648180334, guid: bc56a6c0bbc010c4da29fdd949f23cae, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6213245053648180334, guid: bc56a6c0bbc010c4da29fdd949f23cae, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6213245053648180334, guid: bc56a6c0bbc010c4da29fdd949f23cae, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6213245053648180334, guid: bc56a6c0bbc010c4da29fdd949f23cae, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6213245053648180334, guid: bc56a6c0bbc010c4da29fdd949f23cae, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 1356474539691433099, guid: bc56a6c0bbc010c4da29fdd949f23cae, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bc56a6c0bbc010c4da29fdd949f23cae, type: 3}

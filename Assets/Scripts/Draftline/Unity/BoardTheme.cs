@@ -14,6 +14,14 @@ namespace Draftline.Unity
         [Tooltip("菜单与 PlayerPrefs 使用的标识，如 tabletop / magic")]
         public string ThemeId = "tabletop";
         public string ThemeName = "桌面玩具";
+        [TextArea(2, 5)] public string Description;
+        public int Version = 1;
+        public int SortOrder;
+        public GameObject PresentationPrefab;
+        public GameObject PiecePrefab;
+        public Color BackgroundColor = new Color(.055f,.07f,.09f);
+        public Color AmbientColor = new Color(.40f,.45f,.50f);
+        [Range(24, 34)] public float OverviewDistance=29.5f;
         [Tooltip("场景里 Themes 根下的图层对象名")]
         public string SceneLayerName = "Tabletop";
         [Tooltip("未实现的主题选择后回退到桌面玩具")]

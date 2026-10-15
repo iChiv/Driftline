@@ -61,6 +61,50 @@ namespace Draftline.Tests
         }
 
         [UnityTest]
+        public IEnumerator EveryAuthoredThemeKeepsModelsAndSupportsBoardPointerActions()
+        {
+            var ui=controller.CanvasUI;ui.ResultMenu.onClick.Invoke();
+            var themes=DraftlineThemeApplier.Available;
+            Assert.AreEqual(6,themes.Length);
+            var originalPreference=DraftlineThemeApplier.PreferredId;
+            foreach(var theme in themes.Where(t=>t.PresentationPrefab!=null))
+            {
+                ui.ThemeSelector.value=System.Array.IndexOf(themes,theme);
+                Assert.AreEqual(theme.ThemeId,DraftlineThemeApplier.CurrentId);
+                Assert.AreEqual(theme.ThemeId,DraftlineThemeApplier.PreferredId);
+                ui.LocalGame.onClick.Invoke();ui.StartMatch.onClick.Invoke();
+                typeof(DraftlineGameController).GetMethod("ExecuteAuthorityCommand",BindingFlags.Instance|BindingFlags.NonPublic)
+                    .Invoke(controller,new object[]{new MatchCommand{Kind=MatchCommandKind.ApplyDice,Dice=2,ExpectedRevision=0}});
+                yield return new WaitForSeconds(.6f);
+                ui.Refresh();Assert.IsFalse(ui.ThemeSelector.interactable);
+                var before=JsonUtility.ToJson(MatchSnapshot.Capture(controller.Rules.State));
+                ui.ThemeSelector.onValueChanged.Invoke(0);
+                Assert.AreEqual(theme.ThemeId,DraftlineThemeApplier.CurrentId,"An active match cannot change theme.");
+                Assert.AreEqual(before,JsonUtility.ToJson(MatchSnapshot.Capture(controller.Rules.State)));
+                var piece=controller.Rules.State.Pieces.First(p=>p.Owner==PlayerColor.Red&&p.OnBoard);
+                var view=controller.PieceViews[piece.Id];var appearance=view.GetComponent<ThemePieceAppearance>();
+                Assert.IsNotNull(appearance,theme.ThemeId);
+                Assert.IsTrue(view.GetComponentsInChildren<Renderer>().Any(r=>!appearance.FactionRenderers.Contains(r)&&r.sharedMaterial!=appearance.FactionRenderers[0].sharedMaterial),"Imported palette must be retained.");
+                yield return Click(view.transform.position+Vector3.up*.25f);
+                Assert.AreEqual(piece.Id,controller.BoardInteraction.SelectedPieceId,theme.ThemeId+" piece collider selection");
+                var target=Object.FindObjectsOfType<BoardTarget>().First(t=>!t.Deploy&&!t.DirectionChoice&&t.StopIndex==-1);
+                yield return Click(target.transform.position);
+                var deadline=Time.realtimeSinceStartup+4;
+                while(controller.IsAnimating&&Time.realtimeSinceStartup<deadline)yield return null;
+                Assert.Less(controller.Rules.State.RemainingSlides,2,theme.ThemeId+" endpoint executes");
+                var scene=Object.FindObjectOfType<BoardThemeScene>();var active=scene.Entries.Single(e=>e.Root.activeSelf);
+                Assert.AreEqual(theme,active.Theme);
+                Assert.IsTrue(active.Root.transform.Find("BoardSurface").GetComponentsInChildren<MeshRenderer>().Any(r=>r.isPartOfStaticBatch),"Static board geometry should be batched.");
+                foreach(var wall in active.Root.GetComponentsInChildren<ThemeMovingWall>(true)) {
+                    Assert.IsNotNull(wall.Driver);
+                    Assert.AreEqual(controller.Rules.IsWall(new GridPosition(wall.Column,wall.Row)),wall.Body.gameObject.activeSelf,theme.ThemeId+" wall binding");
+                }
+                ui.ReturnMenu.onClick.Invoke();yield return null;
+            }
+            DraftlineThemeApplier.SelectLocal(originalPreference);
+        }
+
+        [UnityTest]
         public IEnumerator LocalGameAllowsMixedSeatsAndRestoresThemAfterLanNavigation()
         {
             var ui=Object.FindObjectOfType<DraftlineCanvasUI>();

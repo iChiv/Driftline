@@ -1,0 +1,13 @@
+{
+  "commonRevisions": 25,
+  "mismatches": [],
+  "hostComplete": true,
+  "clientComplete": true,
+  "clientReconnected": true,
+  "activeThemes": [
+    "fortress"
+  ],
+  "clientPreferredThemes": [
+    "forest"
+  ]
+}

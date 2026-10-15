@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Linq;
 using Draftline.Core;
 
 namespace Draftline.Unity
@@ -13,12 +14,20 @@ namespace Draftline.Unity
         public const string PrefKey = "boardTheme";
         public const string DefaultId = "tabletop";
 
-        public static string CurrentId => PlayerPrefs.GetString(PrefKey, DefaultId);
+        public static string CurrentId { get; private set; }
+        public static string PreferredId => PlayerPrefs.GetString(PrefKey, DefaultId);
+        public static BoardTheme[] Available => Resources.LoadAll<BoardTheme>("Themes").Where(t=>t.Implemented).OrderBy(t=>t.SortOrder).ThenBy(t=>t.ThemeId).ToArray();
+
+        public static void SelectLocal(string themeId)
+        {
+            var theme=Apply(themeId);
+            if(theme==null)return;
+            PlayerPrefs.SetString(PrefKey,theme.ThemeId);PlayerPrefs.Save();
+        }
 
         public static BoardTheme Load(string themeId)
         {
-            var name = themeId == "magic" ? "MagicTheme" : "TabletopTheme";
-            return Resources.Load<BoardTheme>("Themes/" + name);
+            return Resources.LoadAll<BoardTheme>("Themes").FirstOrDefault(t=>t.ThemeId==themeId);
         }
 
         /// <summary>Activates the theme's scene layer and applies its materials. Returns the applied theme.</summary>
@@ -36,6 +45,16 @@ namespace Draftline.Unity
                 Debug.LogWarning("[Theme] TabletopTheme asset missing from Resources/Themes.");
                 return null;
             }
+
+            var scene=Object.FindObjectOfType<BoardThemeScene>();
+            if(scene!=null)
+            {
+                var applied=scene.Apply(theme);
+                if(applied==null) { theme=Load(DefaultId);scene.Apply(theme); }
+                CurrentId=theme.ThemeId;
+                if(theme.ThemeId!=DefaultId)return theme;
+            }
+            CurrentId=theme.ThemeId;
 
             var themesRoot = GameObject.Find("Themes");
             if (themesRoot != null)

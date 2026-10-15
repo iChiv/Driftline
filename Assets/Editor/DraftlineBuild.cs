@@ -25,5 +25,19 @@ namespace Draftline.EditorTools
             else
                 Debug.LogError($"[DraftlineBuild] failed: {report.summary.result}");
         }
+
+        [MenuItem("Driftline/Build Windows Themes Dev")]
+        public static void BuildWindowsThemes()
+        {
+            if(EditorApplication.isPlaying)throw new System.InvalidOperationException("Build in Edit Mode.");
+            AssetDatabase.SaveAssets();UnityEditor.SceneManagement.EditorSceneManager.SaveOpenScenes();
+            const string directory="Builds/Themed";Directory.CreateDirectory(directory);
+            var report=BuildPipeline.BuildPlayer(new[]{"Assets/Scenes/SampleScene.unity"},directory+"/Driftline-Themes.exe",BuildTarget.StandaloneWindows64,BuildOptions.Development);
+            if(report.summary.result==BuildResult.Succeeded)File.Copy("Assets/UI/Fonts/LICENSE.txt",directory+"/SourceHanSans-LICENSE.txt",true);
+            Directory.CreateDirectory("Docs/Validation/2026-10-15");
+            var record=new {result=report.summary.result.ToString(),bytes=report.summary.totalSize,errors=report.summary.totalErrors,warnings=report.summary.totalWarnings};
+            File.WriteAllText("Docs/Validation/2026-10-15/themes-build.json",Newtonsoft.Json.JsonConvert.SerializeObject(record));
+            if(report.summary.result!=BuildResult.Succeeded)Debug.LogError("Themed build failed: "+report.summary.result);
+        }
     }
 }

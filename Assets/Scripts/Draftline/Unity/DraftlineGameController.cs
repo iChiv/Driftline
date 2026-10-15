@@ -102,7 +102,7 @@ namespace Draftline.Unity
         {
             Application.runInBackground = true; // Also needed for a future LAN host.
             MatchLabels.Configure(Content);
-            DraftlineThemeApplier.Apply(DraftlineThemeApplier.CurrentId);
+            DraftlineThemeApplier.Apply(DraftlineThemeApplier.PreferredId);
             var piecesRoot = GameObject.Find("Pieces");
             if (piecesRoot != null)
             {
@@ -189,12 +189,13 @@ namespace Draftline.Unity
         private void StartMatch(PlayerColor[] active)
         {
             CancelPresentation();
-            DraftlineThemeApplier.Apply(DraftlineThemeApplier.CurrentId);
+            var selectedTheme=DraftlineThemeApplier.Apply(DraftlineThemeApplier.CurrentId);
             rules = new MatchRules(active);
             setupError = null;
             pendingStopDirection = null;
             recentEvents.Clear();
             warnings?.ClearAll();
+            UpdatePieceTemplate(selectedTheme);
             CreatePieceMaterials();
             cameraDirector?.ResetForMatch();
             IsPaused = false;
@@ -229,12 +230,22 @@ namespace Draftline.Unity
         }
 
         public void ShowError(string text) { setupError = text; gameUI?.Refresh(); }
+        private void UpdatePieceTemplate(BoardTheme theme)
+        {
+            if(theme!=null && theme.PiecePrefab!=null)pieceTemplate=theme.PiecePrefab;
+            else {
+                var root=GameObject.Find("Pieces");
+                var source=root!=null?root.transform.Find("Red/Pawn"):null;
+                if(source!=null)pieceTemplate=source.gameObject;
+            }
+        }
         public void SetPaused(bool paused) { IsPaused = paused; BoardInteraction?.Rebuild(); }
         public void ReturnToMenu()
         {
             CancelPresentation();
             lanRoom?.Leave();
             rules = null;
+            DraftlineThemeApplier.Apply(DraftlineThemeApplier.PreferredId);
             setupError = null;
             IsPaused = false;
             cameraDirector?.ResetForMatch();
@@ -354,7 +365,8 @@ namespace Draftline.Unity
                     view = visual.AddComponent<DraftlinePieceView>();
                     view.PieceId = piece.Id;
                     view.BaseScale = visual.transform.localScale;
-                    foreach (var renderer in visual.GetComponentsInChildren<Renderer>())
+                    var appearance=visual.GetComponent<ThemePieceAppearance>();
+                    foreach (var renderer in appearance!=null?appearance.FactionRenderers:visual.GetComponentsInChildren<Renderer>())
                         renderer.sharedMaterial = playerMaterials[(int)piece.Owner];
                     pieceViews.Add(piece.Id, view);
                 }
@@ -789,7 +801,7 @@ namespace Draftline.Unity
         private void ApplyRemoteUpdate(MatchState state, MatchEvent[] events)
         {
             if (!lanRoom.IsClientOnly) return;
-            if (rules == null) { CreatePieceMaterials(); cameraDirector.ResetForMatch(); }
+            if (rules == null) { UpdatePieceTemplate(DraftlineThemeApplier.Load(DraftlineThemeApplier.CurrentId)); CreatePieceMaterials(); cameraDirector.ResetForMatch(); }
             rules = MatchRules.FromSnapshot(state);
             rules.ReplaceEvents(events);
             BoardInteraction.StateChanged();

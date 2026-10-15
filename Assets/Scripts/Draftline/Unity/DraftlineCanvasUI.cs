@@ -19,6 +19,10 @@ namespace Draftline.Unity
         [Header("Match configuration")]
         public Dropdown[] SeatControls;
         public Dropdown Difficulty;
+        [Header("Board art — saved main menu controls")]
+        public Dropdown ThemeSelector;
+        public Text ThemeDescription, ThemeStory;
+        private BoardTheme[] themes;
         public Text[] SeatNames, SeatStories;
         [Header("HUD")]
         public Text TurnText, PhaseText, DiceText, HintText, LogText, ErrorText, ResultText;
@@ -60,6 +64,14 @@ namespace Draftline.Unity
             if (!bound)
             {
                 bound = true;
+                themes=DraftlineThemeApplier.Available;
+                if(ThemeSelector!=null) {
+                    ThemeSelector.ClearOptions();ThemeSelector.AddOptions(themes.Select(t=>t.ThemeName).ToList());
+                    ThemeSelector.onValueChanged.AddListener(index=> {
+                        if(controller.Rules!=null || controller.LanRoom.IsLanSession || index<0 || index>=themes.Length)return;
+                        DraftlineThemeApplier.SelectLocal(themes[index].ThemeId);Refresh();
+                    });
+                }
                 LocalGame.onClick.AddListener(OpenSetup);
                 Lan.onClick.AddListener(() => { lobbyOpen = true; setupOpen = false; controller.Session.Mode = GameMode.Lan; Refresh(); });
                 StartMatch.onClick.AddListener(() => { controller.BeginLocalMatch(); Refresh(); });
@@ -169,6 +181,11 @@ namespace Draftline.Unity
             var room = controller.LanRoom;
             var playing = rules != null;
             MainMenu.SetActive(!playing && !setupOpen && !lobbyOpen);
+            if(ThemeSelector!=null && themes!=null) {
+                ThemeSelector.interactable=!playing&&!room.IsLanSession;
+                var index=System.Array.FindIndex(themes,t=>t.ThemeId==DraftlineThemeApplier.CurrentId);
+                if(index>=0){ThemeSelector.SetValueWithoutNotify(index);if(ThemeDescription!=null)ThemeDescription.text=themes[index].Description;if(ThemeStory!=null)ThemeStory.text=themes[index].Description+"\n\n五子连线，或成为最后存活的一方。";}
+            }
             for (var i = 0; i < 4; i++)
             {
                 if (SeatNames != null && i < SeatNames.Length && SeatNames[i] != null) SeatNames[i].text = MatchLabels.Player((PlayerColor)i);

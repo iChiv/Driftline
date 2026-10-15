@@ -1,6 +1,8 @@
 # 两台 Windows 电脑局域网试玩
 
-推荐将 `Builds/Driftline-Windows-LAN.zip` 复制到第二台电脑并完整解压，两台运行其中的 `Driftline-Dev.exe`。项目内入口为 `Builds/Driftline-Dev.exe`；若手工复制，保留 Driftline-Dev_Data、UnityPlayer.dll、MonoBleedingEdge 和字体授权等依赖。不要使用历史 `DraftlineDemo.exe`。两台使用同一份构建，连接同一局域网。
+当前主题版请将 `Builds/Driftline-Themes-Windows.zip` 复制到第二台电脑并完整解压，两台运行其中的 `Driftline-Themes.exe`。项目内入口为 `Builds/Themed/Driftline-Themes.exe`；若手工复制，保留 Driftline-Themes_Data、UnityPlayer.dll、MonoBleedingEdge 和字体授权等依赖。`Driftline-Windows-LAN.zip` 是美术前基线归档，不与主题版混用；不要使用历史 `DraftlineDemo.exe`。
+
+房主先在主菜单选择棋盘美术主题，再创建房间；客户端进入后自动跟随房主。房间内/对局中不能更换主题，返回菜单后恢复各自的本地偏好。当前主题契约 `board19-v03-themes-3`，两端使用同一份构建并连接同一局域网。
 
 1. 房主打开游戏 → 局域网，选 2/3/4 方。先用 2 方测试人类对局；再用 4 方并启用“空位由电脑补齐”。默认端口 `7777`。
 2. 点击创建房间，将房间页显示的实际 IPv4 和端口告诉另一位玩家。可能显示多个网卡地址，应使用两台共同连接的 Wi-Fi/以太网地址。

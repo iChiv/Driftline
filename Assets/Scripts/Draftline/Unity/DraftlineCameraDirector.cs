@@ -53,6 +53,7 @@ namespace Draftline.Unity
             dice = CreateCamera("Dice Lazy Follow", new Vector3(0, 1.9f, 0), 50f, 13f, 48f, 0);
             // Manual pure top-down for precise cell reading.
             topDown = CreateCamera("Board Top Down", new Vector3(0, 0, -2f), 89.99f, 27.5f, 55f, 0);
+            ApplyThemeFraming(DraftlineThemeApplier.Load(DraftlineThemeApplier.CurrentId??DraftlineThemeApplier.PreferredId));
             // Victory is the only cut away from the board: slow push-in and orbit.
             victory = CreateCamera("Victory Orbit", Vector3.zero, 55f, 10f, 50f, 0);
 
@@ -167,6 +168,13 @@ namespace Draftline.Unity
         }
 
         public bool IsManualTopDown => manualTopDown;
+        public void ApplyThemeFraming(BoardTheme theme)
+        {
+            if(theme==null)return;
+            var distance=theme.ThemeId=="tabletop"?27f:theme.OverviewDistance;
+            if(overview!=null)overview.transform.position=FramedPosition(new Vector3(0,0,-2),72,distance);
+            if(topDown!=null)topDown.transform.position=FramedPosition(new Vector3(0,0,-2),89.99f,distance+.5f);
+        }
         public void ResetForMatch()
         {
             StopAllCoroutines();

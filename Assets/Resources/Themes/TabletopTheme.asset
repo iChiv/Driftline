@@ -13,7 +13,14 @@ MonoBehaviour:
   m_Name: TabletopTheme
   m_EditorClassIdentifier: 
   ThemeId: tabletop
-  ThemeName: "\u5730\u7262\u63A2\u9669"
+  ThemeName: "\u754C\u94A5\u68CB\u5EAD \xB7 \u684C\u9762"
+  Description: "\u53E4\u8001\u7684\u754C\u94A5\u518D\u6B21\u82CF\u9192\u3002\u56DB\u652F\u63A2\u7D22\u961F\u64CD\u7EB5\u7B26\u6587\u5080\u5121\uFF0C\u5728\u4E0D\u65AD\u53D8\u5316\u7684\u673A\u5173\u68CB\u5EAD\u4E2D\u4E89\u593A\u5B83\u3002"
+  Version: 1
+  SortOrder: 0
+  PresentationPrefab: {fileID: 0}
+  PiecePrefab: {fileID: 0}
+  BackgroundColor: {r: 0.055, g: 0.07, b: 0.09, a: 1}
+  AmbientColor: {r: 0.4, g: 0.45, b: 0.5, a: 1}
   SceneLayerName: Tabletop
   Implemented: 1
   WallMaterial: {fileID: 2100000, guid: 1504a5083b858a04c9167f29b2e1c07a, type: 2}

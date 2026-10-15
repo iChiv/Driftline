@@ -108,6 +108,8 @@ namespace Draftline.Unity
     public sealed class RoomStatePacket
     {
         public string sessionId, matchId;
+        public string themeId;
+        public int themeVersion;
         public RoomMemberPacket[] members;
         public int[] controls;
         public bool fillComputers;

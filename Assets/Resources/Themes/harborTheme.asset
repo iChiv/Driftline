@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6f5818033a80b94fa2ece976b948559, type: 3}
+  m_Name: harborTheme
+  m_EditorClassIdentifier: 
+  ThemeId: harbor
+  ThemeName: "\u6F6E\u6C50\u6E2F\u53E3"
+  Description: "\u6CCA\u8239\u3001\u4ED3\u5C4B\u4E0E\u540A\u673A\u73AF\u62B1\u77F3\u8D28\u96C6\u6563\u573A\u3002\u56DB\u652F\u8239\u961F\u6CBF\u8D27\u8FD0\u4FE1\u6807\u4E89\u593A\u754C\u94A5\uFF0C\u5347\u964D\u9632\u6C34\u95F8\u4F9D\u65E7\u51B3\u5B9A\u6BCF\u4E00\u6761\u751F\u8DEF\u3002"
+  Version: 1
+  SortOrder: 5
+  PresentationPrefab: {fileID: 2190172839182896381, guid: 8e23bd27fedc2e0458b28ddd0472e51d, type: 3}
+  PiecePrefab: {fileID: 4813979163454975840, guid: 26508570561aeca419fbda1b87ab9a63, type: 3}
+  BackgroundColor: {r: 0.055, g: 0.2, b: 0.27, a: 1}
+  AmbientColor: {r: 0.56, g: 0.66, b: 0.72, a: 1}
+  SceneLayerName: harbor
+  Implemented: 1
+  WallMaterial: {fileID: 0}
+  RotatingWallMaterial: {fileID: 0}
+  TableMaterial: {fileID: 0}
+  RimMaterial: {fileID: 0}
+  PortalA: {fileID: 0}
+  PortalB: {fileID: 0}
+  PortalC: {fileID: 0}
+  PortalD: {fileID: 0}
+  FactionMaterials:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  Props: []

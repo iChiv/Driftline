@@ -1,3 +1,9 @@
+# 棋盘主题入口（2026-10-15）
+
+主菜单新增 `MainMenuPanel/MenuCard/BoardThemeSelector`，六个已实现选项由 `Resources/Themes` 的 BoardTheme 配置提供。下拉背景、字号、行高、模板和位置仍在 UIRoot Prefab 中编辑；主题名称/故事改对应 Theme asset。选择后立即预览并保存本地偏好，对局中锁定；LAN 客户端跟随房主，返回菜单恢复本地主题。
+
+五个场景模型的编辑入口与边界见 [主题制作记录](Art/THEME_IMPLEMENTATION.md)。
+
 # Driftline UI 编辑入口
 
 当前正式 UI 使用 uGUI，位于 `Assets/Scenes/SampleScene.unity` 中的 **UIRoot**，源 Prefab 是 `Assets/UI/Prefabs/UIRoot.prefab`。运行时只绑定数据和事件，不重新搭建页面。原 UXML/USS 保留作迁移参考，正式场景不再挂 UIDocument。

@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6f5818033a80b94fa2ece976b948559, type: 3}
+  m_Name: forestTheme
+  m_EditorClassIdentifier: 
+  ThemeId: forest
+  ThemeName: "\u66AE\u6797\u796D\u575B"
+  Description: "\u66AE\u8272\u843D\u5728\u88AB\u68EE\u6797\u6536\u56DE\u7684\u53E4\u4EE3\u77F3\u5EAD\u3002\u7B26\u77F3\u4E0E\u6811\u6839\u4ECD\u5B88\u7740\u754C\u94A5\uFF0C\u56DB\u5904\u8425\u706B\u4E4B\u95F4\uFF0C\u65E7\u5C01\u5370\u6309\u7167\u539F\u6709\u8282\u5F8B\u5347\u8D77\u3002"
+  Version: 1
+  SortOrder: 4
+  PresentationPrefab: {fileID: 774432132000079028, guid: 6194180729b14c546a211ff6036ad22d, type: 3}
+  PiecePrefab: {fileID: 5921290849879315070, guid: e3f51fd21dfbb0247a1c6648d550bbee, type: 3}
+  BackgroundColor: {r: 0.055, g: 0.11, b: 0.1, a: 1}
+  AmbientColor: {r: 0.53, g: 0.61, b: 0.51, a: 1}
+  SceneLayerName: forest
+  Implemented: 1
+  WallMaterial: {fileID: 0}
+  RotatingWallMaterial: {fileID: 0}
+  TableMaterial: {fileID: 0}
+  RimMaterial: {fileID: 0}
+  PortalA: {fileID: 0}
+  PortalB: {fileID: 0}
+  PortalC: {fileID: 0}
+  PortalD: {fileID: 0}
+  FactionMaterials:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  Props: []

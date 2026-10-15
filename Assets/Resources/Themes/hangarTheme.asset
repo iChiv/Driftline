@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6f5818033a80b94fa2ece976b948559, type: 3}
+  m_Name: hangarTheme
+  m_EditorClassIdentifier: 
+  ThemeId: hangar
+  ThemeName: "\u661F\u8230\u673A\u5E93"
+  Description: "\u5BFC\u822A\u6838\u5FC3\u5C06\u8BAD\u7EC3\u7532\u677F\u6539\u9020\u6210\u76F8\u4F4D\u6218\u573A\u3002\u68C0\u4FEE\u533A\u4E0E\u8D27\u8FD0\u8231\u56F4\u7ED5\u68CB\u9635\u8FD0\u8F6C\uFF0C\u6743\u9650\u706F\u6807\u793A\u56DB\u961F\u7684\u90E8\u7F72\u901A\u9053\u3002"
+  Version: 1
+  SortOrder: 3
+  PresentationPrefab: {fileID: 6094613375013151755, guid: 81c4c44fb9dc8e14bbfc266a38c8d2d4, type: 3}
+  PiecePrefab: {fileID: 8606722368996996441, guid: 9fb224a5e1fabc248b8dad4f12c0bcd6, type: 3}
+  BackgroundColor: {r: 0.025, g: 0.045, b: 0.085, a: 1}
+  AmbientColor: {r: 0.52, g: 0.62, b: 0.73, a: 1}
+  SceneLayerName: hangar
+  Implemented: 1
+  WallMaterial: {fileID: 0}
+  RotatingWallMaterial: {fileID: 0}
+  TableMaterial: {fileID: 0}
+  RimMaterial: {fileID: 0}
+  PortalA: {fileID: 0}
+  PortalB: {fileID: 0}
+  PortalC: {fileID: 0}
+  PortalD: {fileID: 0}
+  FactionMaterials:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  Props: []

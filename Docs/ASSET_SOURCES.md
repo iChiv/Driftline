@@ -1,3 +1,7 @@
+# 2026-10-15 场所主题补充
+
+五个主题新增复用项目现有 Polyperfect Low Poly Ultimate Pack（Military / WW2 / People / SciFi / Nature / Pirates / Fantasy / Medieval）、Polyworks（Dungeon / SciFi / Druid Home）以及 KayKit Dungeon 模块。实际使用的源模型通过 `Assets/Themes/Battlefields/Adapters` 的 Prefab Variant 追溯；项目自有 URP 材质和静止几何副本分别在 Materials / Meshes。第三方原包未改写，没有额外下载、购买或引入新的外部模型许可。完整构成见 [制作记录](Art/THEME_IMPLEMENTATION.md)。以下为之前功能版本的来源记录。
+
 # 新增公开资产
 
 ## Source Han Sans CN Regular
