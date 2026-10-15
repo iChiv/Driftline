@@ -1,0 +1,1376 @@
+{
+  "date": "2026-10-15",
+  "counting": "Raw file counts; material/textured and atlased variants are not unique models.",
+  "packs": {
+    "Polyworks": {
+      "root": "Assets/Off Axis Studios/Polyworks",
+      "filesByType": {
+        "png": 73,
+        "mat": 2111,
+        "fbx": 8403,
+        "prefab": 8977
+      }
+    },
+    "Low Poly Ultimate": {
+      "root": "Assets/polyperfect/Low Poly Ultimate Pack",
+      "filesByType": {
+        "mat": 69,
+        "prefab": 6239,
+        "png": 10,
+        "fbx": 6225
+      }
+    },
+    "KayKit Dungeon": {
+      "root": "Assets/KayKit/Packs/KayKit - Dungeon Remastered Pack (for Unity)",
+      "filesByType": {
+        "mat": 2,
+        "png": 8,
+        "fbx": 283,
+        "prefab": 283
+      }
+    },
+    "Cartoon FX": {
+      "root": "Assets/JMO Assets/Cartoon FX Remaster",
+      "filesByType": {
+        "mat": 195,
+        "png": 162,
+        "prefab": 840,
+        "fbx": 13
+      }
+    },
+    "Feel": {
+      "root": "Assets/Feel",
+      "filesByType": {
+        "png": 300,
+        "wav": 233,
+        "prefab": 73,
+        "mat": 258,
+        "fbx": 35,
+        "tga": 4,
+        "obj": 1
+      }
+    },
+    "Dice": {
+      "root": "Assets/Dice_6",
+      "filesByType": {
+        "mat": 5,
+        "fbx": 1,
+        "prefab": 5,
+        "png": 60
+      }
+    },
+    "Casual Sounds": {
+      "root": "Assets/Casual Game Sounds U6",
+      "filesByType": {
+        "wav": 50
+      }
+    },
+    "Project Resources": {
+      "root": "Assets/Resources",
+      "filesByType": {
+        "prefab": 3,
+        "mat": 30,
+        "wav": 11,
+        "png": 4
+      }
+    }
+  },
+  "primaryPrefabCategories": [
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Amusement_Park_T",
+      "count": 31,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Amusement_Park_T/Building_Haunted_House.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Amusement_Park_T/Bumper_Cars_Booth.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Amusement_Park_T/Bumper_Car_Blue.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Amusement_Park_T/Bumper_Car_Red.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Amusement_Park_T/Bumper_Car_Yellow.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Amusement_Park_T/Burger_Stall.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Amusement_Park_T/Carousel_Coaster.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Amusement_Park_T/Circus_Wagon.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Animals_T",
+      "count": 28,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Animals_T/Bear_Brown.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Animals_T/Bear_Polar.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Animals_T/Butterfly.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Animals_T/Chick.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Animals_T/Cow.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Animals_T/Crab.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Animals_T/Deer.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Animals_T/Dog.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Apocalypse_T",
+      "count": 203,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Apocalypse_T/Atomic_Sign.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Apocalypse_T/Barrel.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Apocalypse_T/Barrel_Empty.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Apocalypse_T/Barricade_Window.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Apocalypse_T/Barrier_Concrete.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Apocalypse_T/Barrier_Concrete_Demaged.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Apocalypse_T/Barrier_Concrete_Tank.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Apocalypse_T/Bath_Broken.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Beach_T",
+      "count": 28,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Beach_T/Ball_Beach.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Beach_T/Beach_Bag.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Beach_T/Buoy.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Beach_T/Cabin_Beach.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Beach_T/Flip_Flops.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Beach_T/Float.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Beach_T/Inflatable_Crocodile.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Beach_T/Inflatable_Flamingo_Big.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Buildings_T",
+      "count": 235,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Buildings_T/Airport_Control_Tower.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Buildings_T/Airport_Hangar.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Buildings_T/Airport_Jet_Bridge.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Buildings_T/Airport_Terminal.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Buildings_T/Bar_Tropic.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Buildings_T/Building_Antique_China.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Buildings_T/Building_Apartment_China.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Buildings_T/Building_Bank.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Construction_T",
+      "count": 57,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Construction_T/Beam_Large.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Construction_T/Brick_Concrete.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Construction_T/Brick_Concrete_Stack.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Construction_T/Brick_Holes.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Construction_T/Brick_Holes_Stack.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Construction_T/Brick_Plain.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Construction_T/Brick_Plain_Stack.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Construction_T/Bucket_Paint_Large.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Dishes_T",
+      "count": 32,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Dishes_T/Board_Cutting.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Dishes_T/Bowl_Salad.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Dishes_T/Bowl_Serving.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Dishes_T/Fork_Carving.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Dishes_T/Knife_Holder.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Dishes_T/Knife_Kitchen_Bread.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Dishes_T/Knife_Kitchen_Chopper.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Dishes_T/Knife_Kitchen_Large.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Drinks_T",
+      "count": 38,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Drinks_T/Beer.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Drinks_T/Coffee_Cup.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Drinks_T/Coffee_Cup_Paper.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Drinks_T/Cup_Plastic.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Drinks_T/Cup_Plastic_Bubble_Tea.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Drinks_T/Cup_Plastic_Frappuccino.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Drinks_T/Cup_Plastic_Frappuccino_Lid.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Drinks_T/Cup_Plastic_Full.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Egypt_T",
+      "count": 38,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Egypt_T/Carpet_Rolled.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Egypt_T/Dagger_Egypt.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Egypt_T/Egypt_Amphora_Simple.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Egypt_T/Egypt_Amphora_Tall.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Egypt_T/Egypt_Bowl_Spice.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Egypt_T/Egypt_Bowl_Spice_Full.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Egypt_T/Egypt_Crate.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Egypt_T/Egypt_Gate.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Electronics_T",
+      "count": 67,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Electronics_T/Arcade_Machine_Dance.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Electronics_T/Arcade_Machine_Frog.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Electronics_T/Arcade_Machine_Race.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Electronics_T/Arcade_Machine_Shooter.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Electronics_T/Camera_Dslr.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Electronics_T/Camera_Dslr_Objective_Big.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Electronics_T/Camera_Dslr_Objective_Small.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Electronics_T/Cartridge_Game_A.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Empire_T",
+      "count": 292,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Empire_T/Armor_Roman_Empire.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Empire_T/Armor_Roman_Leader_Empire.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Empire_T/Armor_Stand_Greek_Empire.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Empire_T/Armor_Stand_Spartan_Empire.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Empire_T/Atrium_Empire.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Empire_T/Banner_Anchor_Empire.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Empire_T/Banner_Arc_Double_Empire.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Empire_T/Banner_Arc_Square_Big_Empire.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Fantasy_T",
+      "count": 81,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Fantasy_T/Altar.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Fantasy_T/Bed_Big_Wood.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Fantasy_T/Bed_Prison.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Fantasy_T/Bed_Wood.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Fantasy_T/Bench_Broken_Wood.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Fantasy_T/Bench_Wood.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Fantasy_T/Books_Pile.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Fantasy_T/Book_Closed.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Farm_T",
+      "count": 18,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Farm_T/Bucket_Milk.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Farm_T/Building_Forester_House.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Farm_T/Building_Warehouse.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Farm_T/Car_Truck_Logging.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Farm_T/Debarker.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Farm_T/Farm_Flower_Bed.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Farm_T/Farm_House.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Farm_T/Farm_Silo.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Food_T",
+      "count": 55,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Food_T/Apple.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Food_T/Apple_Core.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Food_T/Banana.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Food_T/Banana_Peel.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Food_T/Bread_Round.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Food_T/Bread_Toast.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Food_T/Burger.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Food_T/Can_Beans.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Furniture_T",
+      "count": 193,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Furniture_T/Armchair_Modern.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Furniture_T/Bag_Storage_Clothes.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Furniture_T/Bag_Storage_Small.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Furniture_T/Bag_Storage_Towels.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Furniture_T/Bath.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Furniture_T/Bath_Space.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Furniture_T/Bed_Bunk_Kids_Metal.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Furniture_T/Bed_Bunk_Kids_Old.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "India_T",
+      "count": 20,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/India_T/Building_Lotus_India.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/India_T/Building_Street2_India.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/India_T/Building_Street_India.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/India_T/Gate_India.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/India_T/Hindu_Palace_Small.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/India_T/Hindu_Pillars_Corner.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/India_T/Hindu_Pillars_Edge.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/India_T/Hindu_Pillars_Middle.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Japan_T",
+      "count": 32,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Japan_T/Bamboo.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Japan_T/Bamboo_Leaves.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Japan_T/Base_Japan_Edge_Medium.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Japan_T/Base_Japan_Edge_Small.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Japan_T/Base_Japan_Elbow_Medium.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Japan_T/Base_Japan_Medium.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Japan_T/Base_Japan_Small.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Japan_T/Bridge_Japan.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Landmarks_T",
+      "count": 36,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Landmarks_T/BigBen_Landmark.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Landmarks_T/Bridge_GoldenGate_Landmark.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Landmarks_T/Cathedral_Florence_Landmark.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Landmarks_T/Cathedral_Moscow_Landmark.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Landmarks_T/Cathedral_NotreDame_Landmark.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Landmarks_T/CNTower_Landmark.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Landmarks_T/EiffelTower_Landmark.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Landmarks_T/HagiaSophia_Landmark.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Medieval_T",
+      "count": 41,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Medieval_T/Ballista.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Medieval_T/Bridge_Medieval_Stone.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Medieval_T/Cannon.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Medieval_T/Cannonball.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Medieval_T/Cannonballs.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Medieval_T/Carriage.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Medieval_T/Castle_Medieval.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Medieval_T/Catapult.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Military_T",
+      "count": 8,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Military_T/Military_Barracks.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Military_T/Military_Gate.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Military_T/Military_Headquarters.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Military_T/Military_Tent.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Military_T/Military_Tower.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Military_T/Military_Truck.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Military_T/Military_Truck_Cover.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Military_T/Military_Wall.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Music_T",
+      "count": 42,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Music_T/Banjo.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Music_T/Bass_Guitar.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Music_T/Clarinet.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Music_T/Dj_Controller.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Music_T/Double_Bass.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Music_T/Drum_Bass.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Music_T/Drum_Cymbal.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Music_T/Drum_Snare.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Nature_T",
+      "count": 257,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Nature_T/Lava_Brick.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Nature_T/Rain.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Nature_T/Water_Wave_Circle.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Nature_T/Clouds_T/Cloud_Big.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Nature_T/Clouds_T/Cloud_Fluffy.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Nature_T/Clouds_T/Cloud_Long.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Nature_T/Clouds_T/Cloud_Simple.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Nature_T/Clouds_T/Cloud_Small.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "People_T",
+      "count": 243,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/People_T/Alien_Ufo.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/People_T/Boy_Beach.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/People_T/Boy_Shirt.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/People_T/Boy_Sport.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/People_T/Giant.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/People_T/Girl_Beach.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/People_T/Girl_Skirt.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/People_T/Girl_Winter.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Pirates_T",
+      "count": 25,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Pirates_T/Bungalov.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Pirates_T/Cage_Hanging.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Pirates_T/Crane_Wood.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Pirates_T/Dock_Wood.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Pirates_T/House_Pirate_Big.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Pirates_T/House_Pirate_Medium.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Pirates_T/House_Pirate_New.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Pirates_T/House_Pirate_New_Small.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Props_T",
+      "count": 119,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Props_T/Anchor.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Props_T/Cap_Baseball.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Props_T/Cat_Ball.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Props_T/Duct_Tape.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Props_T/Fence_Vineyard.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Props_T/Flashlight.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Props_T/Fountain.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Props_T/Guidepost.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Racing_T",
+      "count": 12,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Racing_T/Barrier_Concrete_Glass.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Racing_T/Barrier_Traffic.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Racing_T/Building_Race_Track.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Racing_T/Building_Race_Track_Long.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Racing_T/Tile_Race_Track_Pit_Lane_Start.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Racing_T/Tile_Race_Track_Single_Pit_Lane.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Racing_T/Tire_Barrier_Race.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Racing_T/Tire_Pile.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Resources_T",
+      "count": 25,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Resources_T/Aluminium.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Resources_T/Bolts.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Resources_T/Carbon.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Resources_T/Carbon_Fiber.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Resources_T/Conductive_Wire.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Resources_T/Crater_Water.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Resources_T/Deposit_Salt.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Resources_T/Epoxi_Resin.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Roman_T",
+      "count": 2,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Roman_T/Pillar_Doric_Big.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Roman_T/Pillar_Ionic.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Scifi_T",
+      "count": 287,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Scifi_T/Belt_Moving_Column.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Scifi_T/Belt_Moving_Connector.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Scifi_T/Belt_Moving_Curve.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Scifi_T/Belt_Moving_Curve_Up.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Scifi_T/Belt_Moving_Straight.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Scifi_T/Belt_Moving_Up.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Scifi_T/Matter_Manipulator.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Scifi_T/Scifi_Box.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Space_T",
+      "count": 15,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Space_T/Asteroid.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Space_T/Crater_Big.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Space_T/Crater_Deep.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Space_T/Flag_Big.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Space_T/Lunar_Rover.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Space_T/Moon.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Space_T/Planet_Earth.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Space_T/Planet_Ring.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Sport_T",
+      "count": 23,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Sport_T/American_Football_Gate.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Sport_T/Baseball_Bat.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Sport_T/Basketball.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Sport_T/Basketball_Stand.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Sport_T/Box_Glove.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Sport_T/Dart.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Sport_T/Dartboard.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Sport_T/Flag_Golf_Red.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Survival_T",
+      "count": 22,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Survival_T/Bag.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Survival_T/Battery_9v.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Survival_T/Battery_Car.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Survival_T/Bear_Trap.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Survival_T/Candle.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Survival_T/Cooker.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Survival_T/Drugs.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Survival_T/Fire.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Terrains_T",
+      "count": 67,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Terrains_T/Ground_Cracked_Desert.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Terrains_T/Ground_Cracked_Dirt.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Terrains_T/Ground_Cracked_Dry.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Terrains_T/Ground_Cracked_Sand.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Terrains_T/Hexagon_Land.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Terrains_T/Hexagon_Water.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Terrains_T/Mountains.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Terrains_T/Mountain_Desert.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Tiles_NB_T",
+      "count": 90,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tiles_NB_T/Tile_Bridge_Mainroad_Hill_Nb.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tiles_NB_T/Tile_Bridge_Road_Hill_Nb.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tiles_NB_T/Tile_Golf_Green_Circle_Nb.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tiles_NB_T/Tile_Golf_Green_Nb.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tiles_NB_T/Tile_Golf_Sand_Nb.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tiles_NB_T/Tile_Hill_Askew_Nb.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tiles_NB_T/Tile_Hill_Askew_Valley_Corner_Nb.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tiles_NB_T/Tile_Hill_Corner_Nb.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Tiles_T",
+      "count": 112,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tiles_T/Tile_Golf_Green.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tiles_T/Tile_Golf_Green_Circle.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tiles_T/Tile_Golf_Sand.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tiles_T/Tile_Hill.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tiles_T/Tile_Hill_Askew.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tiles_T/Tile_Hill_Askew_Valley_Corner.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tiles_T/Tile_Hill_Corner.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tiles_T/Tile_Hill_Curve.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Tools_T",
+      "count": 45,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tools_T/Anvil.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tools_T/Axe.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tools_T/Broom.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tools_T/Brush_Round.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tools_T/Brush_Round_Paint.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tools_T/Brush_Square.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tools_T/Brush_Square_Paint.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tools_T/Brush_Straight_Medium.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Tribal_T",
+      "count": 36,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tribal_T/Axe_Tribal.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tribal_T/Bridge_Tribal_Tier1.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tribal_T/Bridge_Tribal_Tier2.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tribal_T/Bridge_Tribal_Tier3.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tribal_T/Bridge_Tribal_Tier4.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tribal_T/Club_Tribal.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tribal_T/Cookingpot_Tribal.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Tribal_T/Egg_Fried.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Vehicles_T",
+      "count": 93,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Vehicles_T/Baby_Carriage.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Vehicles_T/Bike_Modern.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Vehicles_T/Bike_Old.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Vehicles_T/Lawn_Mower.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Vehicles_T/Lawn_Mower_Ride.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Vehicles_T/Motorbike_Classic.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Vehicles_T/Motorbike_Old.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Vehicles_T/Scooter_Kick.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "WW2_T",
+      "count": 18,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/WW2_T/Ammo_Crate_Pak.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/WW2_T/Barricade_Tank.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/WW2_T/Bunker_Big.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/WW2_T/Bunker_Medium.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/WW2_T/Helmet_Ge.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/WW2_T/Helmet_Us.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/WW2_T/Jeep_Willys.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/WW2_T/Log_Post.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Weapons_T",
+      "count": 55,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Weapons_T/Ak_47.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Weapons_T/Ammo_Box_Bullets.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Weapons_T/Ammo_Box_Bullets_Open.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Weapons_T/Ammo_Box_Explosives.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Weapons_T/Ammo_Grenade_Airburst.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Weapons_T/Ammo_Grenade_Flare.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Weapons_T/Ammo_Grenade_HE.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Weapons_T/Ammo_Grenade_incendiary.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Western_T",
+      "count": 21,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Western_T/Bank_Western.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Western_T/Barrel_Old.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Western_T/Canoe.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Western_T/Church_Western.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Western_T/Dryer.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Western_T/Gunsmith_Western.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Western_T/Horse_Rest.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Western_T/Horse_Wagon.prefab"
+      ]
+    },
+    {
+      "pack": "Low Poly Ultimate",
+      "category": "Zulu_T",
+      "count": 14,
+      "examples": [
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Zulu_T/Balloon_Spotter.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Zulu_T/Blockhouse_General_Major.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Zulu_T/Cannon_Naval.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Zulu_T/Cannon_Pounder.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Zulu_T/Cannon_Wagon.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Zulu_T/Club_Zulu.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Zulu_T/Rifle_British.prefab",
+        "Assets/polyperfect/Low Poly Ultimate Pack/_T/Prefabs_T/Zulu_T/Shield_Zulu.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Abstract",
+      "count": 87,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Abstract/Abstract_Modular_Alcove_Base_1.0_Beige_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Abstract/Abstract_Modular_Alcove_Top_1.0_Beige_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Abstract/Abstract_Modular_Archway_Dual_1.0_Beige_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Abstract/Abstract_Modular_Archway_Quad_1.0_Beige_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Abstract/Abstract_Modular_Archway_Single_1.0_Beige_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Abstract/Abstract_Modular_Archway_Single_1.5_Beige_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Abstract/Abstract_Modular_Archway_Support_1.0_Beige_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Abstract/Abstract_Modular_Battlements_1.0_Beige_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Ancient Ruins",
+      "count": 110,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Ancient Ruins/Prop_Building_Eastern_Base_Floor_Roof_Block_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Ancient Ruins/Prop_Building_Eastern_Base_Roof_Dome_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Ancient Ruins/Prop_Building_Eastern_Base_Wall_Block_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Ancient Ruins/Prop_Building_Eastern_Entrance_Base_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Ancient Ruins/Prop_Building_Eastern_Facade_Arch_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Ancient Ruins/Prop_Building_Eastern_Facade_Column_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Ancient Ruins/Prop_Building_Eastern_Facade_Ornamental_Block_Corner_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Ancient Ruins/Prop_Building_Eastern_Free_Standing_Arches_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Animals",
+      "count": 2,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Animals/Animal_Fish_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Animals/Animal_Snail_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Asian Additional",
+      "count": 239,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Asian Additional/Asian_Building_Castle_Steps_Base_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Asian Additional/Asian_Building_Castle_Stone_Base_Sloped_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Asian Additional/Asian_Building_Castle_Stone_Base_Sloped_Corner_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Asian Additional/Asian_Building_Castle_Stone_Base_Sloped_Corner_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Asian Additional/Asian_Building_Castle_Stone_Base_Sloped_Side_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Asian Additional/Asian_Building_Castle_Stone_Base_Sloped_Side_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Asian Additional/Asian_Building_Castle_Stone_Base_Sloped_Side_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Asian Additional/Asian_Building_Temple_Pagoda_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Boardgame",
+      "count": 98,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Boardgame/Boardgame_Chess_Checkers_Board_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Boardgame/Boardgame_Chess_Piece_Bishop_Black_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Boardgame/Boardgame_Chess_Piece_Bishop_White_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Boardgame/Boardgame_Chess_Piece_Castle_Rook_Black_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Boardgame/Boardgame_Chess_Piece_Castle_Rook_White_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Boardgame/Boardgame_Chess_Piece_King_Black_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Boardgame/Boardgame_Chess_Piece_King_White_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Boardgame/Boardgame_Chess_Piece_Knight_Black_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Bones",
+      "count": 24,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Bones/Prop_Bones_Beast_Enormous_Broken_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Bones/Prop_Bones_Beast_Enormous_Broken_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Bones/Prop_Bones_Beast_Enormous_Broken_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Bones/Prop_Bones_Beast_Enormous_Broken_04_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Bones/Prop_Bones_Beast_Hip_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Bones/Prop_Bones_Beast_Ribs_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Bones/Prop_Bones_Beast_Ribs_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Bones/Prop_Bones_Beast_Ribs_03_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Bridges",
+      "count": 4,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Bridges/Prop_Bridge_Stone_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Bridges/Prop_Bridge_Wooden_Hanging_Long_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Bridges/Prop_Bridge_Wooden_Hanging_Short_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Bridges/Prop_Walkway_Timber_Simple_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Buildings",
+      "count": 120,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Buildings/Building_Bollard_Castle_Large_Stone_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Buildings/Building_Castle_Joining_Bridge_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Buildings/Building_Castle_Platform_Building_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Buildings/Building_Castle_Platform_Building_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Buildings/Building_Castle_Platform_Columns_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Buildings/Building_Castle_Tower_Base_Large_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Buildings/Building_Castle_Tower_Base_Small_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Buildings/Building_Castle_Tower_Keep_Top_Large_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Cave Lair",
+      "count": 138,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Cave Lair/Cave_Lair_Cave_Stone_Block_Eroded_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Cave Lair/Cave_Lair_Cave_Stone_Block_Eroded_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Cave Lair/Cave_Lair_Cave_Stone_Block_Eroded_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Cave Lair/Cave_Lair_Cave_Stone_Block_Eroded_04_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Cave Lair/Cave_Lair_Cave_Stone_Block_Eroded_05_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Cave Lair/Cave_Lair_Cave_Stone_Block_Eroded_06_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Cave Lair/Cave_Lair_Cave_Stone_Pillar_Damaged_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Cave Lair/Cave_Lair_Cave_Stone_Pillar_Damaged_02_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Christmas",
+      "count": 50,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Christmas/Prop_Christmas_Candy_Cane_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Christmas/Prop_Christmas_Candy_Cane_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Christmas/Prop_Christmas_Cookie_Plate_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Christmas/Prop_Christmas_Gingerbread_Man_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Christmas/Prop_Christmas_Ornament_Bauble_Burnished_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Christmas/Prop_Christmas_Ornament_Bauble_Cream_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Christmas/Prop_Christmas_Ornament_Bauble_Gold_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Christmas/Prop_Christmas_Ornament_Bauble_Red_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Clouds",
+      "count": 16,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Clouds/Cloud_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Clouds/Cloud_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Clouds/Cloud_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Clouds/Cloud_04_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Clouds/Cloud_05_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Clouds/Cloud_06_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Clouds/Cloud_Wisp_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Clouds/Cloud_Wisp_02_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Coral",
+      "count": 6,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Coral/Coral_Clump_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Coral/Coral_Plate_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Coral/Coral_Plate_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Coral/Coral_Plate_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Coral/Coral_Stem_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Coral/Coral_Upright_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Crystals",
+      "count": 35,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Crystals/Prop_Crystal_Dark_Blue_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Crystals/Prop_Crystal_Green_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Crystals/Prop_Crystal_Light_Blue_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Crystals/Prop_Crystal_Orange_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Crystals/Prop_Crystal_Pink_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Crystals/Prop_Crystal_Purple_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Crystals/Prop_Crystal_Red_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Crystals/Prop_Crystal_Singular_Purple_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Dark Fantasy",
+      "count": 107,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Dark Fantasy/Prop_Bone_Horn_Tusk_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Dark Fantasy/Prop_Bone_Horn_Tusk_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Dark Fantasy/Prop_Bone_Horn_Tusk_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Dark Fantasy/Prop_Bone_Horn_Tusk_Rope_Tied_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Dark Fantasy/Prop_Building_Canopy_Canvas_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Dark Fantasy/Prop_Building_Canopy_Canvas_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Dark Fantasy/Prop_Building_Canopy_Canvas_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Dark Fantasy/Prop_Building_Dark_Fantasy_Fort_Adornment_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Druid Home",
+      "count": 97,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Druid Home/Prop_Adornment_Gold_Sun_Moon_Crescent_Medal_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Druid Home/Prop_Adornment_Gold_Sun_Moon_Crescent_Medal_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Druid Home/Prop_Adornment_Gold_Sun_Moon_Crescent_Medal_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Druid Home/Prop_Crescent_Moon_Stylised_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Druid Home/Prop_Druid_Home_Dream_Catcher_Woven_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Druid Home/Prop_Furniture_Tribal_Stone_Seat_01_1_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Druid Home/Prop_Furniture_Tribal_Stone_Seat_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Druid Home/Prop_Furniture_Tribal_Stone_Table_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Dungeon",
+      "count": 378,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Dungeon/Building_Outer_Arch_Facade_Stone_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Dungeon/Building_Outer_Arch_Facade_Stone_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Dungeon/Building_Outer_Arch_Support_Stone_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Dungeon/Building_Outer_Support_Arch_Stone_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Dungeon/Building_Prop_Bridge_Stone_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Dungeon/Building_Prop_Corner_Stone_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Dungeon/Building_Prop_Platform_Trim_Stone_Corner_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Dungeon/Building_Prop_Platform_Trim_Stone_Corner_02_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Fences",
+      "count": 19,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Fences/Prop_Fence_Steel_Pole_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Fences/Prop_Fence_Steel_Spiked_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Fences/Prop_Fence_Steel_Spiked_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Fences/Prop_Fence_Steel_Spiked_Gate_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Fences/Prop_Fence_Steel_Spiked_Gate_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Fences/Prop_Fence_Stone_Cobbled_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Fences/Prop_Fence_Stone_Cobbled_Column_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Fences/Prop_Fence_Stone_Column_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Fruit & Veg",
+      "count": 9,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Fruit & Veg/Prop_Fruit_Apple_Red_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Fruit & Veg/Prop_Fruit_Banana_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Fruit & Veg/Prop_Fruit_Coconuts_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Fruit & Veg/Prop_Fruit_Lime_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Fruit & Veg/Prop_Fruit_Mango_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Fruit & Veg/Prop_Fruit_Papaya_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Fruit & Veg/Prop_Fruit_Pineapple_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Fruit & Veg/Prop_Vegetable_Pumpkin_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Graves",
+      "count": 35,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Graves/Prop_Coffin_Stone_Bottom_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Graves/Prop_Coffin_Stone_Closed_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Graves/Prop_Coffin_Stone_Top_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Graves/Prop_Coffin_Timber_Bottom_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Graves/Prop_Coffin_Timber_Closed_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Graves/Prop_Coffin_Timber_Top_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Graves/Prop_Crypt_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Graves/Prop_Gravestone_Plate_Stone_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Handrails",
+      "count": 9,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Handrails/Prop_Handrail_Stone_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Handrails/Prop_Handrail_Stone_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Handrails/Prop_Handrail_Stone_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Handrails/Prop_Handrail_Stone_04_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Handrails/Prop_Handrail_Stone_05_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Handrails/Prop_Handrail_Stone_06_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Handrails/Prop_Handrail_Stone_07_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Handrails/Prop_Handrail_Stone_08_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Industrial",
+      "count": 190,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Industrial/Prop_Industrial_Barrier_Striped_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Industrial/Prop_Industrial_Beams_Brace_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Industrial/Prop_Industrial_Beams_Brace_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Industrial/Prop_Industrial_Beams_Brace_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Industrial/Prop_Industrial_Beams_Brace_04_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Industrial/Prop_Industrial_Beams_Brace_05_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Industrial/Prop_Industrial_Beams_Brace_Half_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Industrial/Prop_Industrial_Beams_Brace_Half_02_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Props General",
+      "count": 78,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Props General/Prop_55_Gallon_Drum_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Props General/Prop_Altar_Crystal_Smooth_Stone_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Props General/Prop_Anvil_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Props General/Prop_Archway_Timber_Asian_Elven_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Props General/Prop_Axe_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Props General/Prop_Bag_Grain_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Props General/Prop_Bag_Grain_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Props General/Prop_Bag_Grain_03_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Prototype",
+      "count": 501,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Prototype/Proto_3D_Text_Dollar_Sign_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Prototype/Proto_3D_Text_Exclamation_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Prototype/Proto_3D_Text_Number_1_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Prototype/Proto_3D_Text_Number_2_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Prototype/Proto_3D_Text_Number_3_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Prototype/Proto_3D_Text_Question_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Prototype/Proto_Bullet_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Prototype/Proto_Card_ID_Security_Data_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "RPG Tiles",
+      "count": 156,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/RPG Tiles/RPG_Tiles_Crystal_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/RPG Tiles/RPG_Tiles_Hex_Building_Door_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/RPG Tiles/RPG_Tiles_Hex_Building_Door_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/RPG Tiles/RPG_Tiles_Hex_Building_Door_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/RPG Tiles/RPG_Tiles_Hex_Building_Door_04_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/RPG Tiles/RPG_Tiles_Hex_Building_Door_Raised_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/RPG Tiles/RPG_Tiles_Hex_Building_Door_Raised_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/RPG Tiles/RPG_Tiles_Hex_Building_Door_Raised_03_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Rocks",
+      "count": 298,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Rocks/Prop_Ore_Node_Blue_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Rocks/Prop_Ore_Node_Blue_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Rocks/Prop_Ore_Node_Blue_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Rocks/Prop_Ore_Node_Yellow_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Rocks/Prop_Ore_Node_Yellow_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Rocks/Prop_Ore_Node_Yellow_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Rocks/Rock_Archway_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Rocks/Rock_Archway_Ice_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Ruins",
+      "count": 25,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Ruins/Prop_Ruins_Archway_Sandstone_Half_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Ruins/Prop_Ruins_Archway_Sandstone_Half_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Ruins/Prop_Ruins_Archway_Stone_Full_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Ruins/Prop_Ruins_Archway_Stone_Half_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Ruins/Prop_Ruins_Archway_Stone_Half_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Ruins/Prop_Ruins_Bridge_Stone_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Ruins/Prop_Ruins_Bridge_Stone_Piece_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Ruins/Prop_Ruins_Bridge_Stone_Piece_02_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "SciFi",
+      "count": 163,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/SciFi/SciFi_Modular_Bed_Grey_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/SciFi/SciFi_Modular_Bed_White_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/SciFi/SciFi_Modular_Chair_Grey_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/SciFi/SciFi_Modular_Chair_Grey_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/SciFi/SciFi_Modular_Chair_White_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/SciFi/SciFi_Modular_Chair_White_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/SciFi/SciFi_Modular_Computer_Console_Control_Grey_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/SciFi/SciFi_Modular_Computer_Console_Control_White_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Skatepark",
+      "count": 76,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Skatepark/Skateboard_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Skatepark/Skate_Block_Double_Wave_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Skatepark/Skate_Block_Stairs_Rails_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Skatepark/Skate_Block_Top_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Skatepark/Skate_Block_Wave_High_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Skatepark/Skate_Block_Wave_High_Half_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Skatepark/Skate_Block_Wave_Low_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Skatepark/Skate_Block_Wave_Low_Half_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Statues",
+      "count": 12,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Statues/Prop_Statue_Angel_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Statues/Prop_Statue_Aphrodite_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Statues/Prop_Statue_Aphrodite_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Statues/Prop_Statue_Aphrodite_Bust_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Statues/Prop_Statue_Base_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Statues/Prop_Statue_Base_Rough_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Statues/Prop_Statue_Deity_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Statues/Prop_Statue_Gazelle_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Terrain",
+      "count": 286,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Terrain/Terrain_Bluff_Grass_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Terrain/Terrain_Bluff_Grass_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Terrain/Terrain_Bluff_Grass_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Terrain/Terrain_Bluff_Snow_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Terrain/Terrain_Bluff_Snow_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Terrain/Terrain_Bluff_Snow_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Terrain/Terrain_Cave_Dirt_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Terrain/Terrain_Cave_Grass_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Text Black",
+      "count": 103,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Black/GUI_Text_3D_Lower_a_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Black/GUI_Text_3D_Lower_b_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Black/GUI_Text_3D_Lower_c_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Black/GUI_Text_3D_Lower_d_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Black/GUI_Text_3D_Lower_e_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Black/GUI_Text_3D_Lower_f_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Black/GUI_Text_3D_Lower_g_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Black/GUI_Text_3D_Lower_h_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Text Blue 01",
+      "count": 103,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Blue 01/GUI_Text_3D_Lower_a_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Blue 01/GUI_Text_3D_Lower_b_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Blue 01/GUI_Text_3D_Lower_c_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Blue 01/GUI_Text_3D_Lower_d_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Blue 01/GUI_Text_3D_Lower_e_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Blue 01/GUI_Text_3D_Lower_f_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Blue 01/GUI_Text_3D_Lower_g_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Blue 01/GUI_Text_3D_Lower_h_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Text Blue 02",
+      "count": 103,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Blue 02/GUI_Text_3D_Lower_a_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Blue 02/GUI_Text_3D_Lower_b_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Blue 02/GUI_Text_3D_Lower_c_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Blue 02/GUI_Text_3D_Lower_d_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Blue 02/GUI_Text_3D_Lower_e_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Blue 02/GUI_Text_3D_Lower_f_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Blue 02/GUI_Text_3D_Lower_g_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Blue 02/GUI_Text_3D_Lower_h_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Text Cream",
+      "count": 103,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Cream/GUI_Text_3D_Lower_a_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Cream/GUI_Text_3D_Lower_b_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Cream/GUI_Text_3D_Lower_c_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Cream/GUI_Text_3D_Lower_d_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Cream/GUI_Text_3D_Lower_e_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Cream/GUI_Text_3D_Lower_f_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Cream/GUI_Text_3D_Lower_g_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Cream/GUI_Text_3D_Lower_h_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Text Green 01",
+      "count": 103,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Green 01/GUI_Text_3D_Lower_a_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Green 01/GUI_Text_3D_Lower_b_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Green 01/GUI_Text_3D_Lower_c_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Green 01/GUI_Text_3D_Lower_d_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Green 01/GUI_Text_3D_Lower_e_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Green 01/GUI_Text_3D_Lower_f_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Green 01/GUI_Text_3D_Lower_g_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Green 01/GUI_Text_3D_Lower_h_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Text Green 02",
+      "count": 103,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Green 02/GUI_Text_3D_Lower_a_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Green 02/GUI_Text_3D_Lower_b_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Green 02/GUI_Text_3D_Lower_c_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Green 02/GUI_Text_3D_Lower_d_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Green 02/GUI_Text_3D_Lower_e_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Green 02/GUI_Text_3D_Lower_f_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Green 02/GUI_Text_3D_Lower_g_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Green 02/GUI_Text_3D_Lower_h_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Text Orange",
+      "count": 103,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Orange/GUI_Text_3D_Lower_a_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Orange/GUI_Text_3D_Lower_b_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Orange/GUI_Text_3D_Lower_c_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Orange/GUI_Text_3D_Lower_d_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Orange/GUI_Text_3D_Lower_e_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Orange/GUI_Text_3D_Lower_f_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Orange/GUI_Text_3D_Lower_g_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Orange/GUI_Text_3D_Lower_h_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Text Pink",
+      "count": 103,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Pink/GUI_Text_3D_Lower_a_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Pink/GUI_Text_3D_Lower_b_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Pink/GUI_Text_3D_Lower_c_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Pink/GUI_Text_3D_Lower_d_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Pink/GUI_Text_3D_Lower_e_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Pink/GUI_Text_3D_Lower_f_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Pink/GUI_Text_3D_Lower_g_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Pink/GUI_Text_3D_Lower_h_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Text Purple",
+      "count": 103,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Purple/GUI_Text_3D_Lower_a_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Purple/GUI_Text_3D_Lower_b_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Purple/GUI_Text_3D_Lower_c_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Purple/GUI_Text_3D_Lower_d_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Purple/GUI_Text_3D_Lower_e_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Purple/GUI_Text_3D_Lower_f_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Purple/GUI_Text_3D_Lower_g_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Purple/GUI_Text_3D_Lower_h_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Text Red",
+      "count": 103,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Red/GUI_Text_3D_Lower_a_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Red/GUI_Text_3D_Lower_b_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Red/GUI_Text_3D_Lower_c_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Red/GUI_Text_3D_Lower_d_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Red/GUI_Text_3D_Lower_e_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Red/GUI_Text_3D_Lower_f_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Red/GUI_Text_3D_Lower_g_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text Red/GUI_Text_3D_Lower_h_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Text White",
+      "count": 103,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text White/GUI_Text_3D_Lower_a_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text White/GUI_Text_3D_Lower_b_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text White/GUI_Text_3D_Lower_c_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text White/GUI_Text_3D_Lower_d_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text White/GUI_Text_3D_Lower_e_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text White/GUI_Text_3D_Lower_f_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text White/GUI_Text_3D_Lower_g_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Text White/GUI_Text_3D_Lower_h_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Tribal",
+      "count": 54,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Tribal/Tribal_Plains_Basket_Woven_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Tribal/Tribal_Plains_Basket_Woven_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Tribal/Tribal_Plains_Basket_Woven_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Tribal/Tribal_Plains_Canoe_Boat_Timber_Wood_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Tribal/Tribal_Plains_Cast_Iron_Cook_Pot_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Tribal/Tribal_Plains_Cot_Bed_Cloth_Timber_Wood_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Tribal/Tribal_Plains_Drum_Decoration_Prop_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Tribal/Tribal_Plains_Drum_Decoration_Prop_02_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Underwater Temple",
+      "count": 61,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Underwater Temple/Underwater_Temple_Sea_Shell_Clam_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Underwater Temple/Underwater_Temple_Sea_Starfish_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Underwater Temple/Underwater_Temple_Spiral_Decoration_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Underwater Temple/Underwater_Temple_Spiral_Decoration_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Underwater Temple/Underwater_Temple_Stone_Archway_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Underwater Temple/Underwater_Temple_Stone_Archway_Double_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Underwater Temple/Underwater_Temple_Stone_Arch_Piece_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Underwater Temple/Underwater_Temple_Stone_Column_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Vegetation",
+      "count": 347,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Vegetation/Vegetation_Bush_Large_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Vegetation/Vegetation_Bush_Large_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Vegetation/Vegetation_Bush_Large_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Vegetation/Vegetation_Bush_Small_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Vegetation/Vegetation_Bush_Small_02_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Vegetation/Vegetation_Bush_Small_03_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Vegetation/Vegetation_Cactus_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Vegetation/Vegetation_Cactus_02_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Vehicles",
+      "count": 2,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Vehicles/Vehicle_Balloon_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Vehicles/Vehicle_Boat_01_Atlased.prefab"
+      ]
+    },
+    {
+      "pack": "Polyworks",
+      "category": "Water Planes",
+      "count": 8,
+      "examples": [
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Water Planes/Water_Plane_Circle_Large_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Water Planes/Water_Plane_Circle_Small_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Water Planes/Water_Plane_Rectangle_Large_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Water Planes/Water_Plane_Rectangle_Small_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Water Planes/Water_Plane_Semicircle_Large_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Water Planes/Water_Plane_Semicircle_Small_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Water Planes/Water_Plane_Square_Large_01_Atlased.prefab",
+        "Assets/Off Axis Studios/Polyworks/Prefabs/Atlased/Water Planes/Water_Plane_Square_Small_01_Atlased.prefab"
+      ]
+    }
+  ]
+}

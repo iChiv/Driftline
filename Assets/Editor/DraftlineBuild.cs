@@ -18,7 +18,10 @@ namespace Draftline.EditorTools
             var report = BuildPipeline.BuildPlayer(scenes, outputPath,
                 BuildTarget.StandaloneWindows64, BuildOptions.Development);
             if (report.summary.result == BuildResult.Succeeded)
+            {
+                File.Copy("Assets/UI/Fonts/LICENSE.txt", Path.Combine(directory, "SourceHanSans-LICENSE.txt"), true);
                 Debug.Log($"[DraftlineBuild] succeeded: {outputPath} ({report.summary.totalSize / (1024 * 1024)} MB)");
+            }
             else
                 Debug.LogError($"[DraftlineBuild] failed: {report.summary.result}");
         }

@@ -1,4 +1,7 @@
+using System;
 using System.Collections;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
@@ -29,7 +32,6 @@ namespace Draftline.Unity
         private readonly Dictionary<GridPosition, Collider> rotatingWallColliders =
             new Dictionary<GridPosition, Collider>();
         private readonly List<string> recentEvents = new List<string>();
-        private readonly List<GameObject> hintObjects = new List<GameObject>();
         private readonly bool[] selectedColors = { true, true, true, true };
 
         private MatchRules rules;
@@ -39,10 +41,8 @@ namespace Draftline.Unity
         private Collider centerWallCollider;
         private Material[] playerMaterials;
         private Material[] itemMaterials;
-        private Material hintMaterial;
-        private DraftlineWarnings warnings;
+        [SerializeField] private DraftlineWarnings warnings;
         private bool animating;
-        private float animatingSince;
         private int pendingVisuals;
         private readonly HashSet<int> exitingPieces = new HashSet<int>();
         private readonly Dictionary<Renderer, bool> wallVisualState = new Dictionary<Renderer, bool>();
@@ -50,11 +50,24 @@ namespace Draftline.Unity
         private readonly Dictionary<Renderer, Vector3> wallBaseScale = new Dictionary<Renderer, Vector3>();
         private SlideDirection? pendingStopDirection;
         private string setupError;
-        private PhysicalDiceRoller diceRoller;
-        private DraftlineCameraDirector cameraDirector;
-        private DraftlineGameUI gameUI;
-        private DraftlineLanRoom lanRoom;
-        private DraftlineAudio sfx;
+        [SerializeField] private PhysicalDiceRoller diceRoller;
+        [SerializeField] private DraftlineCameraDirector cameraDirector;
+        [SerializeField] private DraftlineCanvasUI gameUI;
+        public MatchSession Session;
+        public BoardInteractionController BoardInteraction;
+        public bool SimpleEffects;
+        public MatchFeedbackProfile Feedback;
+        public MatchTextContent Content;
+        private readonly Queue<GameObject> activeEffects = new Queue<GameObject>();
+        public bool IsPaused { get; private set; }
+        private CancellationTokenSource computerCancellation;
+        private Task<MatchCommand> computerTask;
+        private int computerRevision = -1;
+        private float nextComputerAction;
+        private int lifetime;
+        private readonly Queue<Tuple<MatchState, MatchEvent[]>> remoteUpdates = new Queue<Tuple<MatchState, MatchEvent[]>>();
+        [SerializeField] private DraftlineLanRoom lanRoom;
+        [SerializeField] private DraftlineAudio sfx;
         private bool applyingRemoteCommand;
 
         public MatchRules Rules => rules;
@@ -69,12 +82,26 @@ namespace Draftline.Unity
         public bool IsDiceRolling => diceRoller != null && diceRoller.IsRolling;
         public bool IsManualTopDown => cameraDirector != null && cameraDirector.IsManualTopDown;
         public DraftlineLanRoom LanRoom => lanRoom;
-        public bool CanControl => applyingRemoteCommand || lanRoom == null || !lanRoom.IsNetworked ||
-                                  lanRoom.LocalColor == rules?.State.CurrentPlayer;
+        public DraftlineCanvasUI CanvasUI => gameUI;
+        public bool CanControl => (applyingRemoteCommand || !IsPaused) && rules != null &&
+            (applyingRemoteCommand || (Session.Seat(rules.State.CurrentPlayer).Control == SeatControl.LocalHuman &&
+            (Session.Mode != GameMode.Lan || (lanRoom != null && lanRoom.IsNetworked && lanRoom.LocalColor == rules.State.CurrentPlayer)))) &&
+            (lanRoom == null || !lanRoom.HasPendingCommand);
+
+        public void ConfigureEditor(DraftlineCanvasUI ui, MatchSession session, BoardInteractionController board)
+        {
+            gameUI = ui; Session = session; BoardInteraction = board;
+            diceRoller = GetComponent<PhysicalDiceRoller>();
+            cameraDirector = GetComponent<DraftlineCameraDirector>();
+            lanRoom = GetComponent<DraftlineLanRoom>();
+            warnings = GetComponent<DraftlineWarnings>();
+            sfx = GetComponent<DraftlineAudio>();
+        }
 
         private void Awake()
         {
             Application.runInBackground = true; // Also needed for a future LAN host.
+            MatchLabels.Configure(Content);
             DraftlineThemeApplier.Apply(DraftlineThemeApplier.CurrentId);
             var piecesRoot = GameObject.Find("Pieces");
             if (piecesRoot != null)
@@ -92,31 +119,22 @@ namespace Draftline.Unity
                 runtimePieces.SetParent(piecesRoot.transform, false);
             }
             BindWalls();
-            diceRoller = gameObject.GetComponent<PhysicalDiceRoller>() ??
-                         gameObject.AddComponent<PhysicalDiceRoller>();
-            cameraDirector = gameObject.GetComponent<DraftlineCameraDirector>() ??
-                             gameObject.AddComponent<DraftlineCameraDirector>();
-            gameUI = gameObject.GetComponent<DraftlineGameUI>() ??
-                     gameObject.AddComponent<DraftlineGameUI>();
-            lanRoom = gameObject.GetComponent<DraftlineLanRoom>() ??
-                      gameObject.AddComponent<DraftlineLanRoom>();
-            warnings = gameObject.GetComponent<DraftlineWarnings>() ??
-                       gameObject.AddComponent<DraftlineWarnings>();
-            sfx = gameObject.GetComponent<DraftlineAudio>() ??
-                  gameObject.AddComponent<DraftlineAudio>();
-            if (gameObject.GetComponent<DraftlineTabletopInteraction>() == null)
-                gameObject.AddComponent<DraftlineTabletopInteraction>();
-            if (gameObject.GetComponent<DraftlineBoardAmbience>() == null)
-                gameObject.AddComponent<DraftlineBoardAmbience>();
+            if (gameUI == null || Session == null || BoardInteraction == null || diceRoller == null || cameraDirector == null || lanRoom == null)
+            {
+                Debug.LogError("Driftline scene bindings are missing. Use Driftline/Install Editable Experience once in Edit Mode.");
+                enabled = false;
+                return;
+            }
+            BoardInteraction.Controller = this;
             gameUI.Initialize(this);
         }
 
         private void OnDestroy()
         {
+            CancelPresentation();
             if (playerMaterials != null)
                 foreach (var material in playerMaterials)
                     if (material != null) Destroy(material);
-            if (hintMaterial != null) Destroy(hintMaterial);
         }
 
         private void BindWalls()
@@ -164,34 +182,74 @@ namespace Draftline.Unity
 
         private void StartLocalMatch()
         {
-            DraftlineThemeApplier.Apply(DraftlineThemeApplier.CurrentId);
-            var active = Enumerable.Range(0, 4).Where(index => selectedColors[index])
-                .Select(index => (PlayerColor)index).ToArray();
-            if (active.Length < 2)
-            {
-                setupError = "Select at least two colors.";
-                return;
-            }
+            if (!Session.Validate(out var error)) { ShowError(error); return; }
+            StartMatch(Session.ActiveColors);
+        }
 
+        private void StartMatch(PlayerColor[] active)
+        {
+            CancelPresentation();
+            DraftlineThemeApplier.Apply(DraftlineThemeApplier.CurrentId);
             rules = new MatchRules(active);
             setupError = null;
             pendingStopDirection = null;
             recentEvents.Clear();
-            exitingPieces.Clear();
-            pendingVisuals = 0;
-            foreach (var view in pieceViews.Values)
-                if (view != null)
-                {
-                    view.transform.DOKill();
-                    Destroy(view.gameObject);
-                }
-            pieceViews.Clear();
-            foreach (var itemView in itemViews.Values)
-                if (itemView != null) Destroy(itemView.gameObject);
-            itemViews.Clear();
             warnings?.ClearAll();
             CreatePieceMaterials();
+            cameraDirector?.ResetForMatch();
+            IsPaused = false;
             SyncViews();
+            BoardInteraction.StateChanged();
+        }
+
+        private void CancelPresentation()
+        {
+            lifetime++;
+            computerCancellation?.Cancel();
+            computerCancellation?.Dispose();
+            computerCancellation = null;
+            computerTask = null;
+            computerRevision = -1;
+            StopAllCoroutines();
+            DOTween.Kill(this);
+            while (activeEffects.Count > 0) { var effect = activeEffects.Dequeue(); if (effect != null) Destroy(effect); }
+            foreach (var renderer in wallVisualState.Keys)
+                if (renderer != null) renderer.transform.DOKill();
+            foreach (var view in pieceViews.Values)
+                if (view != null) { view.transform.DOKill(); Destroy(view.gameObject); }
+            pieceViews.Clear();
+            foreach (var view in itemViews.Values) if (view != null) Destroy(view.gameObject);
+            itemViews.Clear();
+            BoardInteraction?.ClearVisuals();
+            remoteUpdates.Clear();
+            exitingPieces.Clear();
+            pendingVisuals = 0;
+            animating = false;
+            diceRoller?.ResetRoll();
+        }
+
+        public void ShowError(string text) { setupError = text; gameUI?.Refresh(); }
+        public void SetPaused(bool paused) { IsPaused = paused; BoardInteraction?.Rebuild(); }
+        public void ReturnToMenu()
+        {
+            CancelPresentation();
+            lanRoom?.Leave();
+            rules = null;
+            setupError = null;
+            IsPaused = false;
+            cameraDirector?.ResetForMatch();
+            warnings?.ClearAll();
+            gameUI?.Refresh();
+        }
+        public void RestartMatch()
+        {
+            if (lanRoom.IsNetworked) { if (lanRoom.IsHost) lanRoom.RestartHostedMatch(); }
+            else StartLocalMatch();
+        }
+        public void ClearNetworkMatch()
+        {
+            CancelPresentation(); rules = null; setupError = null;
+            cameraDirector?.ResetForMatch(); warnings?.ClearAll(); gameUI?.Refresh();
         }
 
         private void CreatePieceMaterials()
@@ -281,6 +339,7 @@ namespace Draftline.Unity
         private void SyncViews()
         {
             if (rules == null) return;
+            var capturedEvents = rules.Events.Where(e => e.Type == MatchEventType.PieceCaptured).ToDictionary(e => e.PieceId, e => e);
             foreach (var piece in rules.State.Pieces)
             {
                 if (!pieceViews.TryGetValue(piece.Id, out var view))
@@ -304,6 +363,11 @@ namespace Draftline.Unity
                     view.gameObject.SetActive(true);
                     view.transform.position = BoardCoordinates.ToWorld(piece.Position);
                 }
+                else if (capturedEvents.TryGetValue(piece.Id, out var exitEvent))
+                {
+                    view.gameObject.SetActive(true);
+                    view.transform.position = BoardCoordinates.ToWorld(exitEvent.Position);
+                }
                 else if (!exitingPieces.Contains(piece.Id))
                 {
                     // Captured pieces stay visible while their exit animation owns them.
@@ -322,6 +386,7 @@ namespace Draftline.Unity
             if (centerWallCollider != null) centerWallCollider.enabled = centerVisible;
             AnimateWallTo(centerWallRenderer, centerVisible);
 
+            gameUI?.RecordEvents(rules);
             foreach (var matchEvent in rules.Events)
             {
                 var text = EventText(matchEvent);
@@ -340,8 +405,7 @@ namespace Draftline.Unity
                         sfx?.Play(SfxType.Capture);
                         cameraDirector?.Pulse(0.4f);
                         ShowEventFlash(matchEvent.Position);
-                        SpawnFx("FX/CaptureExplosion",
-                            BoardCoordinates.ToWorld(matchEvent.Position, 1.0f), 2.5f);
+                        if (Feedback != null) SpawnProfileEffect(Feedback.Capture, BoardCoordinates.ToWorld(matchEvent.Position,.85f),Feedback.CaptureScale,Feedback.CaptureLifetime);
                         if (pieceViews.TryGetValue(matchEvent.PieceId, out var captured) && captured != null)
                             StartCoroutine(AnimateCaptureOut(captured));
                         break;
@@ -359,11 +423,12 @@ namespace Draftline.Unity
                     case MatchEventType.PortalUsed:
                         cameraDirector?.Pulse(0.3f);
                         ShowEventFlash(matchEvent.Position);
+                        if (Feedback != null) SpawnProfileEffect(Feedback.Portal,BoardCoordinates.ToWorld(matchEvent.Position,.8f),Feedback.PortalScale,Feedback.PortalLifetime);
                         break;
                     case MatchEventType.WallRotated:
                         sfx?.Play(SfxType.WallFall, 0.55f);
                         DG.Tweening.DOVirtual.DelayedCall(0.12f,
-                            () => sfx?.Play(SfxType.WallRise, 0.7f));
+                            () => sfx?.Play(SfxType.WallRise, 0.7f)).SetTarget(this);
                         cameraDirector?.Pulse(0.25f);
                         break;
                     case MatchEventType.ItemActivated:
@@ -387,18 +452,10 @@ namespace Draftline.Unity
                                     .SetDelay(order++ * 0.13f);
                             }
                         }
-                        var focus = Vector3.zero;
-                        if (rules.State.SelectedPieceId.HasValue &&
-                            pieceViews.TryGetValue(rules.State.SelectedPieceId.Value, out var winnerView) &&
-                            winnerView != null)
-                            focus = winnerView.transform.position;
-                        cameraDirector?.PlayVictory(focus);
-                        // 胜利烟花：棋盘四角方向 staggered 三发
-                        SpawnFx("FX/VictoryFirework", focus + new Vector3(0f, 0.5f, 0f), 3.5f);
-                        DG.Tweening.DOVirtual.DelayedCall(0.4f, () =>
-                            SpawnFx("FX/VictoryFirework", focus + new Vector3(2.5f, 0.5f, -2f), 3.5f));
-                        DG.Tweening.DOVirtual.DelayedCall(0.8f, () =>
-                            SpawnFx("FX/VictoryFirework", focus + new Vector3(-2.5f, 0.5f, 2f), 3.5f));
+                        var focus = line != null ? line.Select(cell => BoardCoordinates.ToWorld(cell)).Aggregate(Vector3.zero,(sum,p)=>sum+p)/line.Count
+                            : BoardCoordinates.ToWorld(rules.Board.SpawnOf(matchEvent.Player));
+                        if (!SimpleEffects) cameraDirector?.PlayVictory(focus);
+                        if (Feedback != null) SpawnProfileEffect(Feedback.Victory,focus+Vector3.up*.8f,Feedback.VictoryScale,Feedback.VictoryLifetime);
                         break;
                     case MatchEventType.PlayerEliminated:
                         sfx?.Play(SfxType.Capture);
@@ -444,7 +501,7 @@ namespace Draftline.Unity
             view.transform.localScale = view.BaseScale;
             view.transform.rotation = Quaternion.identity;
             exitingPieces.Remove(view.PieceId);
-            pendingVisuals--;
+            pendingVisuals = Math.Max(0, pendingVisuals - 1);
             gameUI?.Refresh();
         }
 
@@ -466,63 +523,36 @@ namespace Draftline.Unity
                 renderer.enabled = true;
                 renderer.transform.position = new Vector3(basePosition.x, basePosition.y - baseScale.y * 0.5f, basePosition.z);
                 renderer.transform.localScale = new Vector3(baseScale.x, 0.05f, baseScale.z);
-                var sequence = DOTween.Sequence();
+                var sequence = DOTween.Sequence().SetTarget(this);
                 sequence.Append(renderer.transform.DOScaleY(baseScale.y, 0.32f).SetEase(Ease.OutBounce));
                 sequence.Join(renderer.transform.DOMoveY(basePosition.y, 0.32f).SetEase(Ease.OutQuad));
                 sequence.OnKill(() =>
                 {
+                    if (renderer == null) return;
                     renderer.transform.position = basePosition;
                     renderer.transform.localScale = baseScale;
-                    pendingVisuals--;
+                    pendingVisuals = Math.Max(0, pendingVisuals - 1);
                 });
             }
             else
             {
                 pendingVisuals++;
-                var sequence = DOTween.Sequence();
+                var sequence = DOTween.Sequence().SetTarget(this);
                 sequence.Append(renderer.transform.DOScaleY(0.05f, 0.18f).SetEase(Ease.InQuad));
                 sequence.Join(renderer.transform.DOMoveY(basePosition.y - baseScale.y * 0.5f, 0.18f).SetEase(Ease.InQuad));
                 sequence.OnKill(() =>
                 {
+                    if (renderer == null) return;
                     renderer.enabled = false;
+                    if (renderer == null) return;
                     renderer.transform.position = basePosition;
                     renderer.transform.localScale = baseScale;
-                    pendingVisuals--;
+                    pendingVisuals = Math.Max(0, pendingVisuals - 1);
                 });
             }
         }
 
-        private void RenderMoveHints()
-        {
-            foreach (var marker in hintObjects)
-                if (marker != null) Destroy(marker);
-            hintObjects.Clear();
-            if (rules == null || rules.State.Phase != MatchPhase.Moving ||
-                !rules.State.SelectedPieceId.HasValue || InputLocked) return;
-            var piece = rules.PieceById(rules.State.SelectedPieceId.Value);
-            if (piece == null || !piece.OnBoard) return;
-            if (hintMaterial == null)
-            {
-                var shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
-                hintMaterial = new Material(shader);
-                var color = new Color(0.26f, 0.95f, 0.52f, 0.8f);
-                if (hintMaterial.HasProperty("_BaseColor")) hintMaterial.SetColor("_BaseColor", color);
-                if (hintMaterial.HasProperty("_Color")) hintMaterial.SetColor("_Color", color);
-            }
-            foreach (var direction in rules.LegalDirections())
-            {
-                var destination = rules.PlanSlide(piece, direction).Destination;
-                var marker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                marker.name = $"{direction} destination {destination}";
-                marker.transform.position = BoardCoordinates.ToWorld(destination, 0.53f);
-                var targetScale = new Vector3(0.54f, 0.025f, 0.54f);
-                marker.transform.localScale = targetScale * 0.4f;
-                marker.transform.DOScale(targetScale, 0.14f).SetEase(Ease.OutBack);
-                marker.GetComponent<Renderer>().sharedMaterial = hintMaterial;
-                Destroy(marker.GetComponent<Collider>());
-                hintObjects.Add(marker);
-            }
-        }
+        private void RenderMoveHints() => BoardInteraction?.Rebuild();
 
         // 换人：镜头不切走，在下一玩家出生角放一个同色光环脉冲。
         private void ShowTurnPulse(PlayerColor player)
@@ -533,12 +563,16 @@ namespace Draftline.Unity
 
         // 传送门/吃子等事件：镜头不动，只在事件格放一个短闪光环。
         // CFXR 特效：prefab 在 Resources/FX 下（从 Cartoon FX Remaster 复制，引用关系保留）。
-        private void SpawnFx(string resourcePath, Vector3 position, float destroyAfter)
+        private void SpawnProfileEffect(GameObject prefab,Vector3 position,float scale,float duration)
         {
-            var prefab = Resources.Load<GameObject>(resourcePath);
-            if (prefab == null) return;
-            var fx = Instantiate(prefab, position, Quaternion.identity);
-            Destroy(fx, destroyAfter);
+            if (SimpleEffects || prefab == null || Feedback == null) return;
+            while (activeEffects.Count > 0 && activeEffects.Peek() == null) activeEffects.Dequeue();
+            while (activeEffects.Count >= Math.Max(1,Feedback.MaxConcurrentEffects))
+            { var old=activeEffects.Dequeue(); if(old!=null)Destroy(old); }
+            var effect=Instantiate(prefab,position,Quaternion.identity);
+            effect.transform.localScale*=scale;
+            activeEffects.Enqueue(effect);
+            Destroy(effect,duration);
         }
 
         private void ShowEventFlash(GridPosition position)
@@ -565,12 +599,13 @@ namespace Draftline.Unity
             color.a = 0.85f;
             material.color = color;
             ring.GetComponent<Renderer>().sharedMaterial = material;
-            ring.transform.DOScale(new Vector3(endScale, 0.02f, endScale), duration).SetEase(Ease.OutQuad);
-            material.DOFade(0f, duration).SetEase(Ease.InQuad)
-                .OnComplete(() =>
+            DOTween.Sequence().SetTarget(this)
+                .Append(ring.transform.DOScale(new Vector3(endScale, 0.02f, endScale), duration).SetEase(Ease.OutQuad))
+                .Join(material.DOFade(0f, duration).SetEase(Ease.InQuad))
+                .OnKill(() =>
                 {
-                    Destroy(ring);
-                    Destroy(material);
+                    if (ring != null) Destroy(ring);
+                    if (material != null) Destroy(material);
                 });
         }
 
@@ -583,7 +618,7 @@ namespace Draftline.Unity
                 case MatchEventType.DiceRolled: return $"{player}方掷出 {matchEvent.Value} 点";
                 case MatchEventType.PieceDeployed: return $"{player}方出新棋（{matchEvent.Position}）";
                 case MatchEventType.PieceSlid: return $"{player}棋 {matchEvent.Origin} → {matchEvent.Position}";
-                case MatchEventType.PieceCaptured: return $"{player}棋被吃（{matchEvent.Position}）";
+                case MatchEventType.PieceCaptured: return $"{player}棋被吃：{MatchExplanation.CaptureReason(matchEvent.Cause)}";
                 case MatchEventType.ItemCollected: return $"{player}方拾取【{ItemName(matchEvent.Item)}】";
                 case MatchEventType.ItemActivated: return $"{player}方使用【{ItemName(matchEvent.Item)}】";
                 case MatchEventType.ItemSpawned: return $"出现道具【{ItemName(matchEvent.Item)}】";
@@ -619,106 +654,102 @@ namespace Draftline.Unity
 
         private void Update()
         {
-            // 看门狗：表现层异常卡死时强制释放输入锁（正常对局不会触发）。
-            if (animating && !IsDiceRolling && Time.unscaledTime - animatingSince > 4f)
+            if (rules == null || IsAnimating || (IsPaused && Session.Mode != GameMode.Lan)) return;
+            if (remoteUpdates.Count > 0)
             {
-                Debug.LogWarning("[Draftline] animation watchdog released a stuck lock.");
-                animating = false;
-                pendingVisuals = 0;
-                SyncViews();
+                var update = remoteUpdates.Dequeue();
+                ApplyRemoteUpdate(update.Item1, update.Item2);
+                return;
             }
-            if (rules == null || InputLocked || !CanControl) return;
-            var keyboard = Keyboard.current;
-            if (keyboard != null)
+            if ((Session.Mode == GameMode.Lan && !lanRoom.IsHost) || rules.State.Phase == MatchPhase.GameOver || lanRoom.WaitingForDisconnectedPlayer) return;
+            if (Session.Seat(rules.State.CurrentPlayer).Control != SeatControl.Computer) return;
+            if (Time.unscaledTime < nextComputerAction) return;
+            if (rules.State.Phase == MatchPhase.WaitRoll)
             {
-                if (rules.State.Phase == MatchPhase.WaitRoll && keyboard.spaceKey.wasPressedThisFrame)
-                    Roll();
-                else if (rules.State.Phase == MatchPhase.Moving)
-                {
-                    if (keyboard.upArrowKey.wasPressedThisFrame) SubmitDirection(SlideDirection.Up);
-                    else if (keyboard.downArrowKey.wasPressedThisFrame) SubmitDirection(SlideDirection.Down);
-                    else if (keyboard.leftArrowKey.wasPressedThisFrame) SubmitDirection(SlideDirection.Left);
-                    else if (keyboard.rightArrowKey.wasPressedThisFrame) SubmitDirection(SlideDirection.Right);
-                }
+                applyingRemoteCommand = true;
+                try { Roll(); } finally { applyingRemoteCommand = false; }
+                nextComputerAction = Time.unscaledTime + .4f;
+                return;
             }
-
-            var mouse = Mouse.current;
-            if (rules.State.Phase != MatchPhase.WaitSelect || mouse == null ||
-                !mouse.leftButton.wasPressedThisFrame || Camera.main == null) return;
-            var screen = mouse.position.ReadValue();
-            if (screen.x < 360f) return; // The control panel occupies the left edge.
-            if (!Physics.Raycast(Camera.main.ScreenPointToRay(screen), out var hit)) return;
-            var pieceView = hit.collider.GetComponentInParent<DraftlinePieceView>();
-            if (pieceView == null) return;
-            if (rules.TrySelectPiece(pieceView.PieceId, out _)) SyncViews();
+            if (computerTask == null)
+            {
+                computerRevision = rules.State.Revision;
+                computerCancellation = new CancellationTokenSource();
+                var token = computerCancellation.Token;
+                var copy = rules.CloneForSimulation();
+                var easy = Session.Seat(rules.State.CurrentPlayer).Difficulty == ComputerDifficulty.Easy;
+                computerTask = Task.Run(() => ComputerPlanner.Choose(copy, easy, token), token);
+                return;
+            }
+            if (!computerTask.IsCompleted) return;
+            var command = !computerTask.IsCanceled && !computerTask.IsFaulted ? computerTask.Result : null;
+            if (computerTask.IsFaulted) Debug.LogException(computerTask.Exception);
+            computerTask = null;
+            computerCancellation?.Dispose(); computerCancellation = null;
+            if (command != null && computerRevision == rules.State.Revision)
+            {
+                applyingRemoteCommand = true;
+                try { SubmitCommand(command); } finally { applyingRemoteCommand = false; }
+            }
+            nextComputerAction = Time.unscaledTime + (SimpleEffects ? .12f : .4f);
         }
 
         private void Roll()
         {
-            if (rules == null || rules.State.Phase != MatchPhase.WaitRoll || InputLocked) return;
-            if (lanRoom != null && lanRoom.IsNetworked && !CanControl) return;
-            if (lanRoom != null && lanRoom.IsClientOnly)
-            {
-                lanRoom.SendCommand("roll");
-                return;
-            }
+            if (rules == null || rules.State.Phase != MatchPhase.WaitRoll || InputLocked || !CanControl) return;
+            if (lanRoom.IsClientOnly) { lanRoom.SendRoll(); return; }
             StartCoroutine(RollPhysicalDie());
         }
 
         private IEnumerator RollPhysicalDie()
         {
+            var generation = lifetime;
             animating = true;
-            animatingSince = Time.unscaledTime;
-            cameraDirector?.ShowDice();
-            sfx?.Play(SfxType.DiceRoll);
-            if (lanRoom != null && lanRoom.IsHost) lanRoom.BroadcastDiceStart();
+            cameraDirector?.ShowDice(); sfx?.Play(SfxType.DiceRoll);
+            if (lanRoom.IsHost) lanRoom.BroadcastDiceStart();
             int? result = null;
-            var rolling = StartCoroutine(diceRoller.Roll(value => result = value));
-            gameUI?.Refresh();
-            yield return rolling;
+            yield return diceRoller.Roll(value => result = value);
+            if (generation != lifetime) yield break;
             cameraDirector?.ShowBoard();
+            animating = false;
             if (result.HasValue)
             {
                 sfx?.Play(SfxType.DiceLand);
-                if (rules.TryApplyDice(result.Value, out _)) SyncViews();
+                var command = new MatchCommand { Kind = MatchCommandKind.ApplyDice, Dice = result.Value, ExpectedRevision = rules.State.Revision };
+                ExecuteAuthorityCommand(command);
             }
-            animating = false;
-            gameUI?.Refresh();
+            else { ShowError("骰子未停稳，请再投一次。"); lanRoom.BroadcastState(Array.Empty<MatchEvent>(), true); }
+            gameUI?.Refresh(); BoardInteraction.Rebuild();
         }
 
-        private void SubmitDirection(SlideDirection direction)
+        public bool SubmitCommand(MatchCommand command)
         {
-            if (rules.State.Phase != MatchPhase.Moving) return;
-            if (rules.State.EmergencyStopActive)
-            {
-                pendingStopDirection = direction;
-                gameUI?.Refresh();
-                return;
-            }
-            ExecuteSlide(direction, null);
+            if (!CanControl || InputLocked || rules == null) return false;
+            if (command.Kind == MatchCommandKind.ApplyDice) { ShowError("骰子结果只能由权威投掷产生。"); return false; }
+            if (lanRoom.IsClientOnly) { lanRoom.SendCommand(command); return true; }
+            return ExecuteAuthorityCommand(command);
         }
 
-        private void ExecuteSlide(SlideDirection direction, int? stopIndex)
+        private bool ExecuteAuthorityCommand(MatchCommand command)
         {
-            var selected = rules.State.SelectedPieceId;
-            if (!rules.TrySlide(direction, stopIndex, out var path, out _)) return;
-            pendingStopDirection = null;
-            if (selected.HasValue && pieceViews.TryGetValue(selected.Value, out var view))
-                StartCoroutine(AnimateSlide(view, path));
-            else
-                SyncViews();
+            if (!MatchCommandDispatcher.TryExecute(rules, rules.State.CurrentPlayer, command, out var next, out var error))
+            { ShowError(MatchExplanation.FriendlyError(error)); return false; }
+            rules = next;
+            setupError = null;
+            BoardInteraction.StateChanged();
+            var slide = rules.Events.FirstOrDefault(e => e.Type == MatchEventType.PieceSlid);
+            if (lanRoom.IsHost) lanRoom.BroadcastState(rules.Events);
+            if (slide != null && pieceViews.TryGetValue(slide.PieceId, out var view)) StartCoroutine(AnimateSlide(view, slide.Slide));
+            else SyncViews();
+            return true;
         }
 
         private IEnumerator AnimateSlide(DraftlinePieceView view, SlidePlan path)
         {
+            var generation = lifetime;
             animating = true;
-            animatingSince = Time.unscaledTime;
-            foreach (var marker in hintObjects)
-                if (marker != null) Destroy(marker);
-            hintObjects.Clear();
-            // The camera never follows slides; the 72° overview keeps everything visible.
-
-            var sequence = DOTween.Sequence();
+            BoardInteraction.ClearVisuals();
+            var sequence = DOTween.Sequence().SetTarget(this);
             sfx?.Play(SfxType.Slide);
             foreach (var step in path.Steps)
             {
@@ -726,154 +757,78 @@ namespace Draftline.Unity
                 if (step.PortalExit)
                 {
                     var exitDestination = destination;
-                    sequence.Append(view.transform.DOScale(Vector3.zero, 0.12f).SetEase(Ease.InQuad));
-                    sequence.AppendCallback(() => view.transform.position = exitDestination);
+                    sequence.Append(view.transform.DOScale(Vector3.zero, .1f));
+                    sequence.AppendCallback(() => { if (view != null) view.transform.position = exitDestination; });
                     sequence.AppendCallback(() => sfx?.Play(SfxType.Portal));
-                    sequence.Append(view.transform.DOScale(view.BaseScale, 0.18f).SetEase(Ease.OutBack));
-                    continue;
+                    sequence.Append(view.transform.DOScale(view.BaseScale, .14f).SetEase(Ease.OutBack));
                 }
-                sequence.Append(view.transform.DOMove(destination, 0.07f).SetEase(Ease.OutQuad));
-                if (step.BrokeWall)
-                    sequence.Append(view.transform.DOPunchScale(view.BaseScale * 0.25f, 0.18f, 6, 0.6f));
-                if (step.Hit)
-                    sequence.Append(view.transform.DOPunchScale(view.BaseScale * 0.35f, 0.2f, 8, 0.7f));
+                else sequence.Append(view.transform.DOMove(destination, SimpleEffects ? .025f : .055f).SetEase(Ease.Linear));
+                if (step.Hit) sequence.Append(view.transform.DOPunchScale(view.BaseScale * .25f, .16f));
             }
             yield return sequence.WaitForCompletion();
-
+            if (generation != lifetime || view == null) yield break;
             animating = false;
             SyncViews();
+            BoardInteraction.Rebuild();
         }
 
-        public void ApplyNetworkSnapshot(MatchState snapshot)
+        public bool AcceptRemoteCommand(PlayerColor actor, MatchCommand command, bool roll)
         {
-            if (lanRoom == null || !lanRoom.IsClientOnly) return;
-            rules = MatchRules.FromSnapshot(snapshot);
-            if (playerMaterials == null) CreatePieceMaterials();
-            SyncViews();
+            if (!lanRoom.IsHost || rules == null || rules.State.CurrentPlayer != actor || InputLocked) return false;
+            applyingRemoteCommand = true;
+            try { if (roll) { if (rules.State.Phase != MatchPhase.WaitRoll) return false; Roll(); return true; } return SubmitCommand(command); }
+            finally { applyingRemoteCommand = false; }
         }
 
-        public void PlayNetworkDice()
+        public void ReceiveNetworkUpdate(MatchState state, MatchEvent[] events)
         {
-            if (lanRoom == null || !lanRoom.IsClientOnly) return;
-            StartCoroutine(PlayNetworkDicePresentation());
+            if (IsAnimating) { remoteUpdates.Enqueue(Tuple.Create(state, events)); return; }
+            ApplyRemoteUpdate(state, events);
         }
 
-        private IEnumerator PlayNetworkDicePresentation()
+        private void ApplyRemoteUpdate(MatchState state, MatchEvent[] events)
         {
-            animating = true;
-            animatingSince = Time.unscaledTime;
-            cameraDirector?.ShowDice();
-            gameUI?.Refresh();
-            yield return new WaitForSeconds(1.6f);
-            cameraDirector?.ShowBoard();
-            animating = false;
-            gameUI?.Refresh();
-        }
-
-        public Vector3? PieceViewPosition(int pieceId) =>
-            pieceViews.TryGetValue(pieceId, out var view) && view != null
-                ? view.transform.position : (Vector3?)null;
-
-        public void ApplyNetworkSlide(SlidePlan path, int pieceId, Vector3? origin)
-        {
-            if (lanRoom == null || !lanRoom.IsClientOnly || path == null) return;
-            if (pieceViews.TryGetValue(pieceId, out var view))
+            if (!lanRoom.IsClientOnly) return;
+            if (rules == null) { CreatePieceMaterials(); cameraDirector.ResetForMatch(); }
+            rules = MatchRules.FromSnapshot(state);
+            rules.ReplaceEvents(events);
+            BoardInteraction.StateChanged();
+            var slide = events.FirstOrDefault(e => e.Type == MatchEventType.PieceSlid);
+            if (slide != null && pieceViews.TryGetValue(slide.PieceId, out var view))
             {
-                if (origin.HasValue) view.transform.position = origin.Value;
-                StartCoroutine(AnimateSlide(view, path));
+                view.transform.position = BoardCoordinates.ToWorld(slide.Origin);
+                StartCoroutine(AnimateSlide(view, slide.Slide));
             }
+            else SyncViews();
+            gameUI.Refresh();
         }
 
+        public void PlayNetworkDice() { if (lanRoom.IsClientOnly) StartCoroutine(NetworkDicePresentation()); }
+        private IEnumerator NetworkDicePresentation()
+        {
+            cameraDirector.ShowDice();
+            yield return new WaitForSeconds(.6f);
+            cameraDirector.ShowBoard();
+        }
+        public void ApplyNetworkSnapshot(MatchState snapshot) => ReceiveNetworkUpdate(snapshot, Array.Empty<MatchEvent>());
+        public Vector3? PieceViewPosition(int id) => pieceViews.TryGetValue(id, out var view) && view != null ? view.transform.position : (Vector3?)null;
         public void BeginLocalMatch() => StartLocalMatch();
         public void BeginNetworkMatch(int activeMask)
         {
-            for (var index = 0; index < selectedColors.Length; index++)
-                selectedColors[index] = (activeMask & (1 << index)) != 0;
-            StartLocalMatch();
-        }
-        public void ApplyVerifiedRemoteCommand(string kind, int first, int second)
-        {
-            if (lanRoom == null || !lanRoom.IsHost) return;
-            applyingRemoteCommand = true;
-            try
-            {
-                switch (kind)
-                {
-                    case "roll": RollFromUI(); break;
-                    case "select": SelectFromUI(first); break;
-                    case "deploy": DeployFromUI(); break;
-                    case "move":
-                        if (System.Enum.IsDefined(typeof(SlideDirection), first))
-                            MoveFromUI((SlideDirection)first);
-                        break;
-                    case "stop":
-                        if (System.Enum.IsDefined(typeof(SlideDirection), first))
-                            StopFromUI((SlideDirection)first, second);
-                        break;
-                    case "item":
-                        if (System.Enum.IsDefined(typeof(ItemType), first))
-                            UseItemFromUI((ItemType)first);
-                        break;
-                }
-            }
-            finally { applyingRemoteCommand = false; }
+            StartMatch(Enumerable.Range(0,4).Where(i => (activeMask & (1 << i)) != 0).Select(i => (PlayerColor)i).ToArray());
         }
         public void RollFromUI() => Roll();
-        public void SelectFromUI(int pieceId)
-        {
-            if (lanRoom != null && lanRoom.IsNetworked && !CanControl) return;
-            if (lanRoom != null && lanRoom.IsClientOnly)
-            {
-                lanRoom.SendCommand("select", pieceId);
-                return;
-            }
-            if (rules != null && !InputLocked && rules.TrySelectPiece(pieceId, out _)) SyncViews();
-        }
-        public void DeployFromUI()
-        {
-            if (lanRoom != null && lanRoom.IsNetworked && !CanControl) return;
-            if (lanRoom != null && lanRoom.IsClientOnly)
-            {
-                lanRoom.SendCommand("deploy");
-                return;
-            }
-            if (rules != null && !InputLocked && rules.TryDeploy(out _, out _)) SyncViews();
-        }
-        public void MoveFromUI(SlideDirection direction)
-        {
-            if (lanRoom != null && lanRoom.IsNetworked && !CanControl) return;
-            if (lanRoom != null && lanRoom.IsClientOnly)
-            {
-                lanRoom.SendCommand("move", (int)direction);
-                return;
-            }
-            if (rules != null && !InputLocked) SubmitDirection(direction);
-        }
+        public void SelectFromUI(int id) => BoardInteraction.Select(id);
+        public void DeployFromUI() { if (rules != null) SubmitCommand(new MatchCommand { Kind = MatchCommandKind.Deploy, ExpectedRevision = rules.State.Revision }); }
+        public void MoveFromUI(SlideDirection direction) => BoardInteraction.ChooseDirection(direction);
         public void StopFromUI(SlideDirection direction, int index)
         {
-            if (lanRoom != null && lanRoom.IsNetworked && !CanControl) return;
-            if (lanRoom != null && lanRoom.IsClientOnly)
-            {
-                lanRoom.SendCommand("stop", (int)direction, index);
-                return;
-            }
-            if (rules != null && !InputLocked) ExecuteSlide(direction, index);
+            var id = BoardInteraction.SelectedPieceId;
+            if (!id.HasValue || rules == null) return;
+            SubmitCommand(new MatchCommand { Kind = MatchCommandKind.Slide, PieceId = id.Value, Direction = direction,
+                StopIndex = index, Item = BoardInteraction.PendingItem.HasValue ? (int)BoardInteraction.PendingItem.Value : 0, ExpectedRevision = rules.State.Revision });
         }
-        public void UseItemFromUI(ItemType item)
-        {
-            if (lanRoom != null && lanRoom.IsNetworked && !CanControl) return;
-            if (lanRoom != null && lanRoom.IsClientOnly)
-            {
-                lanRoom.SendCommand("item", (int)item);
-                return;
-            }
-            if (rules != null && !InputLocked && rules.TryActivateItem(item, out _)) SyncViews();
-        }
-        public void ToggleCameraFromUI()
-        {
-            cameraDirector?.ToggleManualTopDown();
-            gameUI?.Refresh();
-        }
-
+        public void UseItemFromUI(ItemType item) => BoardInteraction.ToggleItem(item);
+        public void ToggleCameraFromUI() { cameraDirector.ToggleManualTopDown(); gameUI.Refresh(); }
     }
 }

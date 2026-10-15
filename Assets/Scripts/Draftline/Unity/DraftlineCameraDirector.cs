@@ -141,6 +141,7 @@ namespace Draftline.Unity
         // Light shake for captures / wall events — the camera itself does not move.
         public void Pulse(float strength = 0.35f)
         {
+            if (GetComponent<DraftlineGameController>().SimpleEffects) return;
             impulse?.GenerateImpulse(strength);
         }
 
@@ -166,5 +167,16 @@ namespace Draftline.Unity
         }
 
         public bool IsManualTopDown => manualTopDown;
+        public void ResetForMatch()
+        {
+            StopAllCoroutines();
+            victoryPlaying = false;
+            manualTopDown = false;
+            victoryAngle = 0f;
+            if (dice != null) dice.Priority = 0;
+            if (victory != null) victory.Priority = 0;
+            if (topDown != null) topDown.Priority = 0;
+            if (overview != null) overview.Priority = 10;
+        }
     }
 }

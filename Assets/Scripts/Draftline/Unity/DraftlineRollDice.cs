@@ -54,6 +54,7 @@ namespace Draftline.Unity
             else if (!rolling && hidden) SetHidden(false);
 
             var canRoll = controller != null && controller.Rules != null &&
+                          controller.CanControl &&
                           controller.Rules.State.Phase == MatchPhase.WaitRoll &&
                           !controller.IsAnimating && !controller.IsDiceRolling;
             if (canRoll != ready) ApplyState(canRoll, false);

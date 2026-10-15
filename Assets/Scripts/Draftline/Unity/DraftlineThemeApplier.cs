@@ -1,4 +1,5 @@
 using UnityEngine;
+using Draftline.Core;
 
 namespace Draftline.Unity
 {
@@ -46,6 +47,7 @@ namespace Draftline.Unity
             AssignMaterial("Wooden Table", theme.TableMaterial);
             AssignMaterial("Table Rim", theme.RimMaterial);
             var walls = GameObject.Find("Walls");
+            var layout = new BoardLayout();
             if (walls != null && theme.WallMaterial != null)
                 foreach (var renderer in walls.GetComponentsInChildren<Renderer>(true))
                 {
@@ -53,7 +55,11 @@ namespace Draftline.Unity
                     var skinned = false;
                     for (var t = renderer.transform; t != null; t = t.parent)
                         if (t.name == "DungeonWall") { skinned = true; break; }
-                    if (!skinned) renderer.sharedMaterial = theme.WallMaterial;
+                    if (!skinned)
+                    {
+                        var rotating=BoardCoordinates.TryFromWorld(renderer.transform.position,out var cell)&&layout.CellAt(cell).Kind==CellKind.RotatingWallSlot;
+                        renderer.sharedMaterial=rotating&&theme.RotatingWallMaterial!=null?theme.RotatingWallMaterial:theme.WallMaterial;
+                    }
                 }
             return theme;
         }

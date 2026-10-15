@@ -18,11 +18,10 @@ namespace Draftline.Core
               ItemType.CollisionCapture,
               ItemType.BreakWall, ItemType.BreakWall, ItemType.BreakWall };
 
-        private readonly Random random;
         private readonly List<MatchEvent> events = new List<MatchEvent>();
 
         public BoardLayout Board { get; }
-        public MatchState State { get; }
+        public MatchState State { get; private set; }
         public IReadOnlyList<MatchEvent> Events => events;
 
         public MatchRules(IEnumerable<PlayerColor> activeColors, int? randomSeed = null)
@@ -33,7 +32,8 @@ namespace Draftline.Core
 
             Board = new BoardLayout();
             State = new MatchState { Phase = MatchPhase.WaitRoll, CurrentPlayer = active[0] };
-            random = randomSeed.HasValue ? new Random(randomSeed.Value) : new Random();
+            State.RandomState = unchecked((uint)(randomSeed ?? Environment.TickCount));
+            if (State.RandomState == 0) State.RandomState = 0x9E3779B9u;
 
             var id = 0;
             for (var color = 0; color < State.Players.Length; color++)
@@ -58,37 +58,37 @@ namespace Draftline.Core
         {
             var active = snapshot.Players.Where(player => player.Active).Select(player => player.Color);
             var rules = new MatchRules(active);
-            rules.State.Phase = snapshot.Phase;
-            rules.State.CurrentPlayer = snapshot.CurrentPlayer;
-            rules.State.TurnCount = snapshot.TurnCount;
-            rules.State.DiceValue = snapshot.DiceValue;
-            rules.State.RemainingSlides = snapshot.RemainingSlides;
-            rules.State.SelectedPieceId = snapshot.SelectedPieceId;
-            rules.State.WallPhase = snapshot.WallPhase;
-            rules.State.Winner = snapshot.Winner;
-            rules.State.PassWallActive = snapshot.PassWallActive;
-            rules.State.EmergencyStopActive = snapshot.EmergencyStopActive;
-            rules.State.CollisionCaptureActive = snapshot.CollisionCaptureActive;
-            rules.State.BreakWallActive = snapshot.BreakWallActive;
-            rules.State.NextItemId = snapshot.NextItemId;
-            rules.State.Pieces.Clear();
-            rules.State.Pieces.AddRange(snapshot.Pieces);
-            rules.State.FieldItems.Clear();
-            rules.State.FieldItems.AddRange(snapshot.FieldItems);
-            for (var index = 0; index < 4; index++)
-            {
-                var target = rules.State.Players[index];
-                var source = snapshot.Players[index];
-                target.Active = source.Active;
-                target.Eliminated = source.Eliminated;
-                target.Consumed = source.Consumed;
-                target.Items.Clear();
-                target.Items.AddRange(source.Items);
-            }
+            rules.State = snapshot.DeepClone();
+            if (rules.State.RandomState == 0) rules.State.RandomState = 0x9E3779B9u;
             return rules;
         }
 
+        public MatchRules CloneForSimulation() => FromSnapshot(State);
+
+        // Explicitly stored RNG state lets isolated simulations reproduce item spawns
+        // without consuming the real match's random stream. Rejection avoids modulo bias.
+        private int NextRandom(int max)
+        {
+            var bound = (uint)max;
+            var threshold = unchecked(0u - bound) % bound;
+            uint value;
+            do
+            {
+                value = State.RandomState;
+                value ^= value << 13;
+                value ^= value >> 17;
+                value ^= value << 5;
+                State.RandomState = value;
+            } while (value < threshold);
+            return (int)(value % bound);
+        }
+
         public void ClearEvents() => events.Clear();
+        public void ReplaceEvents(IEnumerable<MatchEvent> incoming)
+        {
+            events.Clear();
+            if (incoming != null) events.AddRange(incoming);
+        }
 
         public int HandCount(PlayerColor player) => State.Pieces.Count(piece =>
             piece.Owner == player && !piece.OnBoard && !piece.Gone);
@@ -291,7 +291,7 @@ namespace Draftline.Core
             var lastIndex = stopIndex ?? planned.Steps.Count - 1;
             for (var index = 0; index <= lastIndex; index++) applied.Steps.Add(planned.Steps[index]);
             if (applied.Steps.Any(step => step.Hit)) applied.CapturedPieceId = planned.CapturedPieceId;
-            if (applied.CapturedPieceId >= 0) CapturePiece(PieceById(applied.CapturedPieceId));
+            if (applied.CapturedPieceId >= 0) CapturePiece(PieceById(applied.CapturedPieceId), CaptureCause.Collision);
 
             var slideOrigin = piece.Position;
             piece.Position = applied.Destination;
@@ -328,14 +328,14 @@ namespace Draftline.Core
                 return;
             }
 
-            CaptureBlocks(NewlyDeadBlocks(State.DeadAtTurnStart, State.CurrentPlayer));
+            CaptureBlocks(NewlyDeadBlocks(State.DeadAtTurnStart, State.CurrentPlayer), CaptureCause.Surround);
             if (CheckEliminations()) return;
 
             var beforeWall = DeadPieceIds();
             State.WallPhase ^= 1;
             State.TurnCount++;
             AddEvent(MatchEventType.WallRotated, State.CurrentPlayer, value: State.WallPhase);
-            CaptureBlocks(NewlyDeadBlocks(beforeWall, null));
+            CaptureBlocks(NewlyDeadBlocks(beforeWall, null), CaptureCause.WallChange);
             if (CheckEliminations()) return;
             // 道具公平性：被埋的道具不占名额；每次换人后若场上没有可见道具则立即补刷。
             var visibleItems = State.FieldItems.Count(item => !IsWall(item.Position));
@@ -411,8 +411,8 @@ namespace Draftline.Core
             var item = new FieldItem
             {
                 Id = State.NextItemId++,
-                Type = ItemWeights[random.Next(ItemWeights.Length)],
-                Position = candidates[random.Next(candidates.Length)]
+                Type = ItemWeights[NextRandom(ItemWeights.Length)],
+                Position = candidates[NextRandom(candidates.Length)]
             };
             State.FieldItems.Add(item);
             AddEvent(MatchEventType.ItemSpawned, State.CurrentPlayer, position: item.Position, item: item.Type);
@@ -471,20 +471,21 @@ namespace Draftline.Core
                 (!actor.HasValue || block[0].Owner != actor.Value) &&
                 block.Any(piece => !before.Contains(piece.Id))).ToList();
 
-        private void CaptureBlocks(IEnumerable<List<PieceState>> blocks)
+        private void CaptureBlocks(IEnumerable<List<PieceState>> blocks, CaptureCause cause)
         {
             foreach (var block in blocks)
                 foreach (var piece in block)
-                    CapturePiece(piece);
+                    CapturePiece(piece, cause);
         }
 
-        private void CapturePiece(PieceState piece)
+        private void CapturePiece(PieceState piece, CaptureCause cause)
         {
             if (piece == null || !piece.OnBoard) return;
             piece.OnBoard = false;
             piece.Gone = true;
             State.Players[(int)piece.Owner].Consumed++;
-            AddEvent(MatchEventType.PieceCaptured, piece.Owner, piece.Id, piece.Position);
+            events.Add(new MatchEvent { Type = MatchEventType.PieceCaptured, Player = piece.Owner,
+                PieceId = piece.Id, Position = piece.Position, Cause = cause });
         }
 
         private bool CheckEliminations()

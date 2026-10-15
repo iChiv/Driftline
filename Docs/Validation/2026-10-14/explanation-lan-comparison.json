@@ -1,0 +1,111 @@
+{
+  "finalRevision": 24,
+  "hostComplete": true,
+  "mismatches": 0,
+  "port": 7791,
+  "pairs": [
+    {
+      "revision": 0,
+      "matches": true
+    },
+    {
+      "revision": 1,
+      "matches": true
+    },
+    {
+      "revision": 2,
+      "matches": true
+    },
+    {
+      "revision": 3,
+      "matches": true
+    },
+    {
+      "revision": 4,
+      "matches": true
+    },
+    {
+      "revision": 5,
+      "matches": true
+    },
+    {
+      "revision": 6,
+      "matches": true
+    },
+    {
+      "revision": 7,
+      "matches": true
+    },
+    {
+      "revision": 8,
+      "matches": true
+    },
+    {
+      "revision": 9,
+      "matches": true
+    },
+    {
+      "revision": 10,
+      "matches": true
+    },
+    {
+      "revision": 11,
+      "matches": true
+    },
+    {
+      "revision": 12,
+      "matches": true
+    },
+    {
+      "revision": 13,
+      "matches": true
+    },
+    {
+      "revision": 14,
+      "matches": true
+    },
+    {
+      "revision": 15,
+      "matches": true
+    },
+    {
+      "revision": 16,
+      "matches": true
+    },
+    {
+      "revision": 17,
+      "matches": true
+    },
+    {
+      "revision": 18,
+      "matches": true
+    },
+    {
+      "revision": 19,
+      "matches": true
+    },
+    {
+      "revision": 20,
+      "matches": true
+    },
+    {
+      "revision": 21,
+      "matches": true
+    },
+    {
+      "revision": 22,
+      "matches": true
+    },
+    {
+      "revision": 23,
+      "matches": true
+    },
+    {
+      "revision": 24,
+      "matches": true
+    }
+  ],
+  "commonRevisions": 25,
+  "reconnected": true,
+  "clientComplete": true
+}

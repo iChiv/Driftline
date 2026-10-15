@@ -9,6 +9,9 @@ namespace Draftline.Unity
     public sealed class MatchSnapshot
     {
         public int phase, current, turn, dice, remaining, selected, wall, winner, nextItem;
+        public int revision;
+        public uint randomState;
+        public int[] deadAtTurnStart;
         public bool passWall, emergencyStop, collisionCapture, breakWall;
         public PlayerPacket[] players;
         public PiecePacket[] pieces;
@@ -16,6 +19,9 @@ namespace Draftline.Unity
 
         public static MatchSnapshot Capture(MatchState state) => new MatchSnapshot
         {
+            revision = state.Revision,
+            randomState = state.RandomState,
+            deadAtTurnStart = state.DeadAtTurnStart.ToArray(),
             phase = (int)state.Phase,
             current = (int)state.CurrentPlayer,
             turn = state.TurnCount,
@@ -52,6 +58,8 @@ namespace Draftline.Unity
         {
             var state = new MatchState
             {
+                Revision = revision,
+                RandomState = randomState,
                 Phase = (MatchPhase)phase,
                 CurrentPlayer = (PlayerColor)current,
                 TurnCount = turn,
@@ -66,6 +74,8 @@ namespace Draftline.Unity
                 CollisionCaptureActive = collisionCapture,
                 BreakWallActive = breakWall
             };
+            if (deadAtTurnStart != null)
+                state.DeadAtTurnStart.UnionWith(deadAtTurnStart);
             foreach (var packet in players)
             {
                 var player = new PlayerState
@@ -97,12 +107,44 @@ namespace Draftline.Unity
     [Serializable]
     public sealed class RoomStatePacket
     {
+        public string sessionId, matchId;
+        public RoomMemberPacket[] members;
+        public int[] controls;
+        public bool fillComputers;
         public int sequence;
         public int seatsRequested;
         public bool started;
         public string seats;
         public string snapshot;
         public string slide;
+        public MatchEventPacket[] events;
+    }
+
+    [Serializable]
+    public sealed class RoomMemberPacket
+    {
+        public ulong clientId;
+        public int color;
+        public bool connected, ready;
+    }
+
+    [Serializable]
+    public sealed class MatchEventPacket
+    {
+        public int type, player, piece, column, row, originColumn, originRow, value, item, cause;
+        public SlidePacket slide;
+        public static MatchEventPacket Capture(MatchEvent e) => new MatchEventPacket
+        {
+            type = (int)e.Type, player = (int)e.Player, piece = e.PieceId, column = e.Position.Column,
+            row = e.Position.Row, originColumn = e.Origin.Column, originRow = e.Origin.Row,
+            value = e.Value, item = (int)e.Item, cause = (int)e.Cause, slide = e.Slide == null ? null : SlidePacket.Capture(e)
+        };
+        public MatchEvent Restore() => new MatchEvent
+        {
+            Type = (MatchEventType)type, Player = (PlayerColor)player, PieceId = piece,
+            Position = new GridPosition(column,row), Origin = new GridPosition(originColumn,originRow),
+            Value = value, Item = (ItemType)item, Cause = (CaptureCause)cause, Slide = slide?.Restore()
+        };
     }
 
     [Serializable]

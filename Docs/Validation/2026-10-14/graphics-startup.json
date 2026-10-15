@@ -1,0 +1,11 @@
+{
+  "manualInputTest": false,
+  "height": 720,
+  "width": 1280,
+  "aliveAtCheck": true,
+  "pid": 43444,
+  "graphicsBackend": "Direct3D 11",
+  "mode": "batchmode with graphics",
+  "checked": "2026-10-14T20:12:09.9275231+08:00",
+  "endedBy": "owned process stopped after startup"
+}

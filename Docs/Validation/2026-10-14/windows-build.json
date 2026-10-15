@@ -1,0 +1,1 @@
+{"success":true,"message":"Code executed successfully.","data":{"result":{"result":"Succeeded","bytes":167526667,"seconds":14.6668059,"start":"2026-10-14T04:06:17.9856492Z","end":"2026-10-14T04:06:32.6524551Z","errors":0,"warnings":3,"unity":"2022.3.62f3","output":"E:/Projects/ABIG/Josef/Project-3/Driftline/Builds/Driftline-Dev.exe"},"compiler":"roslyn"}}

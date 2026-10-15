@@ -1,0 +1,9 @@
+{
+  "name": "Draftline.Tests.PlayMode",
+  "references": ["Draftline.Core", "Draftline.Unity", "Unity.InputSystem", "UnityEngine.UI"],
+  "includePlatforms": [], "excludePlatforms": [],
+  "allowUnsafeCode": false, "overrideReferences": true,
+  "precompiledReferences": ["nunit.framework.dll"], "autoReferenced": false,
+  "defineConstraints": ["UNITY_INCLUDE_TESTS"],
+  "optionalUnityReferences": ["TestAssemblies"], "noEngineReferences": false
+}

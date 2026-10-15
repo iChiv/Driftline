@@ -47,6 +47,16 @@ namespace Draftline.Unity
 
         private void OnDestroy()
         {
+            ResetRoll();
+        }
+
+        public void ResetRoll()
+        {
+            IsRolling = false;
+            if (body != null) body.isKinematic = true;
+            if (die != null) die.gameObject.SetActive(false);
+            if (tray != null) tray.SetActive(false);
+            Status = "准备投掷";
         }
 
         public IEnumerator Roll(Action<int?> finished)
