@@ -172,8 +172,8 @@ namespace Draftline.Unity
         {
             if(theme==null)return;
             var distance=theme.ThemeId=="tabletop"?27f:theme.OverviewDistance;
-            if(overview!=null)overview.transform.position=FramedPosition(new Vector3(0,0,-2),72,distance);
-            if(topDown!=null)topDown.transform.position=FramedPosition(new Vector3(0,0,-2),89.99f,distance+.5f);
+            if(overview!=null){overview.transform.position=FramedPosition(theme.FramingTarget,theme.OverviewPitch,distance);overview.transform.rotation=BoardRotation(theme.OverviewPitch);}
+            if(topDown!=null)topDown.transform.position=FramedPosition(theme.FramingTarget,89.99f,distance+.5f);
         }
         public void ResetForMatch()
         {

@@ -94,7 +94,7 @@ namespace Draftline.Tests
                 Assert.Less(controller.Rules.State.RemainingSlides,2,theme.ThemeId+" endpoint executes");
                 var scene=Object.FindObjectOfType<BoardThemeScene>();var active=scene.Entries.Single(e=>e.Root.activeSelf);
                 Assert.AreEqual(theme,active.Theme);
-                Assert.IsTrue(active.Root.transform.Find("BoardSurface").GetComponentsInChildren<MeshRenderer>().Any(r=>r.isPartOfStaticBatch),"Static board geometry should be batched.");
+                Assert.IsTrue(active.Root.transform.Find("Architecture — static/BoardSurface").GetComponentsInChildren<MeshRenderer>().Any(r=>r.isPartOfStaticBatch),"Static board geometry should be batched.");
                 foreach(var wall in active.Root.GetComponentsInChildren<ThemeMovingWall>(true)) {
                     Assert.IsNotNull(wall.Driver);
                     Assert.AreEqual(controller.Rules.IsWall(new GridPosition(wall.Column,wall.Row)),wall.Body.gameObject.activeSelf,theme.ThemeId+" wall binding");
@@ -102,6 +102,73 @@ namespace Draftline.Tests
                 ui.ReturnMenu.onClick.Invoke();yield return null;
             }
             DraftlineThemeApplier.SelectLocal(originalPreference);
+        }
+
+        [UnityTest]
+        public IEnumerator SceneryClicksWorkDuringRemoteTurnsWithoutChangingSelectionOrRules()
+        {
+            var ui=controller.CanvasUI;ui.ResultMenu.onClick.Invoke();
+            foreach(var theme in DraftlineThemeApplier.Available.Where(t=>t.PresentationPrefab!=null)){
+                ui.ThemeSelector.value=System.Array.IndexOf(DraftlineThemeApplier.Available,theme);
+                ui.LocalGame.onClick.Invoke();ui.SeatControls[1].value=1;ui.StartMatch.onClick.Invoke();
+                typeof(DraftlineGameController).GetMethod("ExecuteAuthorityCommand",BindingFlags.Instance|BindingFlags.NonPublic)
+                    .Invoke(controller,new object[]{new MatchCommand{Kind=MatchCommandKind.ApplyDice,Dice=3,ExpectedRevision=0}});
+                yield return new WaitForSeconds(.8f);
+                var piece=controller.Rules.State.Pieces.First(p=>p.Owner==PlayerColor.Red&&p.OnBoard);
+                yield return Click(controller.PieceViews[piece.Id].transform.position+Vector3.up*.25f);
+                Assert.AreEqual(piece.Id,controller.BoardInteraction.SelectedPieceId);
+                var before=JsonUtility.ToJson(MatchSnapshot.Capture(controller.Rules.State));
+                var props=Object.FindObjectsOfType<ThemeSceneryInteraction>();Assert.AreEqual(4,props.Length);
+                foreach(var prop in props){
+                    yield return Click(prop.transform.position);
+                    Assert.Greater(prop.Activations,0,theme.ThemeId+" "+prop.Label+" actual pointer hit");
+                    Assert.AreEqual(piece.Id,controller.BoardInteraction.SelectedPieceId,"Decorative clicks preserve the preview.");
+                    Assert.AreEqual(before,JsonUtility.ToJson(MatchSnapshot.Capture(controller.Rules.State)));
+                }
+                yield return new WaitForSecondsRealtime(2);
+                var toggle=props.First(p=>p.Toggle);Assert.IsTrue(toggle.IsOn);
+                yield return Click(toggle.transform.position);yield return new WaitForSecondsRealtime(2);Assert.IsFalse(toggle.IsOn);
+                foreach(var motion in toggle.Motions)Assert.Less(Vector3.Distance(motion.Target.localPosition,motion.Position),.001f);
+                // Authority gate deliberately closed: the same direct scenery click still works.
+                controller.Session.Seat(controller.Rules.State.CurrentPlayer).Control=SeatControl.RemoteHuman;
+                Assert.IsFalse(controller.CanControl);var count=toggle.Activations;
+                yield return Click(toggle.transform.position);Assert.AreEqual(count+1,toggle.Activations);
+                ui.GuideHud.onClick.Invoke();Assert.IsTrue(ui.EnvironmentInputBlocked);
+                count=toggle.Activations;yield return Click(toggle.transform.position);Assert.AreEqual(count,toggle.Activations);
+                ui.GuideClose.onClick.Invoke();
+                ui.ReturnMenu.onClick.Invoke();yield return new WaitForSecondsRealtime(.5f);
+                var visibleProp=Object.FindObjectsOfType<ThemeSceneryInteraction>().First(p=>p.transform.position.z>10&&!p.Busy);
+                count=visibleProp.Activations;yield return Click(visibleProp.transform.position);Assert.AreEqual(count+1,visibleProp.Activations,"Main menu preview interaction");
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator ThemedDiceStationCanBePressedDirectly()
+        {
+            var ui=controller.CanvasUI;ui.ResultMenu.onClick.Invoke();ui.ThemeSelector.value=4;
+            ui.LocalGame.onClick.Invoke();ui.StartMatch.onClick.Invoke();yield return new WaitForSeconds(.6f);
+            var dice=Object.FindObjectOfType<DraftlineRollDice>();Assert.IsNotNull(dice);
+            Assert.IsTrue(dice.GetComponentsInChildren<Renderer>().All(r=>!r.forceRenderingOff));
+            yield return Click(dice.transform.position);yield return null;
+            Assert.IsTrue(controller.IsDiceRolling,"Actual pointer click on the foreground dice starts the roll.");
+        }
+
+        [UnityTest]
+        public IEnumerator EnvironmentVariantsAreDeterministicAndLockedDuringMatches()
+        {
+            var ui=controller.CanvasUI;ui.ResultMenu.onClick.Invoke();
+            ui.ThemeSelector.value=3;ui.EnvironmentSelector.value=1;yield return null;
+            Assert.AreEqual(1,DraftlineThemeApplier.CurrentVariant);
+            var scene=Object.FindObjectOfType<BoardThemeScene>();var environment=scene.Entries.Single(e=>e.Root.activeSelf).Root.GetComponent<ThemeEnvironment>();
+            DraftlineThemeApplier.ApplyEnvironment(1,19);var first=environment.SeededDetails.Select(g=>g.activeSelf).ToArray();
+            DraftlineThemeApplier.ApplyEnvironment(0,72);DraftlineThemeApplier.ApplyEnvironment(1,19);
+            CollectionAssert.AreEqual(first,environment.SeededDetails.Select(g=>g.activeSelf).ToArray());
+            Assert.IsTrue(environment.Alternate.activeSelf);Assert.IsFalse(environment.Standard.activeSelf);
+            ui.LocalGame.onClick.Invoke();ui.StartMatch.onClick.Invoke();yield return new WaitForSeconds(.5f);
+            Assert.IsFalse(ui.EnvironmentSelector.interactable);ui.EnvironmentSelector.onValueChanged.Invoke(0);Assert.AreEqual(1,DraftlineThemeApplier.CurrentVariant);
+            var dice=Object.FindObjectOfType<DraftlineRollDice>();Assert.IsNotNull(dice);
+            Assert.IsTrue(dice.GetComponentsInChildren<Renderer>().All(r=>!r.forceRenderingOff));
+            ui.ReturnMenu.onClick.Invoke();ui.EnvironmentSelector.value=0;
         }
 
         [UnityTest]

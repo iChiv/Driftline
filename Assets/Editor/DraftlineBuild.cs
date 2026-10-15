@@ -8,6 +8,18 @@ namespace Draftline.EditorTools
     /// <summary>One-click development build for the Windows portfolio demo.</summary>
     public static class DraftlineBuild
     {
+        [MenuItem("Driftline/Build Windows Battlefields V2")]
+        public static void BuildWindowsBattlefields()
+        {
+            if(EditorApplication.isPlaying)throw new System.InvalidOperationException("Build in Edit Mode.");
+            AssetDatabase.SaveAssets();UnityEditor.SceneManagement.EditorSceneManager.SaveOpenScenes();
+            const string directory="Builds/BattlefieldsV2";Directory.CreateDirectory(directory);
+            var report=BuildPipeline.BuildPlayer(new[]{"Assets/Scenes/SampleScene.unity"},directory+"/Driftline-Battlefields.exe",BuildTarget.StandaloneWindows64,BuildOptions.Development);
+            if(report.summary.result==BuildResult.Succeeded)File.Copy("Assets/UI/Fonts/LICENSE.txt",directory+"/SourceHanSans-LICENSE.txt",true);
+            Directory.CreateDirectory("Docs/Validation/BattlefieldsV2");
+            File.WriteAllText("Docs/Validation/BattlefieldsV2/build.json",Newtonsoft.Json.JsonConvert.SerializeObject(new{result=report.summary.result.ToString(),bytes=report.summary.totalSize,errors=report.summary.totalErrors,warnings=report.summary.totalWarnings}));
+            if(report.summary.result!=BuildResult.Succeeded)Debug.LogError("Battlefield build failed: "+report.summary.result);
+        }
         [MenuItem("Draftline/Build Windows Dev")]
         public static void BuildWindowsDev()
         {

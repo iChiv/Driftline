@@ -21,8 +21,12 @@ namespace Draftline.Unity
         public Dropdown Difficulty;
         [Header("Board art — saved main menu controls")]
         public Dropdown ThemeSelector;
+        public Dropdown EnvironmentSelector;
+        public Text SceneryHint;
+        public bool EnvironmentInputBlocked => settingsOpen || guideOpen;
         public Text ThemeDescription, ThemeStory;
         private BoardTheme[] themes;
+        private string environmentOptionsTheme;
         public Text[] SeatNames, SeatStories;
         [Header("HUD")]
         public Text TurnText, PhaseText, DiceText, HintText, LogText, ErrorText, ResultText;
@@ -69,9 +73,14 @@ namespace Draftline.Unity
                     ThemeSelector.ClearOptions();ThemeSelector.AddOptions(themes.Select(t=>t.ThemeName).ToList());
                     ThemeSelector.onValueChanged.AddListener(index=> {
                         if(controller.Rules!=null || controller.LanRoom.IsLanSession || index<0 || index>=themes.Length)return;
-                        DraftlineThemeApplier.SelectLocal(themes[index].ThemeId);Refresh();
+                        DraftlineThemeApplier.SelectLocal(themes[index].ThemeId);RefreshEnvironmentOptions();Refresh();
                     });
                 }
+                RefreshEnvironmentOptions();
+                if(EnvironmentSelector!=null)EnvironmentSelector.onValueChanged.AddListener(index=>{
+                    if(controller.Rules!=null || controller.LanRoom.IsLanSession)return;
+                    DraftlineThemeApplier.SelectEnvironment(index);Refresh();
+                });
                 LocalGame.onClick.AddListener(OpenSetup);
                 Lan.onClick.AddListener(() => { lobbyOpen = true; setupOpen = false; controller.Session.Mode = GameMode.Lan; Refresh(); });
                 StartMatch.onClick.AddListener(() => { controller.BeginLocalMatch(); Refresh(); });
@@ -174,13 +183,26 @@ namespace Draftline.Unity
             Refresh();
         }
 
+        private void RefreshEnvironmentOptions()
+        {
+            if(EnvironmentSelector==null)return;
+            var theme=DraftlineThemeApplier.Load(DraftlineThemeApplier.CurrentId??DraftlineThemeApplier.PreferredId);
+            environmentOptionsTheme=theme!=null?theme.ThemeId:null;
+            EnvironmentSelector.ClearOptions();
+            EnvironmentSelector.AddOptions((theme!=null?theme.EnvironmentNames:new[]{"标准","环境变化"}).Concat(new[]{"随机环境"}).ToList());
+            EnvironmentSelector.SetValueWithoutNotify(DraftlineThemeApplier.PreferredEnvironment);
+        }
+
         public void Refresh()
         {
             if (controller == null) return;
             var rules = controller.Rules;
             var room = controller.LanRoom;
             var playing = rules != null;
+            if(environmentOptionsTheme!=DraftlineThemeApplier.CurrentId)RefreshEnvironmentOptions();
             MainMenu.SetActive(!playing && !setupOpen && !lobbyOpen);
+            if(EnvironmentSelector!=null)EnvironmentSelector.interactable=!playing&&!room.IsLanSession&&DraftlineThemeApplier.CurrentId!="tabletop";
+            if(SceneryHint!=null){var prop=ThemeSceneryInteraction.Hovered;SceneryHint.text=prop!=null?prop.Label+" · "+prop.Hint:"棋盘四周藏着可点击的小机关 · 悬停探索";SceneryHint.gameObject.SetActive(!EnvironmentInputBlocked);}
             if(ThemeSelector!=null && themes!=null) {
                 ThemeSelector.interactable=!playing&&!room.IsLanSession;
                 var index=System.Array.FindIndex(themes,t=>t.ThemeId==DraftlineThemeApplier.CurrentId);

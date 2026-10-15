@@ -110,6 +110,7 @@ namespace Draftline.Unity
         public string sessionId, matchId;
         public string themeId;
         public int themeVersion;
+        public int environmentVariant, environmentSeed;
         public RoomMemberPacket[] members;
         public int[] controls;
         public bool fillComputers;

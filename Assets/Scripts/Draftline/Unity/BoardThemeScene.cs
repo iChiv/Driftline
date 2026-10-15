@@ -23,7 +23,8 @@ namespace Draftline.Unity
             if(theme.ThemeId!="tabletop" && (entry==null || entry.Root==null)) return null;
             foreach(var e in Entries??Array.Empty<Entry>())if(e.Root!=null)e.Root.SetActive(e==entry);
             var original=theme.ThemeId=="tabletop";
-            foreach(var r in LegacyRenderers??Array.Empty<Renderer>())if(r!=null)r.forceRenderingOff=!original;
+            foreach(var r in LegacyRenderers??Array.Empty<Renderer>())if(r!=null)r.forceRenderingOff=!original&&r.GetComponentInParent<DraftlineRollDice>()==null;
+            var tableDice=Object.FindObjectOfType<DraftlineRollDice>();if(tableDice!=null)tableDice.SetThemeStation(!original);
             if(LegacyLight!=null)LegacyLight.enabled=original;
             if(entry!=null && LegacyWalls!=null)
             {
@@ -49,5 +50,10 @@ namespace Draftline.Unity
         }
         [ContextMenu("Preview Selected Theme")]
         public void Preview() { DraftlineThemeApplier.Apply(PreviewThemeId); }
+        public void ApplyEnvironment(int variant,int seed)
+        {
+            var entry=Entries?.FirstOrDefault(e=>e.Theme==ActiveTheme);
+            if(entry?.Root!=null)entry.Root.GetComponent<ThemeEnvironment>()?.Apply(variant,seed);
+        }
     }
 }

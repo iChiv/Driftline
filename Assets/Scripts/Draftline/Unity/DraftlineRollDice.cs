@@ -24,6 +24,15 @@ namespace Draftline.Unity
         private Vector3 baseScale;
         private Tween idleSpin;
         private Tween idleBob;
+        [SerializeField] private bool stationCaptured;
+        [SerializeField] private Vector3 originalStation;
+        public void SetThemeStation(bool themed)
+        {
+            if(!stationCaptured){originalStation=transform.position;stationCaptured=true;}
+            var destination=themed?new Vector3(12.1f,.85f,-1.8f):originalStation;
+            if(Application.isPlaying){StopIdle();transform.DOKill();}transform.position=destination;restLocal=transform.localPosition;
+            if(ready&&!hidden)StartIdle();
+        }
 
         private void Start()
         {

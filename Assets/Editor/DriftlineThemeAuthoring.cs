@@ -207,7 +207,7 @@ namespace Draftline.EditorTools
                 return PrefabUtility.SaveAsPrefabAsset(go,Root+"/"+s.Id+"/Pawn.prefab");
             } finally{Object.DestroyImmediate(go);}
         }
-        private static GameObject Place(Transform parent,string source,string name,Vector3 position,float size,float yaw=0,bool horizontal=false)
+        internal static GameObject Place(Transform parent,string source,string name,Vector3 position,float size,float yaw=0,bool horizontal=false)
         {
             var prefab=Adapter(source);var go=(GameObject)PrefabUtility.InstantiatePrefab(prefab);go.name=name;go.transform.SetParent(parent,false);go.transform.localRotation=Quaternion.Euler(0,yaw,0);
             var bounds=Bounds(go);var max=horizontal?Mathf.Max(bounds.size.x,bounds.size.z):Mathf.Max(bounds.size.x,bounds.size.y,bounds.size.z);
@@ -249,7 +249,7 @@ namespace Draftline.EditorTools
             if(old.HasProperty("_Cull"))material.SetFloat("_Cull",old.GetFloat("_Cull"));
             material.enableInstancing=true;AssetDatabase.CreateAsset(material,path);return material;
         }
-        private static Bounds Bounds(GameObject go){var rs=go.GetComponentsInChildren<Renderer>();if(rs.Length==0)throw new InvalidOperationException("Model contains no renderer: "+go.name);var b=rs[0].bounds;foreach(var r in rs)b.Encapsulate(r.bounds);return b;}
+        internal static Bounds Bounds(GameObject go){var rs=go.GetComponentsInChildren<Renderer>();if(rs.Length==0)throw new InvalidOperationException("Model contains no renderer: "+go.name);var b=rs[0].bounds;foreach(var r in rs)b.Encapsulate(r.bounds);return b;}
         private static Transform Group(Transform parent,string name){var go=new GameObject(name);go.transform.SetParent(parent,false);return go.transform;}
         private static GameObject Cube(Transform parent,string name,Vector3 position,Vector3 scale,Material material,bool local=false)=>Primitive(PrimitiveType.Cube,parent,name,position,scale,material,local);
         private static GameObject Cylinder(Transform parent,string name,Vector3 position,Vector3 scale,Material material,bool local=false)=>Primitive(PrimitiveType.Cylinder,parent,name,position,scale,material,local);

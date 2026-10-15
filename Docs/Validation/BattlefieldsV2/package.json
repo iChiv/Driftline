@@ -1,0 +1,10 @@
+{
+  "archive": "Builds/Driftline-BattlefieldsV2-Windows.zip",
+  "bytes": 63446020,
+  "sha256": "44DE7EAD4ED440B44A1BADD73A85CB8EBC639349A4BB966BDFC1B994CFE29849",
+  "entries": 302,
+  "assemblySha256": "682CB3FFF6D288FF1F1CC99FCAEF349EA8568CE3AE417A80F4B35E7A825262DB",
+  "assemblyMatchesBuild": true,
+  "preArtArchivePreserved": true,
+  "firstThemesArchivePreserved": true
+}

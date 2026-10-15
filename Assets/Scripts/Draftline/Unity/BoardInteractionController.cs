@@ -46,6 +46,7 @@ namespace Draftline.Unity
         private void Update()
         {
             if (Controller == null || Style == null) return;
+            if (ThemeSceneryInteraction.ProcessPointer(this)) return;
             var state = Controller.Rules?.State;
             if (state == null) { if (targets.Count > 0 || selection != null) ClearVisuals(); return; }
             if (state.Revision != lastRevision) { lastRevision = state.Revision; StateChanged(); }

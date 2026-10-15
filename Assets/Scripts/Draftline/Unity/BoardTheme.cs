@@ -17,11 +17,14 @@ namespace Draftline.Unity
         [TextArea(2, 5)] public string Description;
         public int Version = 1;
         public int SortOrder;
+        public string[] EnvironmentNames = { "标准", "环境变化" };
         public GameObject PresentationPrefab;
         public GameObject PiecePrefab;
         public Color BackgroundColor = new Color(.055f,.07f,.09f);
         public Color AmbientColor = new Color(.40f,.45f,.50f);
         [Range(24, 34)] public float OverviewDistance=29.5f;
+        public Vector3 FramingTarget=new Vector3(0,0,-2);
+        [Range(60,80)] public float OverviewPitch=72;
         [Tooltip("场景里 Themes 根下的图层对象名")]
         public string SceneLayerName = "Tabletop";
         [Tooltip("未实现的主题选择后回退到桌面玩具")]

@@ -15,12 +15,18 @@ MonoBehaviour:
   ThemeId: fortress
   ThemeName: "\u524D\u7EBF\u8981\u585E"
   Description: "\u5E9F\u5F03\u8981\u585E\u7684\u6F14\u4E60\u5EAD\u9662\u91CD\u65B0\u4EAE\u8D77\u4FE1\u6807\u3002\u56DB\u652F\u961F\u4F0D\u7A7F\u8FC7\u6C99\u888B\u63A9\u4F53\uFF0C\u5728\u8F6E\u8F6C\u7684\u88C5\u7532\u95F8\u677F\u95F4\u4E89\u593A\u4E2D\u67A2\u3002"
-  Version: 1
+  Version: 2
   SortOrder: 1
-  PresentationPrefab: {fileID: 8951270880290952213, guid: c115a196d7c922c47b5a9b9b632c3f07, type: 3}
+  EnvironmentNames:
+  - "\u6674\u65E5\u9A7B\u9632"
+  - "\u9EC4\u660F\u6218\u635F"
+  PresentationPrefab: {fileID: 9002158402192774237, guid: 69644c028a7024943950127aa299f5af, type: 3}
   PiecePrefab: {fileID: 2820037191247784279, guid: 44a057408bbb15940bce9c89ae58e0a0, type: 3}
   BackgroundColor: {r: 0.15, g: 0.19, b: 0.21, a: 1}
   AmbientColor: {r: 0.56, g: 0.59, b: 0.61, a: 1}
+  OverviewDistance: 32.5
+  FramingTarget: {x: 1.7, y: 0, z: -1.2}
+  OverviewPitch: 66
   SceneLayerName: fortress
   Implemented: 1
   WallMaterial: {fileID: 0}

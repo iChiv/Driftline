@@ -15,7 +15,7 @@ namespace Draftline.Unity
     public sealed class DraftlineLanRoom : MonoBehaviour
     {
         private const string RequestChannel = "driftline.request.v2", StateChannel = "driftline.state.v2", AckChannel = "driftline.ack.v2", DiceChannel = "driftline.dice.v2";
-        private const string Contract = "board19-v03-themes-3";
+        private const string Contract = "board19-v03-scenes-4";
         public NetworkManager Network;
         public UnityTransport Transport;
         public bool FillWithComputers = true;
@@ -52,7 +52,7 @@ namespace Draftline.Unity
             {
                 var text = IsHost ? "房主地址：" + hostAddresses + " : " + lastPort : "房主：" + lastAddress + " : " + lastPort;
                 var theme=DraftlineThemeApplier.Load(DraftlineThemeApplier.CurrentId);
-                if(theme!=null)text+="\n棋盘主题："+theme.ThemeName;
+                if(theme!=null)text+="\n棋盘主题："+theme.ThemeName+" · "+theme.EnvironmentNames[DraftlineThemeApplier.CurrentVariant];
                 foreach (var m in members.Values.OrderBy(m => m.Color))
                     text += "\n" + MatchLabels.Player(m.Color) + " · " + (!m.Connected ? "掉线，可重连或由电脑接管" : m.Ready ? "已准备" : "未准备");
                 if (FillWithComputers) text += "\n空席位由电脑补齐";
@@ -319,6 +319,7 @@ namespace Draftline.Unity
             {
                 sequence = ++sequence, sessionId = sessionId, matchId = matchId,
                 themeId = DraftlineThemeApplier.CurrentId, themeVersion=DraftlineThemeApplier.Load(DraftlineThemeApplier.CurrentId)?.Version??1,
+                environmentVariant=DraftlineThemeApplier.CurrentVariant,environmentSeed=DraftlineThemeApplier.CurrentSeed,
                 seatsRequested = seatsRequested, started = matchStarted, fillComputers = FillWithComputers,
                 members = members.Values.Select(m => new RoomMemberPacket { clientId = m.ClientId, color = (int)m.Color, connected = m.Connected, ready = m.Ready }).ToArray(),
                 controls = controller.Session.Seats.Select(s => (int)s.Control).ToArray(),
@@ -342,6 +343,8 @@ namespace Draftline.Unity
                 Leave();controller.ShowError("房主的棋盘主题与本机版本不一致，请使用相同游戏包。");return;
             }
             if(DraftlineThemeApplier.CurrentId!=theme.ThemeId)DraftlineThemeApplier.Apply(theme.ThemeId);
+            if(DraftlineThemeApplier.CurrentVariant!=packet.environmentVariant || DraftlineThemeApplier.CurrentSeed!=packet.environmentSeed)
+                DraftlineThemeApplier.ApplyEnvironment(packet.environmentVariant,packet.environmentSeed);
             var newMatch = packet.matchId != matchId;
             receivedSequence = packet.sequence; sessionId = packet.sessionId; matchId = packet.matchId;
             matchStarted = packet.started; seatsRequested = packet.seatsRequested; FillWithComputers = packet.fillComputers;

@@ -15,12 +15,18 @@ MonoBehaviour:
   ThemeId: dungeon
   ThemeName: "\u7B26\u6587\u5730\u57CE"
   Description: "\u5C01\u5370\u5927\u5385\u6DF1\u5904\uFF0C\u754C\u94A5\u4EE4\u53E4\u8001\u77F3\u9635\u518D\u6B21\u8F6C\u52A8\u3002\u706B\u628A\u7167\u4EAE\u63A2\u7D22\u8005\u7684\u8425\u5730\uFF0C\u6210\u5BF9\u7B26\u6587\u6307\u5411\u53E6\u4E00\u7AEF\u7684\u51FA\u53E3\u3002"
-  Version: 1
+  Version: 2
   SortOrder: 2
-  PresentationPrefab: {fileID: 3241192901187698295, guid: 16b25608920e8cc429ad5ea5a5084eac, type: 3}
+  EnvironmentNames:
+  - "\u5C01\u5370\u82CF\u9192"
+  - "\u6E7F\u51B7\u9057\u8FF9"
+  PresentationPrefab: {fileID: 6132492759208478292, guid: f395149fa11c391409a0959ca312f37e, type: 3}
   PiecePrefab: {fileID: 7222009819054313258, guid: 752dffe76245d5d4c9ef733e6d5d3d8e, type: 3}
   BackgroundColor: {r: 0.035, g: 0.065, b: 0.11, a: 1}
   AmbientColor: {r: 0.48, g: 0.57, b: 0.68, a: 1}
+  OverviewDistance: 32.5
+  FramingTarget: {x: 1.7, y: 0, z: -1.2}
+  OverviewPitch: 66
   SceneLayerName: dungeon
   Implemented: 1
   WallMaterial: {fileID: 0}

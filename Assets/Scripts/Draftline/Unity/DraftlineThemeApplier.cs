@@ -15,6 +15,9 @@ namespace Draftline.Unity
         public const string DefaultId = "tabletop";
 
         public static string CurrentId { get; private set; }
+        public static int CurrentVariant {get;private set;}
+        public static int CurrentSeed {get;private set;}
+        public static int PreferredEnvironment => Mathf.Clamp(PlayerPrefs.GetInt("boardEnvironment",0),0,2);
         public static string PreferredId => PlayerPrefs.GetString(PrefKey, DefaultId);
         public static BoardTheme[] Available => Resources.LoadAll<BoardTheme>("Themes").Where(t=>t.Implemented).OrderBy(t=>t.SortOrder).ThenBy(t=>t.ThemeId).ToArray();
 
@@ -23,6 +26,20 @@ namespace Draftline.Unity
             var theme=Apply(themeId);
             if(theme==null)return;
             PlayerPrefs.SetString(PrefKey,theme.ThemeId);PlayerPrefs.Save();
+            SelectEnvironment(PreferredEnvironment);
+        }
+
+        public static void SelectEnvironment(int choice)
+        {
+            choice=Mathf.Clamp(choice,0,2);PlayerPrefs.SetInt("boardEnvironment",choice);PlayerPrefs.Save();
+            var seed=System.Environment.TickCount & int.MaxValue;
+            ApplyEnvironment(choice==2?new System.Random(seed).Next(2):choice,seed);
+        }
+        public static void ApplyEnvironment(int variant,int seed)
+        {
+            CurrentVariant=Mathf.Clamp(variant,0,1);CurrentSeed=seed;
+            var scene=Object.FindObjectOfType<BoardThemeScene>();
+            if(scene!=null)scene.ApplyEnvironment(CurrentVariant,CurrentSeed);
         }
 
         public static BoardTheme Load(string themeId)
@@ -46,12 +63,14 @@ namespace Draftline.Unity
                 return null;
             }
 
+            if(CurrentId==null){var choice=PreferredEnvironment;CurrentSeed=System.Environment.TickCount & int.MaxValue;CurrentVariant=choice==2?new System.Random(CurrentSeed).Next(2):choice;}
             var scene=Object.FindObjectOfType<BoardThemeScene>();
             if(scene!=null)
             {
                 var applied=scene.Apply(theme);
                 if(applied==null) { theme=Load(DefaultId);scene.Apply(theme); }
                 CurrentId=theme.ThemeId;
+                scene.ApplyEnvironment(CurrentVariant,CurrentSeed);
                 if(theme.ThemeId!=DefaultId)return theme;
             }
             CurrentId=theme.ThemeId;

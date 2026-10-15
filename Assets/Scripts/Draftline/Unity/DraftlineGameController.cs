@@ -103,6 +103,7 @@ namespace Draftline.Unity
             Application.runInBackground = true; // Also needed for a future LAN host.
             MatchLabels.Configure(Content);
             DraftlineThemeApplier.Apply(DraftlineThemeApplier.PreferredId);
+            DraftlineThemeApplier.SelectEnvironment(DraftlineThemeApplier.PreferredEnvironment);
             var piecesRoot = GameObject.Find("Pieces");
             if (piecesRoot != null)
             {
@@ -246,6 +247,7 @@ namespace Draftline.Unity
             lanRoom?.Leave();
             rules = null;
             DraftlineThemeApplier.Apply(DraftlineThemeApplier.PreferredId);
+            DraftlineThemeApplier.SelectEnvironment(DraftlineThemeApplier.PreferredEnvironment);
             setupError = null;
             IsPaused = false;
             cameraDirector?.ResetForMatch();

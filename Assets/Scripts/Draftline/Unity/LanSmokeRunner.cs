@@ -28,7 +28,7 @@ namespace Draftline.Unity
         [Serializable] private sealed class Entry
         {
             public string role,phase,digest,status,error,theme,preferredTheme;
-            public int revision,turn,current;
+            public int revision,turn,current,variant,environmentSeed;
             public bool complete,reconnected;
         }
 
@@ -44,6 +44,7 @@ namespace Draftline.Unity
             controller=UnityEngine.Object.FindObjectOfType<DraftlineGameController>();
             var requestedTheme=Value(args,"--theme",null);
             if(requestedTheme!=null)DraftlineThemeApplier.SelectLocal(requestedTheme);
+            DraftlineThemeApplier.ApplyEnvironment(int.Parse(Value(args,"--variant","0")),int.Parse(Value(args,"--environment-seed","12345")));
             controller.SimpleEffects=true;
             var room=controller.LanRoom;
             if(role=="host") {room.FillWithComputers=true;room.Host(4,port);}
@@ -92,7 +93,7 @@ namespace Draftline.Unity
             Application.Quit(2);
         }
 
-        private void Write(Entry entry){entry.theme=DraftlineThemeApplier.CurrentId;entry.preferredTheme=DraftlineThemeApplier.PreferredId;File.AppendAllText(report,JsonUtility.ToJson(entry)+Environment.NewLine);}
+        private void Write(Entry entry){entry.theme=DraftlineThemeApplier.CurrentId;entry.preferredTheme=DraftlineThemeApplier.PreferredId;entry.variant=DraftlineThemeApplier.CurrentVariant;entry.environmentSeed=DraftlineThemeApplier.CurrentSeed;File.AppendAllText(report,JsonUtility.ToJson(entry)+Environment.NewLine);}
         private static string Value(string[] args,string key,string fallback)
         {var i=Array.IndexOf(args,key);return i>=0&&i+1<args.Length?args[i+1]:fallback;}
         private static string Digest(MatchState state)

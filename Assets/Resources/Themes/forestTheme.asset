@@ -15,12 +15,18 @@ MonoBehaviour:
   ThemeId: forest
   ThemeName: "\u66AE\u6797\u796D\u575B"
   Description: "\u66AE\u8272\u843D\u5728\u88AB\u68EE\u6797\u6536\u56DE\u7684\u53E4\u4EE3\u77F3\u5EAD\u3002\u7B26\u77F3\u4E0E\u6811\u6839\u4ECD\u5B88\u7740\u754C\u94A5\uFF0C\u56DB\u5904\u8425\u706B\u4E4B\u95F4\uFF0C\u65E7\u5C01\u5370\u6309\u7167\u539F\u6709\u8282\u5F8B\u5347\u8D77\u3002"
-  Version: 1
+  Version: 2
   SortOrder: 4
-  PresentationPrefab: {fileID: 774432132000079028, guid: 6194180729b14c546a211ff6036ad22d, type: 3}
+  EnvironmentNames:
+  - "\u6797\u95F4\u65E5\u5149"
+  - "\u96E8\u540E\u8584\u96FE"
+  PresentationPrefab: {fileID: 7318905789158338712, guid: c40e266e9e801624ca447660e03bbe4c, type: 3}
   PiecePrefab: {fileID: 5921290849879315070, guid: e3f51fd21dfbb0247a1c6648d550bbee, type: 3}
   BackgroundColor: {r: 0.055, g: 0.11, b: 0.1, a: 1}
   AmbientColor: {r: 0.53, g: 0.61, b: 0.51, a: 1}
+  OverviewDistance: 32.5
+  FramingTarget: {x: 1.7, y: 0, z: -1.2}
+  OverviewPitch: 66
   SceneLayerName: forest
   Implemented: 1
   WallMaterial: {fileID: 0}

@@ -1,0 +1,11 @@
+{
+  "resolution": "1280x720",
+  "aliveAfter12Seconds": true,
+  "mode": "hidden graphical Windows player / D3D11",
+  "runtimeErrors": 0,
+  "graphics": [
+    "Direct3D:",
+    "Renderer: NVIDIA GeForce RTX 5090 (ID=0x2b85)",
+    "Vendor:   NVIDIA"
+  ]
+}
