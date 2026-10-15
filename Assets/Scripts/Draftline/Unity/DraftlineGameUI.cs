@@ -294,7 +294,7 @@ namespace Draftline.Unity
                 {
                     var player = state.Players[index];
                     if (player.Active)
-                        parts.Add($"{Names[index]} 消耗 {player.Consumed}");
+                        parts.Add($"{Names[index]} 生命 {player.Health}/{MatchRules.StartingHealth}");
                 }
                 resultStats.text = string.Join(" · ", parts);
             }
@@ -335,7 +335,7 @@ namespace Draftline.Unity
                 row.Add(dot);
                 row.Add(Text(Names[(int)player.Color] + (player.Eliminated ? " · 出局" : ""), "player-name"));
                 var count = state.Pieces.Count(piece => piece.Owner == player.Color && piece.OnBoard);
-                row.Add(Text($"场上 {count}  手中 {rules.HandCount(player.Color)}  消耗 {player.Consumed}",
+                row.Add(Text($"生命 {player.Health}/{MatchRules.StartingHealth}  场上 {count}/{MatchRules.MaxPiecesOnBoard}",
                     "player-stats"));
                 players.Add(row);
             }

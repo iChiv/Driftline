@@ -1,11 +1,12 @@
 param(
     [string]$BuildDirectory = (Join-Path $PSScriptRoot '../Builds/BattlefieldsV2'),
-    [string]$Destination = (Join-Path $PSScriptRoot '../Builds/Driftline-BattlefieldsV2-Windows.zip')
+    [string]$Destination = (Join-Path $PSScriptRoot '../Builds/Driftline-BattlefieldsV2-Windows.zip'),
+    [string]$LanGuidePath = (Join-Path $PSScriptRoot '../Builds/LAN-PLAYTEST.md')
 )
 $ErrorActionPreference='Stop'
 $BuildDirectory=(Resolve-Path -LiteralPath $BuildDirectory).Path
 $Destination=[IO.Path]::GetFullPath($Destination)
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot '../Builds/LAN-PLAYTEST.md') -Destination (Join-Path $BuildDirectory 'LAN-PLAYTEST.md') -Force
+Copy-Item -LiteralPath $LanGuidePath -Destination (Join-Path $BuildDirectory 'LAN-PLAYTEST.md') -Force
 $archive=[IO.Compression.ZipFile]::Open($Destination,[IO.Compression.ZipArchiveMode]::Create)
 try {
     foreach($file in Get-ChildItem -LiteralPath $BuildDirectory -File -Recurse){

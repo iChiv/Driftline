@@ -1,0 +1,15 @@
+{
+  "result": "Passed",
+  "scope": "Windows loopback / two standalone development players",
+  "theme": "hangar",
+  "variant": 1,
+  "seed": 74019,
+  "clientPreference": "forest",
+  "sharedRevisions": 25,
+  "firstRevision": 0,
+  "lastRevision": 24,
+  "reconnected": true,
+  "hostExit": 0,
+  "clientExit": 0,
+  "utc": "2026-10-15T12:49:35.3103889Z"
+}

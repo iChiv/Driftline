@@ -12,14 +12,14 @@ namespace Draftline.Unity
     public static class DraftlineThemeApplier
     {
         public const string PrefKey = "boardTheme";
-        public const string DefaultId = "tabletop";
+        public const string DefaultId = "fortress";
 
         public static string CurrentId { get; private set; }
         public static int CurrentVariant {get;private set;}
         public static int CurrentSeed {get;private set;}
-        public static int PreferredEnvironment => Mathf.Clamp(PlayerPrefs.GetInt("boardEnvironment",0),0,2);
-        public static string PreferredId => PlayerPrefs.GetString(PrefKey, DefaultId);
-        public static BoardTheme[] Available => Resources.LoadAll<BoardTheme>("Themes").Where(t=>t.Implemented).OrderBy(t=>t.SortOrder).ThenBy(t=>t.ThemeId).ToArray();
+        public static int PreferredEnvironment => 2;
+        public static string PreferredId { get { var id=PlayerPrefs.GetString(PrefKey,DefaultId);return Available.Any(t=>t.ThemeId==id)?id:DefaultId; } }
+        public static BoardTheme[] Available => Resources.LoadAll<BoardTheme>("Themes").Where(t=>t.Implemented&&t.PresentationPrefab!=null).OrderBy(t=>t.SortOrder).ThenBy(t=>t.ThemeId).ToArray();
 
         public static void SelectLocal(string themeId)
         {
@@ -31,7 +31,7 @@ namespace Draftline.Unity
 
         public static void SelectEnvironment(int choice)
         {
-            choice=Mathf.Clamp(choice,0,2);PlayerPrefs.SetInt("boardEnvironment",choice);PlayerPrefs.Save();
+            choice=Mathf.Clamp(choice,0,2);
             var seed=System.Environment.TickCount & int.MaxValue;
             ApplyEnvironment(choice==2?new System.Random(seed).Next(2):choice,seed);
         }
@@ -51,15 +51,15 @@ namespace Draftline.Unity
         public static BoardTheme Apply(string themeId)
         {
             var theme = Load(themeId);
-            if (theme == null || !theme.Implemented)
+            if (theme == null || !theme.Implemented || theme.PresentationPrefab==null)
             {
                 if (theme != null)
-                    Debug.Log($"[Theme] {theme.ThemeName} 建设中，本局使用桌面玩具主题。");
+                    Debug.Log($"[Theme] {theme.ThemeName} 不在当前主题目录，使用前线要塞。");
                 theme = Load(DefaultId);
             }
             if (theme == null)
             {
-                Debug.LogWarning("[Theme] TabletopTheme asset missing from Resources/Themes.");
+                Debug.LogWarning("[Theme] Default theme asset missing from Resources/Themes.");
                 return null;
             }
 
@@ -71,7 +71,7 @@ namespace Draftline.Unity
                 if(applied==null) { theme=Load(DefaultId);scene.Apply(theme); }
                 CurrentId=theme.ThemeId;
                 scene.ApplyEnvironment(CurrentVariant,CurrentSeed);
-                if(theme.ThemeId!=DefaultId)return theme;
+                if(theme.PresentationPrefab!=null)return theme;
             }
             CurrentId=theme.ThemeId;
 

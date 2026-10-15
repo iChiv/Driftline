@@ -10,7 +10,7 @@ namespace Draftline.Core
     {
         DiceRolled, PieceSelected, PieceDeployed, PieceSlid, PortalUsed,
         ItemCollected, ItemActivated, PieceCaptured, NoMoves, WallRotated,
-        ItemSpawned, PlayerEliminated, TurnChanged, Victory
+        ItemSpawned, PlayerEliminated, TurnChanged, Victory, Draw
     }
 
     public sealed class PieceState
@@ -27,6 +27,7 @@ namespace Draftline.Core
         public PlayerColor Color;
         public bool Active;
         public bool Eliminated;
+        public int Health = MatchRules.StartingHealth;
         public int Consumed;
         public readonly List<ItemType> Items = new List<ItemType>(2);
     }
@@ -87,7 +88,7 @@ namespace Draftline.Core
         public bool BreakWallActive;
         public int NextItemId = 1;
         public readonly PlayerState[] Players = new PlayerState[4];
-        public readonly List<PieceState> Pieces = new List<PieceState>(40);
+        public readonly List<PieceState> Pieces = new List<PieceState>(32);
         public readonly List<FieldItem> FieldItems = new List<FieldItem>(2);
         public HashSet<int> DeadAtTurnStart = new HashSet<int>();
 
@@ -108,7 +109,7 @@ namespace Draftline.Core
                 var p = Players[i];
                 if (p == null) continue;
                 copy.Players[i] = new PlayerState
-                    { Color = p.Color, Active = p.Active, Eliminated = p.Eliminated, Consumed = p.Consumed };
+                    { Color = p.Color, Active = p.Active, Eliminated = p.Eliminated, Health = p.Health, Consumed = p.Consumed };
                 copy.Players[i].Items.AddRange(p.Items);
             }
             foreach (var p in Pieces)

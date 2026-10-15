@@ -30,6 +30,7 @@ namespace Draftline.Unity
             public string role,phase,digest,status,error,theme,preferredTheme;
             public int revision,turn,current,variant,environmentSeed;
             public bool complete,reconnected;
+            public int[] health,boardCounts;
         }
 
         private IEnumerator Start()
@@ -38,6 +39,7 @@ namespace Draftline.Unity
             role=Value(args,"--role","host");
             report=Value(args,"--report",Path.Combine(Application.temporaryCachePath,"driftline-lan-"+role+".jsonl"));
             var port=ushort.Parse(Value(args,"--port","7788"));
+            var expectedSeed=int.Parse(Value(args,"--expected-environment-seed",Value(args,"--environment-seed","12345")));
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(report)));
             File.WriteAllText(report,"");
             yield return null;yield return null;yield return null;
@@ -55,8 +57,16 @@ namespace Draftline.Unity
             while(Time.realtimeSinceStartup-started<110f)
             {
                 if(role=="client"&&!room.MatchStarted&&room.LocalColor.HasValue&&!room.LocalReady)room.ToggleReady();
-                if(role=="host"&&!room.MatchStarted&&room.PlayerCount>=2&&room.CanStart)room.StartHostedMatch();
+                if(role=="host"&&!room.MatchStarted&&room.PlayerCount>=2&&room.CanStart)
+                {
+                    room.StartHostedMatch();
+                    // Normal matches randomize automatically. Pin only this opt-in
+                    // development probe so both processes can assert a known seed.
+                    DraftlineThemeApplier.ApplyEnvironment(int.Parse(Value(args,"--variant","0")),int.Parse(Value(args,"--environment-seed","12345")));
+                    room.BroadcastState(Array.Empty<MatchEvent>(),true);
+                }
                 var state=controller.Rules?.State;
+                if(state!=null&&DraftlineThemeApplier.CurrentSeed!=expectedSeed){yield return null;continue;}
                 if(state!=null&&state.Revision!=lastRevision)
                 {
                     lastRevision=state.Revision;
@@ -93,7 +103,7 @@ namespace Draftline.Unity
             Application.Quit(2);
         }
 
-        private void Write(Entry entry){entry.theme=DraftlineThemeApplier.CurrentId;entry.preferredTheme=DraftlineThemeApplier.PreferredId;entry.variant=DraftlineThemeApplier.CurrentVariant;entry.environmentSeed=DraftlineThemeApplier.CurrentSeed;File.AppendAllText(report,JsonUtility.ToJson(entry)+Environment.NewLine);}
+        private void Write(Entry entry){entry.theme=DraftlineThemeApplier.CurrentId;entry.preferredTheme=DraftlineThemeApplier.PreferredId;entry.variant=DraftlineThemeApplier.CurrentVariant;entry.environmentSeed=DraftlineThemeApplier.CurrentSeed;var state=controller?.Rules?.State;if(state!=null){entry.health=state.Players.Select(p=>p.Health).ToArray();entry.boardCounts=state.Players.Select(p=>state.Pieces.Count(v=>v.Owner==p.Color&&v.OnBoard)).ToArray();}File.AppendAllText(report,JsonUtility.ToJson(entry)+Environment.NewLine);}
         private static string Value(string[] args,string key,string fallback)
         {var i=Array.IndexOf(args,key);return i>=0&&i+1<args.Length?args[i+1]:fallback;}
         private static string Digest(MatchState state)

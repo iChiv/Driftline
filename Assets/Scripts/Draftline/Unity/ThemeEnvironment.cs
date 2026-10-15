@@ -25,7 +25,9 @@ namespace Draftline.Unity
             foreach(var detail in SeededDetails)if(detail!=null)detail.SetActive(random.NextDouble()>.35);
             if(KeyLight!=null){KeyLight.color=Variant==0?StandardLight:AlternateLight;KeyLight.intensity=Variant==0?StandardIntensity:AlternateIntensity;}
             RenderSettings.ambientLight=Variant==0?StandardAmbient:AlternateAmbient;
-            if(Camera.main!=null)Camera.main.backgroundColor=Variant==0?StandardBackground:AlternateBackground;
+            var backdrop=UnityEngine.Object.FindObjectOfType<ThemeBackdrop>();
+            if(backdrop!=null)backdrop.SetEnvironment(Variant==0?StandardBackground:AlternateBackground);
+            else if(Camera.main!=null)Camera.main.backgroundColor=Variant==0?StandardBackground:AlternateBackground;
             GetComponent<ThemeAmbientEffects>()?.Apply();
         }
     }

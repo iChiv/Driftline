@@ -12,7 +12,7 @@ $clientReport=Join-Path $ReportDirectory 'client.jsonl'
 $hostLog=Join-Path $ReportDirectory 'host.log'
 $clientLog=Join-Path $ReportDirectory 'client.log'
 $hostArguments=@('-batchmode','-nographics','--driftline-lan-smoke','--role','host','--theme','hangar','--variant','1','--environment-seed','74019','--port',"$Port",'--report',('"'+$hostReport+'"'),'-logFile',('"'+$hostLog+'"'))
-$clientArguments=@('-batchmode','-nographics','--driftline-lan-smoke','--role','client','--theme','forest','--variant','0','--environment-seed','222','--port',"$Port",'--report',('"'+$clientReport+'"'),'-logFile',('"'+$clientLog+'"'))
+$clientArguments=@('-batchmode','-nographics','--driftline-lan-smoke','--role','client','--theme','forest','--variant','0','--environment-seed','222','--expected-environment-seed','74019','--port',"$Port",'--report',('"'+$clientReport+'"'),'-logFile',('"'+$clientLog+'"'))
 $hostProcess=$null;$clientProcess=$null
 try {
     $hostProcess=Start-Process -FilePath $ExecutablePath -ArgumentList $hostArguments -WindowStyle Hidden -PassThru
@@ -36,6 +36,8 @@ try {
     foreach($entry in ($hostEntries+$clientEntries)){
         if($entry.error){throw $entry.error}
         if($entry.theme -ne 'hangar' -or $entry.variant -ne 1 -or $entry.environmentSeed -ne 74019){throw 'Client did not retain host scene identity/state/seed.'}
+        if(@($entry.health|Where-Object {$_ -lt 0 -or $_ -gt 5}).Count -gt 0){throw 'Health escaped the 0..5 range.'}
+        if(@($entry.boardCounts|Where-Object {$_ -gt 8}).Count -gt 0){throw 'A seat exceeded eight pieces on the board.'}
     }
     $exceptions=@(Select-String -LiteralPath $hostLog,$clientLog -Pattern '(NullReference|MissingReference|InvalidOperation|ArgumentOutOfRange|MissingComponent)Exception')
     if($exceptions.Count -gt 0){throw 'Runtime exception found in a player log.'}

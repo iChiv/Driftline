@@ -1,0 +1,1 @@
+{"success":true,"message":"Code executed successfully.","data":{"result":{"camera":26.0,"minimum":20.0,"maximum":36.0,"mouseNative":true,"devices":[{"name":"Keyboard","deviceId":1,"native":true,"enabled":true},{"name":"Mouse","deviceId":2,"native":true,"enabled":true}]},"compiler":"roslyn"}}

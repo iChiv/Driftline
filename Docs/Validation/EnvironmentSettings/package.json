@@ -1,0 +1,21 @@
+{
+  "archive": "E:\\Projects\\ABIG\\Josef\\Project-3\\Driftline\\Builds\\Driftline-EnvironmentSettings-Windows.zip",
+  "bytes": 63469752,
+  "sha256": "1A328D21F8255D107B0564BF8C123027A0CD1BE5CAA02BB9760A4E642AB829E4",
+  "entries": 302,
+  "assemblies": [
+    {
+      "name": "Draftline.Core.dll",
+      "matches": true
+    },
+    {
+      "name": "Draftline.Unity.dll",
+      "matches": true
+    }
+  ],
+  "hasExe": true,
+  "hasStartGuide": true,
+  "hasLanGuide": true,
+  "hasExcludedDebugFolders": false,
+  "coreMatchesPreviousBuild": true
+}

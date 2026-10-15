@@ -1,0 +1,20 @@
+{
+  "archive": "E:\\Projects\\ABIG\\Josef\\Project-3\\Driftline\\Builds\\Driftline-MinimalUI-Windows.zip",
+  "bytes": 63449505,
+  "sha256": "FA391B081C47913B3E05FEADDDD12EB6A5D5DCBD73466885AE2A68DC072DB73E",
+  "entries": 302,
+  "assemblies": [
+    {
+      "matches": true,
+      "name": "Draftline.Core.dll"
+    },
+    {
+      "matches": true,
+      "name": "Draftline.Unity.dll"
+    }
+  ],
+  "hasExe": true,
+  "hasStartGuide": true,
+  "hasLanGuide": true,
+  "hasExcludedDebugFolders": false
+}

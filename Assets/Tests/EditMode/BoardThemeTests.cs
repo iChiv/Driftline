@@ -8,10 +8,11 @@ namespace Draftline.Tests
     public sealed class BoardThemeTests
     {
         [Test]
-        public void CatalogueHasFiveCompleteScenesAndTheOriginalTabletop()
+        public void CatalogueContainsOnlyTheFiveCompleteScenes()
         {
             var themes=DraftlineThemeApplier.Available;
-            Assert.AreEqual(6,themes.Length);Assert.AreEqual(6,themes.Select(t=>t.ThemeId).Distinct().Count());
+            Assert.AreEqual(5,themes.Length);Assert.AreEqual(5,themes.Select(t=>t.ThemeId).Distinct().Count());
+            Assert.IsFalse(themes.Any(t=>t.ThemeId=="tabletop"));
             foreach(var theme in themes.Where(t=>t.ThemeId!="tabletop")) {
                 Assert.IsNotNull(theme.PresentationPrefab,theme.ThemeId);Assert.IsNotNull(theme.PiecePrefab,theme.ThemeId);
                 Assert.AreEqual(9,theme.PresentationPrefab.GetComponentsInChildren<ThemeMovingWall>(true).Length);

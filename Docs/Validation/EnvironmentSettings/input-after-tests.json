@@ -1,0 +1,1 @@
+{"success":true,"message":"Code executed successfully.","data":{"result":{"mouseNative":true,"mouseEnabled":true,"keyboardEnabled":true,"devices":[{"name":"Keyboard","native":true,"enabled":true},{"name":"Mouse","native":true,"enabled":true}],"playing":false,"preloaded":0},"compiler":"roslyn"}}

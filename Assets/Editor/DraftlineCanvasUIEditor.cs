@@ -14,7 +14,7 @@ namespace Draftline.EditorTools
             {
                 EditorGUILayout.HelpBox("预览只切换保存的页面，不启动对局，也不重新生成控件。直接编辑子节点或 Prefab。",MessageType.Info);
                 var pages=new[]{view.MainMenu,view.Setup,view.Lobby,view.Hud,view.Settings,view.Result,view.GuidePanel};
-                var names=new[]{"主菜单","席位配置","LAN 房间","对局 HUD","设置","结算","规则引导"};
+                var names=new[]{"主菜单","席位配置","LAN 房间","对局 HUD","设置","结算","游戏说明"};
                 for(var i=0;i<pages.Length;i++)
                     if(GUILayout.Button("预览 · "+names[i]))
                     {

@@ -21,6 +21,9 @@ namespace Draftline.Unity
         public GameObject PresentationPrefab;
         public GameObject PiecePrefab;
         public Color BackgroundColor = new Color(.055f,.07f,.09f);
+        public Material BackgroundMaterial;
+        public Color BackgroundTop = new Color(.10f,.15f,.19f);
+        public Color BackgroundHaze = new Color(.14f,.18f,.20f);
         public Color AmbientColor = new Color(.40f,.45f,.50f);
         [Range(24, 34)] public float OverviewDistance=29.5f;
         public Vector3 FramingTarget=new Vector3(0,0,-2);

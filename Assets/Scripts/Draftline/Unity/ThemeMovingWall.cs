@@ -7,13 +7,14 @@ namespace Draftline.Unity
     {
         public int Column, Row;
         public Transform Body;
+        public int GeometryVersion;
         [System.NonSerialized] public Renderer Driver;
         private float driverY, driverScaleY;
-        public void Bind(Renderer driver)
+        public void Bind(Renderer driver,Vector3 restPosition,Vector3 restScale)
         {
             Driver=driver;
             if(driver==null)return;
-            driverY=driver.transform.position.y;driverScaleY=driver.transform.localScale.y;
+            driverY=restPosition.y;driverScaleY=restScale.y;
             Follow();
         }
         private void LateUpdate() => Follow();

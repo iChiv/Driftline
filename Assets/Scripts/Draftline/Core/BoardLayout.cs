@@ -174,6 +174,18 @@ namespace Draftline.Core
             return pair[0] == entry ? pair[1] : pair[0];
         }
 
+        /// <summary>The playable mouth faces the center, independently of incoming direction.</summary>
+        public GridPosition PortalMouth(GridPosition portal)
+        {
+            if(CellAt(portal).Kind!=CellKind.Portal)
+                throw new ArgumentException("Cell is not a portal.",nameof(portal));
+            if(portal.Row==4)return portal.Offset(0,1);
+            if(portal.Row==14)return portal.Offset(0,-1);
+            if(portal.Column==4)return portal.Offset(1,0);
+            if(portal.Column==14)return portal.Offset(-1,0);
+            throw new InvalidOperationException("Portal has no authored mouth: "+portal);
+        }
+
         public bool IsScheduledWall(GridPosition position, int phase)
         {
             var cell = CellAt(position);

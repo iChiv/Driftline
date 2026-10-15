@@ -38,7 +38,7 @@ namespace Draftline.Unity
             players = state.Players.Select(player => new PlayerPacket
             {
                 color = (int)player.Color, active = player.Active,
-                eliminated = player.Eliminated, consumed = player.Consumed,
+                eliminated = player.Eliminated, health = player.Health, consumed = player.Consumed,
                 inventory = player.Items.Select(item => (int)item).ToArray()
             }).ToArray(),
             pieces = state.Pieces.Select(piece => new PiecePacket
@@ -81,7 +81,7 @@ namespace Draftline.Unity
                 var player = new PlayerState
                 {
                     Color = (PlayerColor)packet.color, Active = packet.active,
-                    Eliminated = packet.eliminated, Consumed = packet.consumed
+                    Eliminated = packet.eliminated, Health = packet.health, Consumed = packet.consumed
                 };
                 if (packet.inventory != null)
                     foreach (var item in packet.inventory) player.Items.Add((ItemType)item);
@@ -153,7 +153,7 @@ namespace Draftline.Unity
     [Serializable]
     public sealed class PlayerPacket
     {
-        public int color, consumed;
+        public int color, health, consumed;
         public bool active, eliminated;
         public int[] inventory;
     }

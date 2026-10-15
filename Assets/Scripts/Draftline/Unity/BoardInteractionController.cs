@@ -220,10 +220,13 @@ namespace Draftline.Unity
                 var vector = DirectionVector(direction);
                 var arrow = AddTarget(piece.Position, direction, -1, Arrow(direction), false, true);
                 arrow.transform.position += vector * .88f;
-                arrow.transform.localScale *= .6f;
                 if (stopDirection.HasValue && stopDirection != direction) continue;
                 if (preview.State.EmergencyStopActive)
-                    for (var i = 0; i < plan.Steps.Count; i++) AddTarget(plan.Steps[i].Position, direction, i, "·", false, false);
+                {
+                    for (var i = 0; i < plan.Steps.Count; i++)
+                        if(!plan.Steps[i].PortalEntry&&!plan.Steps[i].PortalExit)
+                            AddTarget(plan.Steps[i].Position, direction, i, "■", false, false);
+                }
                 else AddTarget(plan.Destination, direction, -1, Arrow(direction), false, false);
             }
         }
@@ -233,7 +236,7 @@ namespace Draftline.Unity
             var go = Instantiate(Style.TargetPrefab, VisualRoot);
             go.name = deploy ? "Deploy +" : direction + " target " + cell;
             go.transform.position = BoardCoordinates.ToWorld(cell, Style.TargetHeight);
-            go.transform.localScale = Style.TargetScale;
+            go.transform.localScale = Style.TargetScale * (choice ? .6f : 1f);
             var target = go.GetComponent<BoardTarget>();
             target.PieceId = SelectedPieceId ?? -1;
             target.Revision = Controller.Rules.State.Revision;
@@ -241,10 +244,13 @@ namespace Draftline.Unity
             target.Deploy = deploy; target.DirectionChoice = choice;
             var mesh = go.GetComponentInChildren<TextMesh>();
             if (mesh != null) mesh.text = label;
-            var block = new MaterialPropertyBlock();
-            block.SetColor("_BaseColor", stopIndex >= 0 ? Style.Stop : Style.Normal);
-            block.SetColor("_Color", stopIndex >= 0 ? Style.Stop : Style.Normal);
-            go.GetComponent<Renderer>().SetPropertyBlock(block);
+            if (stopIndex >= 0 && Style.StopTargetMesh != null)
+            {
+                go.GetComponent<MeshFilter>().sharedMesh = Style.StopTargetMesh;
+                var rim = go.transform.Find("Contrast Rim");
+                if (rim != null) rim.GetComponent<MeshFilter>().sharedMesh = Style.StopTargetMesh;
+            }
+            target.SetAppearance(stopIndex >= 0 ? Style.Stop : Style.Normal);
             targets.Add(target);
             return target;
         }
@@ -252,7 +258,9 @@ namespace Draftline.Unity
         private void Hover(BoardTarget target)
         {
             if (target == hovered) return;
+            if (hovered != null) hovered.SetHovered(false);
             hovered = target;
+            if (hovered != null) hovered.SetHovered(true);
             InspectionText = null;
             foreach (var go in paths) if (go != null) Destroy(go);
             paths.Clear();

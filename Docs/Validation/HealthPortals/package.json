@@ -1,0 +1,20 @@
+{
+  "archive": "E:\\Projects\\ABIG\\Josef\\Project-3\\Driftline\\Builds\\Driftline-HealthPortals-Windows.zip",
+  "bytes": 63453689,
+  "sha256": "0C55601F51395BF05C5519EBF1EA4B35B591FB68E046458178D9E4D6630EE6BF",
+  "entries": 302,
+  "assemblies": [
+    {
+      "matches": true,
+      "name": "Draftline.Core.dll"
+    },
+    {
+      "matches": true,
+      "name": "Draftline.Unity.dll"
+    }
+  ],
+  "hasExe": true,
+  "hasStartGuide": true,
+  "hasLanGuide": true,
+  "hasExcludedDebugFolders": false
+}

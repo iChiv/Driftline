@@ -1,0 +1,178 @@
+{
+  "passed": true,
+  "exitCode": 0,
+  "cases": [
+    {
+      "check": "apply",
+      "mode": "Windowed",
+      "requestedWidth": 1280,
+      "requestedHeight": 720,
+      "actualWidth": 1280,
+      "actualHeight": 720,
+      "passed": true
+    },
+    {
+      "check": "persist",
+      "mode": "Windowed",
+      "requestedWidth": 1280,
+      "requestedHeight": 720,
+      "actualWidth": 1280,
+      "actualHeight": 720,
+      "passed": true
+    },
+    {
+      "check": "apply",
+      "mode": "Windowed",
+      "requestedWidth": 1920,
+      "requestedHeight": 1080,
+      "actualWidth": 1920,
+      "actualHeight": 1080,
+      "passed": true
+    },
+    {
+      "check": "persist",
+      "mode": "Windowed",
+      "requestedWidth": 1920,
+      "requestedHeight": 1080,
+      "actualWidth": 1920,
+      "actualHeight": 1080,
+      "passed": true
+    },
+    {
+      "check": "apply",
+      "mode": "Windowed",
+      "requestedWidth": 2560,
+      "requestedHeight": 1440,
+      "actualWidth": 2560,
+      "actualHeight": 1440,
+      "passed": true
+    },
+    {
+      "check": "persist",
+      "mode": "Windowed",
+      "requestedWidth": 2560,
+      "requestedHeight": 1440,
+      "actualWidth": 2560,
+      "actualHeight": 1440,
+      "passed": true
+    },
+    {
+      "check": "apply",
+      "mode": "Windowed",
+      "requestedWidth": 3840,
+      "requestedHeight": 2160,
+      "actualWidth": 3840,
+      "actualHeight": 2160,
+      "passed": true
+    },
+    {
+      "check": "persist",
+      "mode": "Windowed",
+      "requestedWidth": 3840,
+      "requestedHeight": 2160,
+      "actualWidth": 3840,
+      "actualHeight": 2160,
+      "passed": true
+    },
+    {
+      "check": "apply",
+      "mode": "FullScreenWindow",
+      "requestedWidth": 1280,
+      "requestedHeight": 720,
+      "actualWidth": 1280,
+      "actualHeight": 720,
+      "passed": true
+    },
+    {
+      "check": "persist",
+      "mode": "FullScreenWindow",
+      "requestedWidth": 1280,
+      "requestedHeight": 720,
+      "actualWidth": 1280,
+      "actualHeight": 720,
+      "passed": true
+    },
+    {
+      "check": "apply",
+      "mode": "FullScreenWindow",
+      "requestedWidth": 1920,
+      "requestedHeight": 1080,
+      "actualWidth": 1920,
+      "actualHeight": 1080,
+      "passed": true
+    },
+    {
+      "check": "persist",
+      "mode": "FullScreenWindow",
+      "requestedWidth": 1920,
+      "requestedHeight": 1080,
+      "actualWidth": 1920,
+      "actualHeight": 1080,
+      "passed": true
+    },
+    {
+      "check": "apply",
+      "mode": "FullScreenWindow",
+      "requestedWidth": 2560,
+      "requestedHeight": 1440,
+      "actualWidth": 2560,
+      "actualHeight": 1440,
+      "passed": true
+    },
+    {
+      "check": "persist",
+      "mode": "FullScreenWindow",
+      "requestedWidth": 2560,
+      "requestedHeight": 1440,
+      "actualWidth": 2560,
+      "actualHeight": 1440,
+      "passed": true
+    },
+    {
+      "check": "apply",
+      "mode": "FullScreenWindow",
+      "requestedWidth": 3840,
+      "requestedHeight": 2160,
+      "actualWidth": 3840,
+      "actualHeight": 2160,
+      "passed": true
+    },
+    {
+      "check": "persist",
+      "mode": "FullScreenWindow",
+      "requestedWidth": 3840,
+      "requestedHeight": 2160,
+      "actualWidth": 3840,
+      "actualHeight": 2160,
+      "passed": true
+    },
+    {
+      "check": "timeout-revert",
+      "mode": "FullScreenWindow",
+      "requestedWidth": 3840,
+      "requestedHeight": 2160,
+      "actualWidth": 3840,
+      "actualHeight": 2160,
+      "passed": true
+    },
+    {
+      "check": "close-revert",
+      "mode": "FullScreenWindow",
+      "requestedWidth": 3840,
+      "requestedHeight": 2160,
+      "actualWidth": 3840,
+      "actualHeight": 2160,
+      "passed": true
+    },
+    {
+      "check": "complete",
+      "mode": "FullScreenWindow",
+      "requestedWidth": 3840,
+      "requestedHeight": 2160,
+      "actualWidth": 3840,
+      "actualHeight": 2160,
+      "passed": true
+    }
+  ],
+  "checks": 19
+}

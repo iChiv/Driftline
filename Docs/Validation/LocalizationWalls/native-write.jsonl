@@ -1,0 +1,158 @@
+{"check":"nine-lifts","theme":"fortress","details":"","phase":0,"passed":true}
+{"check":"lift-10-7","theme":"fortress","details":"up=False bounds=Center: (-2.00, 0.80, 1.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-6-12","theme":"fortress","details":"up=True bounds=Center: (3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-12-6","theme":"fortress","details":"up=True bounds=Center: (-3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-6-6","theme":"fortress","details":"up=False bounds=Center: (-3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-7-8","theme":"fortress","details":"up=True bounds=Center: (-1.00, 0.80, -2.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-12-12","theme":"fortress","details":"up=False bounds=Center: (3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-11-10","theme":"fortress","details":"up=True bounds=Center: (1.00, 0.80, 2.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-9-9","theme":"fortress","details":"up=True bounds=Center: (0.00, 0.80, 0.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-8-11","theme":"fortress","details":"up=False bounds=Center: (2.00, 0.80, -1.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"nine-lifts","theme":"fortress","details":"","phase":1,"passed":true}
+{"check":"lift-10-7","theme":"fortress","details":"up=True bounds=Center: (-2.00, 0.80, 1.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-6-12","theme":"fortress","details":"up=False bounds=Center: (3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-12-6","theme":"fortress","details":"up=False bounds=Center: (-3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-6-6","theme":"fortress","details":"up=True bounds=Center: (-3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-7-8","theme":"fortress","details":"up=False bounds=Center: (-1.00, 0.80, -2.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-12-12","theme":"fortress","details":"up=True bounds=Center: (3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-11-10","theme":"fortress","details":"up=False bounds=Center: (1.00, 0.80, 2.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-9-9","theme":"fortress","details":"up=True bounds=Center: (0.00, 0.80, 0.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-8-11","theme":"fortress","details":"up=True bounds=Center: (2.00, 0.80, -1.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"english-dynamic-hud","theme":"fortress","details":"","phase":-1,"passed":true}
+{"check":"render-has-visible-pixels","theme":"fortress","details":"","phase":-1,"passed":true}
+{"check":"nine-lifts","theme":"fortress","details":"","phase":0,"passed":true}
+{"check":"lift-10-7","theme":"fortress","details":"up=False bounds=Center: (-2.00, 0.80, 1.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-6-12","theme":"fortress","details":"up=True bounds=Center: (3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-12-6","theme":"fortress","details":"up=True bounds=Center: (-3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-6-6","theme":"fortress","details":"up=False bounds=Center: (-3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-7-8","theme":"fortress","details":"up=True bounds=Center: (-1.00, 0.80, -2.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-12-12","theme":"fortress","details":"up=False bounds=Center: (3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-11-10","theme":"fortress","details":"up=True bounds=Center: (1.00, 0.80, 2.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-9-9","theme":"fortress","details":"up=True bounds=Center: (0.00, 0.80, 0.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-8-11","theme":"fortress","details":"up=False bounds=Center: (2.00, 0.80, -1.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"nine-lifts","theme":"dungeon","details":"","phase":0,"passed":true}
+{"check":"lift-6-6","theme":"dungeon","details":"up=False bounds=Center: (-3.00, 0.89, -3.00), Extents: (0.45, 0.39, 0.45)","phase":0,"passed":true}
+{"check":"lift-8-11","theme":"dungeon","details":"up=False bounds=Center: (2.00, 0.89, -1.00), Extents: (0.45, 0.39, 0.46)","phase":0,"passed":true}
+{"check":"lift-9-9","theme":"dungeon","details":"up=True bounds=Center: (0.00, 0.89, 0.00), Extents: (0.46, 0.39, 0.46)","phase":0,"passed":true}
+{"check":"lift-7-8","theme":"dungeon","details":"up=True bounds=Center: (-1.00, 0.89, -2.00), Extents: (0.46, 0.39, 0.45)","phase":0,"passed":true}
+{"check":"lift-12-12","theme":"dungeon","details":"up=False bounds=Center: (3.00, 0.89, 3.00), Extents: (0.45, 0.39, 0.45)","phase":0,"passed":true}
+{"check":"lift-12-6","theme":"dungeon","details":"up=True bounds=Center: (-3.00, 0.89, 3.00), Extents: (0.45, 0.39, 0.45)","phase":0,"passed":true}
+{"check":"lift-6-12","theme":"dungeon","details":"up=True bounds=Center: (3.00, 0.89, -3.00), Extents: (0.45, 0.39, 0.45)","phase":0,"passed":true}
+{"check":"lift-10-7","theme":"dungeon","details":"up=False bounds=Center: (-2.00, 0.89, 1.00), Extents: (0.45, 0.39, 0.46)","phase":0,"passed":true}
+{"check":"lift-11-10","theme":"dungeon","details":"up=True bounds=Center: (1.00, 0.89, 2.00), Extents: (0.46, 0.39, 0.45)","phase":0,"passed":true}
+{"check":"nine-lifts","theme":"dungeon","details":"","phase":1,"passed":true}
+{"check":"lift-6-6","theme":"dungeon","details":"up=True bounds=Center: (-3.00, 0.89, -3.00), Extents: (0.45, 0.39, 0.45)","phase":1,"passed":true}
+{"check":"lift-8-11","theme":"dungeon","details":"up=True bounds=Center: (2.00, 0.89, -1.00), Extents: (0.45, 0.39, 0.46)","phase":1,"passed":true}
+{"check":"lift-9-9","theme":"dungeon","details":"up=True bounds=Center: (0.00, 0.89, 0.00), Extents: (0.46, 0.39, 0.46)","phase":1,"passed":true}
+{"check":"lift-7-8","theme":"dungeon","details":"up=False bounds=Center: (-1.00, 0.89, -2.00), Extents: (0.46, 0.39, 0.45)","phase":1,"passed":true}
+{"check":"lift-12-12","theme":"dungeon","details":"up=True bounds=Center: (3.00, 0.89, 3.00), Extents: (0.45, 0.39, 0.45)","phase":1,"passed":true}
+{"check":"lift-12-6","theme":"dungeon","details":"up=False bounds=Center: (-3.00, 0.89, 3.00), Extents: (0.45, 0.39, 0.45)","phase":1,"passed":true}
+{"check":"lift-6-12","theme":"dungeon","details":"up=False bounds=Center: (3.00, 0.89, -3.00), Extents: (0.45, 0.39, 0.45)","phase":1,"passed":true}
+{"check":"lift-10-7","theme":"dungeon","details":"up=True bounds=Center: (-2.00, 0.89, 1.00), Extents: (0.45, 0.39, 0.46)","phase":1,"passed":true}
+{"check":"lift-11-10","theme":"dungeon","details":"up=False bounds=Center: (1.00, 0.89, 2.00), Extents: (0.46, 0.39, 0.45)","phase":1,"passed":true}
+{"check":"english-dynamic-hud","theme":"dungeon","details":"","phase":-1,"passed":true}
+{"check":"nine-lifts","theme":"dungeon","details":"","phase":0,"passed":true}
+{"check":"lift-6-6","theme":"dungeon","details":"up=False bounds=Center: (-3.00, 0.89, -3.00), Extents: (0.45, 0.39, 0.45)","phase":0,"passed":true}
+{"check":"lift-8-11","theme":"dungeon","details":"up=False bounds=Center: (2.00, 0.89, -1.00), Extents: (0.45, 0.39, 0.46)","phase":0,"passed":true}
+{"check":"lift-9-9","theme":"dungeon","details":"up=True bounds=Center: (0.00, 0.89, 0.00), Extents: (0.46, 0.39, 0.46)","phase":0,"passed":true}
+{"check":"lift-7-8","theme":"dungeon","details":"up=True bounds=Center: (-1.00, 0.89, -2.00), Extents: (0.46, 0.39, 0.45)","phase":0,"passed":true}
+{"check":"lift-12-12","theme":"dungeon","details":"up=False bounds=Center: (3.00, 0.89, 3.00), Extents: (0.45, 0.39, 0.45)","phase":0,"passed":true}
+{"check":"lift-12-6","theme":"dungeon","details":"up=True bounds=Center: (-3.00, 0.89, 3.00), Extents: (0.45, 0.39, 0.45)","phase":0,"passed":true}
+{"check":"lift-6-12","theme":"dungeon","details":"up=True bounds=Center: (3.00, 0.89, -3.00), Extents: (0.45, 0.39, 0.45)","phase":0,"passed":true}
+{"check":"lift-10-7","theme":"dungeon","details":"up=False bounds=Center: (-2.00, 0.89, 1.00), Extents: (0.45, 0.39, 0.46)","phase":0,"passed":true}
+{"check":"lift-11-10","theme":"dungeon","details":"up=True bounds=Center: (1.00, 0.89, 2.00), Extents: (0.46, 0.39, 0.45)","phase":0,"passed":true}
+{"check":"nine-lifts","theme":"hangar","details":"","phase":0,"passed":true}
+{"check":"lift-11-10","theme":"hangar","details":"up=True bounds=Center: (1.00, 0.80, 2.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-7-8","theme":"hangar","details":"up=True bounds=Center: (-1.00, 0.80, -2.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-10-7","theme":"hangar","details":"up=False bounds=Center: (-2.00, 0.80, 1.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-12-6","theme":"hangar","details":"up=True bounds=Center: (-3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-9-9","theme":"hangar","details":"up=True bounds=Center: (0.00, 0.80, 0.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-6-6","theme":"hangar","details":"up=False bounds=Center: (-3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-8-11","theme":"hangar","details":"up=False bounds=Center: (2.00, 0.80, -1.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-12-12","theme":"hangar","details":"up=False bounds=Center: (3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-6-12","theme":"hangar","details":"up=True bounds=Center: (3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"nine-lifts","theme":"hangar","details":"","phase":1,"passed":true}
+{"check":"lift-11-10","theme":"hangar","details":"up=False bounds=Center: (1.00, 0.80, 2.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-7-8","theme":"hangar","details":"up=False bounds=Center: (-1.00, 0.80, -2.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-10-7","theme":"hangar","details":"up=True bounds=Center: (-2.00, 0.80, 1.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-12-6","theme":"hangar","details":"up=False bounds=Center: (-3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-9-9","theme":"hangar","details":"up=True bounds=Center: (0.00, 0.80, 0.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-6-6","theme":"hangar","details":"up=True bounds=Center: (-3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-8-11","theme":"hangar","details":"up=True bounds=Center: (2.00, 0.80, -1.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-12-12","theme":"hangar","details":"up=True bounds=Center: (3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-6-12","theme":"hangar","details":"up=False bounds=Center: (3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"english-dynamic-hud","theme":"hangar","details":"","phase":-1,"passed":true}
+{"check":"nine-lifts","theme":"hangar","details":"","phase":0,"passed":true}
+{"check":"lift-11-10","theme":"hangar","details":"up=True bounds=Center: (1.00, 0.80, 2.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-7-8","theme":"hangar","details":"up=True bounds=Center: (-1.00, 0.80, -2.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-10-7","theme":"hangar","details":"up=False bounds=Center: (-2.00, 0.80, 1.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-12-6","theme":"hangar","details":"up=True bounds=Center: (-3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-9-9","theme":"hangar","details":"up=True bounds=Center: (0.00, 0.80, 0.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-6-6","theme":"hangar","details":"up=False bounds=Center: (-3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-8-11","theme":"hangar","details":"up=False bounds=Center: (2.00, 0.80, -1.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-12-12","theme":"hangar","details":"up=False bounds=Center: (3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-6-12","theme":"hangar","details":"up=True bounds=Center: (3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"nine-lifts","theme":"forest","details":"","phase":0,"passed":true}
+{"check":"lift-9-9","theme":"forest","details":"up=True bounds=Center: (0.00, 0.84, 0.00), Extents: (0.46, 0.34, 0.46)","phase":0,"passed":true}
+{"check":"lift-10-7","theme":"forest","details":"up=False bounds=Center: (-2.00, 0.84, 1.00), Extents: (0.45, 0.34, 0.46)","phase":0,"passed":true}
+{"check":"lift-6-6","theme":"forest","details":"up=False bounds=Center: (-3.00, 0.84, -3.00), Extents: (0.45, 0.34, 0.45)","phase":0,"passed":true}
+{"check":"lift-6-12","theme":"forest","details":"up=True bounds=Center: (3.00, 0.84, -3.00), Extents: (0.45, 0.34, 0.45)","phase":0,"passed":true}
+{"check":"lift-12-12","theme":"forest","details":"up=False bounds=Center: (3.00, 0.84, 3.00), Extents: (0.45, 0.34, 0.45)","phase":0,"passed":true}
+{"check":"lift-8-11","theme":"forest","details":"up=False bounds=Center: (2.00, 0.84, -1.00), Extents: (0.45, 0.34, 0.46)","phase":0,"passed":true}
+{"check":"lift-7-8","theme":"forest","details":"up=True bounds=Center: (-1.00, 0.84, -2.00), Extents: (0.46, 0.34, 0.45)","phase":0,"passed":true}
+{"check":"lift-11-10","theme":"forest","details":"up=True bounds=Center: (1.00, 0.84, 2.00), Extents: (0.46, 0.34, 0.45)","phase":0,"passed":true}
+{"check":"lift-12-6","theme":"forest","details":"up=True bounds=Center: (-3.00, 0.84, 3.00), Extents: (0.45, 0.34, 0.45)","phase":0,"passed":true}
+{"check":"nine-lifts","theme":"forest","details":"","phase":1,"passed":true}
+{"check":"lift-9-9","theme":"forest","details":"up=True bounds=Center: (0.00, 0.84, 0.00), Extents: (0.46, 0.34, 0.46)","phase":1,"passed":true}
+{"check":"lift-10-7","theme":"forest","details":"up=True bounds=Center: (-2.00, 0.84, 1.00), Extents: (0.45, 0.34, 0.46)","phase":1,"passed":true}
+{"check":"lift-6-6","theme":"forest","details":"up=True bounds=Center: (-3.00, 0.84, -3.00), Extents: (0.45, 0.34, 0.45)","phase":1,"passed":true}
+{"check":"lift-6-12","theme":"forest","details":"up=False bounds=Center: (3.00, 0.84, -3.00), Extents: (0.45, 0.34, 0.45)","phase":1,"passed":true}
+{"check":"lift-12-12","theme":"forest","details":"up=True bounds=Center: (3.00, 0.84, 3.00), Extents: (0.45, 0.34, 0.45)","phase":1,"passed":true}
+{"check":"lift-8-11","theme":"forest","details":"up=True bounds=Center: (2.00, 0.84, -1.00), Extents: (0.45, 0.34, 0.46)","phase":1,"passed":true}
+{"check":"lift-7-8","theme":"forest","details":"up=False bounds=Center: (-1.00, 0.84, -2.00), Extents: (0.46, 0.34, 0.45)","phase":1,"passed":true}
+{"check":"lift-11-10","theme":"forest","details":"up=False bounds=Center: (1.00, 0.84, 2.00), Extents: (0.46, 0.34, 0.45)","phase":1,"passed":true}
+{"check":"lift-12-6","theme":"forest","details":"up=False bounds=Center: (-3.00, 0.84, 3.00), Extents: (0.45, 0.34, 0.45)","phase":1,"passed":true}
+{"check":"english-dynamic-hud","theme":"forest","details":"","phase":-1,"passed":true}
+{"check":"nine-lifts","theme":"forest","details":"","phase":0,"passed":true}
+{"check":"lift-9-9","theme":"forest","details":"up=True bounds=Center: (0.00, 0.84, 0.00), Extents: (0.46, 0.34, 0.46)","phase":0,"passed":true}
+{"check":"lift-10-7","theme":"forest","details":"up=False bounds=Center: (-2.00, 0.84, 1.00), Extents: (0.45, 0.34, 0.46)","phase":0,"passed":true}
+{"check":"lift-6-6","theme":"forest","details":"up=False bounds=Center: (-3.00, 0.84, -3.00), Extents: (0.45, 0.34, 0.45)","phase":0,"passed":true}
+{"check":"lift-6-12","theme":"forest","details":"up=True bounds=Center: (3.00, 0.84, -3.00), Extents: (0.45, 0.34, 0.45)","phase":0,"passed":true}
+{"check":"lift-12-12","theme":"forest","details":"up=False bounds=Center: (3.00, 0.84, 3.00), Extents: (0.45, 0.34, 0.45)","phase":0,"passed":true}
+{"check":"lift-8-11","theme":"forest","details":"up=False bounds=Center: (2.00, 0.84, -1.00), Extents: (0.45, 0.34, 0.46)","phase":0,"passed":true}
+{"check":"lift-7-8","theme":"forest","details":"up=True bounds=Center: (-1.00, 0.84, -2.00), Extents: (0.46, 0.34, 0.45)","phase":0,"passed":true}
+{"check":"lift-11-10","theme":"forest","details":"up=True bounds=Center: (1.00, 0.84, 2.00), Extents: (0.46, 0.34, 0.45)","phase":0,"passed":true}
+{"check":"lift-12-6","theme":"forest","details":"up=True bounds=Center: (-3.00, 0.84, 3.00), Extents: (0.45, 0.34, 0.45)","phase":0,"passed":true}
+{"check":"nine-lifts","theme":"harbor","details":"","phase":0,"passed":true}
+{"check":"lift-9-9","theme":"harbor","details":"up=True bounds=Center: (0.00, 0.80, 0.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-12-12","theme":"harbor","details":"up=False bounds=Center: (3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-8-11","theme":"harbor","details":"up=False bounds=Center: (2.00, 0.80, -1.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-6-6","theme":"harbor","details":"up=False bounds=Center: (-3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-6-12","theme":"harbor","details":"up=True bounds=Center: (3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-12-6","theme":"harbor","details":"up=True bounds=Center: (-3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-7-8","theme":"harbor","details":"up=True bounds=Center: (-1.00, 0.80, -2.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-10-7","theme":"harbor","details":"up=False bounds=Center: (-2.00, 0.80, 1.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-11-10","theme":"harbor","details":"up=True bounds=Center: (1.00, 0.80, 2.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"nine-lifts","theme":"harbor","details":"","phase":1,"passed":true}
+{"check":"lift-9-9","theme":"harbor","details":"up=True bounds=Center: (0.00, 0.80, 0.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-12-12","theme":"harbor","details":"up=True bounds=Center: (3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-8-11","theme":"harbor","details":"up=True bounds=Center: (2.00, 0.80, -1.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-6-6","theme":"harbor","details":"up=True bounds=Center: (-3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-6-12","theme":"harbor","details":"up=False bounds=Center: (3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-12-6","theme":"harbor","details":"up=False bounds=Center: (-3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-7-8","theme":"harbor","details":"up=False bounds=Center: (-1.00, 0.80, -2.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-10-7","theme":"harbor","details":"up=True bounds=Center: (-2.00, 0.80, 1.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"lift-11-10","theme":"harbor","details":"up=False bounds=Center: (1.00, 0.80, 2.00), Extents: (0.47, 0.30, 0.44)","phase":1,"passed":true}
+{"check":"english-dynamic-hud","theme":"harbor","details":"","phase":-1,"passed":true}
+{"check":"nine-lifts","theme":"harbor","details":"","phase":0,"passed":true}
+{"check":"lift-9-9","theme":"harbor","details":"up=True bounds=Center: (0.00, 0.80, 0.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-12-12","theme":"harbor","details":"up=False bounds=Center: (3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-8-11","theme":"harbor","details":"up=False bounds=Center: (2.00, 0.80, -1.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-6-6","theme":"harbor","details":"up=False bounds=Center: (-3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-6-12","theme":"harbor","details":"up=True bounds=Center: (3.00, 0.80, -3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-12-6","theme":"harbor","details":"up=True bounds=Center: (-3.00, 0.80, 3.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-7-8","theme":"harbor","details":"up=True bounds=Center: (-1.00, 0.80, -2.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-10-7","theme":"harbor","details":"up=False bounds=Center: (-2.00, 0.80, 1.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"lift-11-10","theme":"harbor","details":"up=True bounds=Center: (1.00, 0.80, 2.00), Extents: (0.47, 0.30, 0.44)","phase":0,"passed":true}
+{"check":"language-saved","theme":"harbor","details":"","phase":-1,"passed":true}
+{"check":"complete","theme":"harbor","details":"","phase":-1,"passed":true}

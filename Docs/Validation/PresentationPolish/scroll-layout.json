@@ -1,0 +1,1 @@
+{"success":true,"message":"Code executed successfully.","data":{"result":{"syntheticLayoutStress":true,"width":1366,"height":768,"contentHeight":956.0166,"viewportHeight":280.0,"cardHeight":370.0,"bottomDistance":0.0,"ruleSnapshotUnchanged":true},"compiler":"roslyn"}}

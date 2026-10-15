@@ -1,6 +1,6 @@
 {
   "name": "Draftline.Tests.PlayMode",
-  "references": ["Draftline.Core", "Draftline.Unity", "Unity.InputSystem", "UnityEngine.UI"],
+  "references": ["Draftline.Core", "Draftline.Unity", "Unity.InputSystem", "Unity.InputSystem.TestFramework", "UnityEngine.UI", "Cinemachine"],
   "includePlatforms": [], "excludePlatforms": [],
   "allowUnsafeCode": false, "overrideReferences": true,
   "precompiledReferences": ["nunit.framework.dll"], "autoReferenced": false,

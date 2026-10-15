@@ -1,0 +1,3 @@
+{"check":"language-survives-process-restart","theme":"harbor","details":"","phase":-1,"passed":true}
+{"check":"english-menu-after-restart","theme":"harbor","details":"","phase":-1,"passed":true}
+{"check":"complete","theme":"harbor","details":"","phase":-1,"passed":true}

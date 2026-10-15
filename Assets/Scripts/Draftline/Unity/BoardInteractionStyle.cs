@@ -8,6 +8,7 @@ namespace Draftline.Unity
         public GameObject TargetPrefab;
         public GameObject SelectionPrefab;
         public GameObject ContextMenuPrefab;
+        public Mesh StopTargetMesh;
         public Vector3 ContextOffset = new Vector3(0,1.9f,0);
         public Material PathMaterial;
         public Color Normal = new Color(0.28f, 0.90f, 0.70f);

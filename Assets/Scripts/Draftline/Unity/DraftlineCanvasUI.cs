@@ -34,6 +34,9 @@ namespace Draftline.Unity
         public Button[] ItemButtons;
         public Text[] ItemTexts;
         public Text InventoryHint;
+        public GameObject InventoryPanel;
+        public Image TurnAccent;
+        public Image[] PlayerAccents;
         private ItemType? hoveredItem;
         private int inventoryRevision = -1;
         [Header("LAN")]
@@ -43,11 +46,21 @@ namespace Draftline.Unity
         public Toggle ComputerFill;
         public Button Host, Join, Ready, StartRoom, LeaveRoom;
         public Text RoomText;
+        public Button ConnectionHelp,CopyHostAddress;
+        public GameObject ConnectionInstructions,HostAddressPanel;
+        public Dropdown HostAddressSelector;
+        public Text HostEndpoint;
+        private bool connectionHelpOpen;
+        private string addressOptionsKey;
         [Header("Settings")]
         public Slider Volume;
         public Toggle SimpleEffects;
         [Header("Action explanation and optional rules guide")]
         public Text ActionTitle, ActionText;
+        public GameObject ActionPanel;
+        public ScrollRect ActionScroll;
+        public Vector2 ActionBodyHeightRange = new Vector2(72,280);
+        public float ActionBottomPadding = 24f;
         public GameObject GuidePanel;
         public RuleGuideContent GuideContent;
         public Button GuideMenu, GuideSetup, GuideHud, GuideSettings, GuideClose, GuidePrevious, GuideNext;
@@ -55,6 +68,7 @@ namespace Draftline.Unity
         private bool guideOpen, pausedBeforeGuide;
         private int guidePage, guideClosedFrame = -1;
         private string lastAction;
+        private float lastActionUntil;
         public bool GuideClosedThisFrame => guideClosedFrame == Time.frameCount;
 
         private DraftlineGameController controller;
@@ -77,12 +91,11 @@ namespace Draftline.Unity
                     });
                 }
                 RefreshEnvironmentOptions();
-                if(EnvironmentSelector!=null)EnvironmentSelector.onValueChanged.AddListener(index=>{
-                    if(controller.Rules!=null || controller.LanRoom.IsLanSession)return;
-                    DraftlineThemeApplier.SelectEnvironment(index);Refresh();
-                });
                 LocalGame.onClick.AddListener(OpenSetup);
-                Lan.onClick.AddListener(() => { lobbyOpen = true; setupOpen = false; controller.Session.Mode = GameMode.Lan; Refresh(); });
+                Lan.onClick.AddListener(() => { lobbyOpen = true; setupOpen = false; controller.Session.Mode = GameMode.Lan; controller.LanRoom.RefreshLocalAddresses(); Refresh(); });
+                ConnectionHelp.onClick.AddListener(()=>{connectionHelpOpen=!connectionHelpOpen;Refresh();});
+                CopyHostAddress.onClick.AddListener(()=>GUIUtility.systemCopyBuffer=controller.LanRoom.HostEndpoint);
+                HostAddressSelector.onValueChanged.AddListener(index=>{controller.LanRoom.SelectHostAddress(index);Refresh();});
                 StartMatch.onClick.AddListener(() => { controller.BeginLocalMatch(); Refresh(); });
                 SetupBack.onClick.AddListener(() => { setupOpen = false; Refresh(); });
                 OpenSettings.onClick.AddListener(() => { settingsOpen = true; controller.SetPaused(true); Refresh(); });
@@ -132,8 +145,9 @@ namespace Draftline.Unity
                 });
                 Join.onClick.AddListener(() =>
                 {
-                    if (!ushort.TryParse(Port.text, out var port) || port == 0) { controller.ShowError("请输入 1–65535 的端口。"); return; }
-                    controller.LanRoom.Join(Address.text, port);
+                    if(!LanAddressUtility.TryReadEndpoint(Address.text,Port.text,out var address,out var port,out var error)){controller.ShowError(error);return;}
+                    Address.text=address;Port.text=port.ToString();controller.ShowError(null);
+                    controller.LanRoom.Join(address, port);
                     Refresh();
                 });
                 Ready.onClick.AddListener(() => { controller.LanRoom.ToggleReady(); Refresh(); });
@@ -201,17 +215,15 @@ namespace Draftline.Unity
             var playing = rules != null;
             if(environmentOptionsTheme!=DraftlineThemeApplier.CurrentId)RefreshEnvironmentOptions();
             MainMenu.SetActive(!playing && !setupOpen && !lobbyOpen);
-            if(EnvironmentSelector!=null)EnvironmentSelector.interactable=!playing&&!room.IsLanSession&&DraftlineThemeApplier.CurrentId!="tabletop";
-            if(SceneryHint!=null){var prop=ThemeSceneryInteraction.Hovered;SceneryHint.text=prop!=null?prop.Label+" · "+prop.Hint:"棋盘四周藏着可点击的小机关 · 悬停探索";SceneryHint.gameObject.SetActive(!EnvironmentInputBlocked);}
+            if(EnvironmentSelector!=null)EnvironmentSelector.interactable=false;
             if(ThemeSelector!=null && themes!=null) {
                 ThemeSelector.interactable=!playing&&!room.IsLanSession;
                 var index=System.Array.FindIndex(themes,t=>t.ThemeId==DraftlineThemeApplier.CurrentId);
-                if(index>=0){ThemeSelector.SetValueWithoutNotify(index);if(ThemeDescription!=null)ThemeDescription.text=themes[index].Description;if(ThemeStory!=null)ThemeStory.text=themes[index].Description+"\n\n五子连线，或成为最后存活的一方。";}
+                if(index>=0)ThemeSelector.SetValueWithoutNotify(index);
             }
             for (var i = 0; i < 4; i++)
             {
                 if (SeatNames != null && i < SeatNames.Length && SeatNames[i] != null) SeatNames[i].text = MatchLabels.Player((PlayerColor)i);
-                if (SeatStories != null && i < SeatStories.Length && SeatStories[i] != null) SeatStories[i].text = MatchLabels.Story((PlayerColor)i);
             }
             Setup.SetActive(!playing && setupOpen);
             Lobby.SetActive(!playing && lobbyOpen);
@@ -222,6 +234,19 @@ namespace Draftline.Unity
             ErrorText.text = controller.SetupError ?? "";
             ErrorText.transform.parent.gameObject.SetActive(!string.IsNullOrEmpty(controller.SetupError));
             RoomText.text = room.Status + "\n" + room.RoomDescription;
+            if(ConnectionInstructions!=null)ConnectionInstructions.SetActive(connectionHelpOpen);
+            ConnectionHelp.GetComponentInChildren<Text>().text=connectionHelpOpen?"收起说明":"连接说明";
+            RoomText.gameObject.SetActive(!connectionHelpOpen);
+            HostAddressPanel.SetActive(room.IsHost);
+            HostEndpoint.text=room.HostEndpoint;
+            CopyHostAddress.interactable=room.HostAddresses.Length>0;
+            var addressKey=string.Join("|",room.HostAddresses.Select(a=>a.Label));
+            if(addressKey!=addressOptionsKey)
+            {
+                addressOptionsKey=addressKey;HostAddressSelector.ClearOptions();
+                HostAddressSelector.AddOptions(room.HostAddresses.Select(a=>a.Label).ToList());
+            }
+            HostAddressSelector.interactable=room.HostAddresses.Length>1;
             Host.interactable = Join.interactable = !room.IsNetworked;
             Ready.interactable = room.IsNetworked && !room.MatchStarted;
             Ready.GetComponentInChildren<Text>().text = room.LocalReady ? "取消准备" : "准备";
@@ -237,29 +262,50 @@ namespace Draftline.Unity
             }
             Reconnect.gameObject.SetActive(room.IsLanSession && !room.IsNetworked);
             TakeOver.gameObject.SetActive(room.IsHost && room.HasDisconnectedPlayers);
-            if (!playing) { hoveredItem = null; inventoryRevision = -1; lastAction = null; return; }
+            if (!playing) { hoveredItem = null; inventoryRevision = -1; lastAction = null; GetComponent<LocalizationPresenter>()?.Refresh(); return; }
             var s = rules.State;
+            if (s.Revision == 0) lastAction = null;
             if (inventoryRevision != s.Revision) { hoveredItem = null; inventoryRevision = s.Revision; }
-            TurnText.text = MatchLabels.Player(s.CurrentPlayer) + (controller.Session.Seat(s.CurrentPlayer).Control == SeatControl.Computer ? " · 电脑" : " · 玩家");
+            TurnText.text = MatchLabels.Player(s.CurrentPlayer);
             TurnText.color = MatchLabels.Color(s.CurrentPlayer);
-            PhaseText.text = s.Phase == MatchPhase.WaitRoll ? "等待掷骰" : s.Phase == MatchPhase.WaitSelect ? (controller.BoardInteraction.HasSelection ? "规划路线" : "点选棋子") : s.Phase == MatchPhase.Moving ? "继续滑行" : "对局结束";
-            DiceText.text = "骰子 " + (s.DiceValue?.ToString() ?? "—") + "   ·   剩余滑行 " + s.RemainingSlides;
-            HintText.text = controller.SetupError ?? (controller.IsDiceRolling ? controller.DiceStatus : !controller.CanControl ? "等待对手行动 · 你可以查看棋盘" : controller.IsAnimating ? "行动演出中…" : controller.BoardInteraction.Instruction);
-            LogText.text = string.Join("\n", controller.RecentEvents.Take(4));
+            if (TurnAccent != null) TurnAccent.color = MatchLabels.Color(s.CurrentPlayer);
+            PhaseText.text = s.Phase == MatchPhase.GameOver ? "结束" : !controller.CanControl ? "等待对手" : s.Phase == MatchPhase.WaitSelect ? "选子" : s.Phase == MatchPhase.Moving ? "移动" : "";
+            DiceText.text = "滑行 " + s.RemainingSlides;
+            DiceText.gameObject.SetActive(s.Phase == MatchPhase.WaitSelect || s.Phase == MatchPhase.Moving);
             if (ActionText != null)
             {
                 var preview = controller.BoardInteraction.InspectionText;
                 ActionTitle.text = !string.IsNullOrEmpty(preview) ? "行动预览" : "最近行动";
-                ActionText.text = preview ?? lastAction ?? "悬停终点、急停停点或出生格 +，查看这一步的结果。\n\n红圈：这次动作及结算会吃掉的棋子。\n预览不消耗次数或道具。";
+                var explanation = preview ?? (Time.unscaledTime < lastActionUntil ? lastAction : null) ?? "";
+                if (ActionText.text != explanation && ActionScroll != null)
+                {
+                    ActionScroll.StopMovement();
+                    ActionScroll.content.anchoredPosition = Vector2.zero;
+                }
+                ActionText.text = explanation;
+                (ActionPanel != null ? ActionPanel : ActionText.transform.parent.gameObject).SetActive(!string.IsNullOrEmpty(explanation));
+                if (ActionScroll != null && ActionPanel != null)
+                {
+                    var body = (RectTransform)ActionScroll.transform;
+                    var height = Mathf.Clamp(ActionText.preferredHeight,ActionBodyHeightRange.x,ActionBodyHeightRange.y);
+                    body.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,height);
+                    ((RectTransform)ActionPanel.transform).SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,-body.anchoredPosition.y+height+ActionBottomPadding);
+                }
             }
             for (var i = 0; i < 4; i++)
             {
                 var p = s.Players[i];
                 PlayerTexts[i].gameObject.SetActive(p.Active);
-                PlayerTexts[i].text = MatchLabels.Player((PlayerColor)i) + (p.Eliminated ? " · 出局" : "") + "\n场上 " + s.Pieces.Count(piece => piece.OnBoard && piece.Owner == p.Color) + "   储备 " + rules.HandCount(p.Color) + "   消耗 " + p.Consumed;
+                PlayerTexts[i].text = MatchLabels.Player((PlayerColor)i) + (p.Eliminated ? " · 出局" : "") + "\n生命 " + p.Health + "/" + MatchRules.StartingHealth + "   场上 " + s.Pieces.Count(piece => piece.OnBoard && piece.Owner == p.Color) + "/" + MatchRules.MaxPiecesOnBoard;
                 PlayerTexts[i].color = MatchLabels.Color((PlayerColor)i);
+                if (PlayerAccents != null && i < PlayerAccents.Length && PlayerAccents[i] != null)
+                {
+                    PlayerAccents[i].transform.parent.gameObject.SetActive(p.Active);
+                    PlayerAccents[i].color = p.Eliminated ? new Color(.35f,.38f,.42f) : MatchLabels.Color((PlayerColor)i);
+                }
             }
             var items = s.Players[(int)s.CurrentPlayer].Items;
+            if (InventoryPanel != null) InventoryPanel.SetActive(items.Count > 0);
             for (var i = 0; i < ItemButtons.Length; i++)
             {
                 ItemButtons[i].gameObject.SetActive(i < items.Count);
@@ -269,15 +315,18 @@ namespace Draftline.Unity
                     ItemButtons[i].interactable = controller.CanControl && !controller.IsAnimating && controller.BoardInteraction.HasSelection;
                 }
             }
-            InventoryHint.text = hoveredItem.HasValue ? MatchLabels.ItemDescription(hoveredItem.Value) : controller.BoardInteraction.PendingItem.HasValue ? "待使用：" + MatchLabels.Item(controller.BoardInteraction.PendingItem.Value) + " · 点目标确认" : "先点选棋子，再选择道具";
+            InventoryHint.text = hoveredItem.HasValue ? MatchLabels.ItemDescription(hoveredItem.Value) : controller.BoardInteraction.PendingItem.HasValue ? MatchLabels.Item(controller.BoardInteraction.PendingItem.Value) + " · 待确认" : "";
             Roll.interactable = controller.CanControl && !controller.IsAnimating && s.Phase == MatchPhase.WaitRoll;
+            Roll.gameObject.SetActive(s.Phase == MatchPhase.WaitRoll);
+            Roll.GetComponentInChildren<Text>().text = controller.IsDiceRolling ? "掷骰中" : "掷骰";
             CameraToggle.GetComponentInChildren<Text>().text = controller.IsManualTopDown ? "返回全盘" : "俯视棋盘";
-            if (s.Winner.HasValue)
+            if (s.Phase == MatchPhase.GameOver)
             {
-                var line = rules.FindFiveLine(s.Winner.Value);
-                ResultText.text = MatchLabels.Player(s.Winner.Value) + "获胜\n" + (line != null ? MatchLabels.FiveVictory : MatchLabels.SurvivalVictory) + "\n共 " + s.TurnCount + " 回合";
+                var line = s.Winner.HasValue ? rules.FindFiveLine(s.Winner.Value) : null;
+                ResultText.text = s.Winner.HasValue ? MatchLabels.Player(s.Winner.Value) + "获胜\n" + (line != null ? MatchLabels.FiveVictory : MatchLabels.SurvivalVictory) + "\n共 " + s.TurnCount + " 回合" : "平局\n所有队伍生命耗尽。\n共 " + s.TurnCount + " 回合";
                 Restart.interactable = !room.IsClientOnly;
             }
+            GetComponent<LocalizationPresenter>()?.Refresh();
         }
         public void SetHoveredItem(int slot,bool entered)
         {
@@ -296,7 +345,7 @@ namespace Draftline.Unity
             var inspection = new ActionInspection { Accepted = true, Actor = actor,
                 Kind = rules.Events.Any(e=>e.Type==MatchEventType.PieceDeployed) ? MatchCommandKind.Deploy : MatchCommandKind.Slide,
                 RemainingSlides = rules.State.RemainingSlides,
-                EndsTurn = rules.Events.Any(e=>e.Type==MatchEventType.TurnChanged||e.Type==MatchEventType.Victory),
+                EndsTurn = rules.Events.Any(e=>e.Type==MatchEventType.TurnChanged||e.Type==MatchEventType.Victory||e.Type==MatchEventType.Draw),
                 ForcedEnd = rules.Events.Any(e=>e.Type==MatchEventType.NoMoves),
                 Events = rules.Events.Where(e=>e.Type!=MatchEventType.ItemSpawned).ToArray() };
             if (!inspection.EndsTurn)
@@ -305,14 +354,18 @@ namespace Draftline.Unity
                 inspection.PendingEnemyPieces=newDead.Where(b=>b[0].Owner!=actor).Sum(b=>b.Count);
                 inspection.RetainedOwnPieces=newDead.Where(b=>b[0].Owner==actor).Sum(b=>b.Count);
             }
-            lastAction=MatchLabels.Player(actor)+"\n"+MatchExplanation.Describe(inspection);
+            // Ordinary moves are already visible on the board. Only consequences
+            // that need an explanation leave a short-lived message after the move.
+            lastAction=rules.Events.Any(e=>e.Type==MatchEventType.PieceCaptured||e.Type==MatchEventType.NoMoves)
+                ? MatchExplanation.Describe(inspection) : null;
+            lastActionUntil=Time.unscaledTime+5f;
         }
 
         private void OpenGuide()
         {
             if (GuidePanel == null || GuideContent == null || GuideContent.Steps.Length == 0) return;
             pausedBeforeGuide=controller.IsPaused; guideOpen=true;
-            guidePage=controller.BoardInteraction.PendingItem.HasValue?3:controller.BoardInteraction.HasSelection?1:0;
+            guidePage=0;
             controller.SetPaused(true); RenderGuide(); Refresh();
         }
         private void CloseGuide()
@@ -334,13 +387,13 @@ namespace Draftline.Unity
     {
         private static MatchTextContent content;
         public static void Configure(MatchTextContent asset) => content=asset;
-        public static string FiveVictory => content!=null?content.FiveVictory:"五枚傀儡共鸣，界钥已被唤醒。";
-        public static string SurvivalVictory => content!=null?content.SurvivalVictory:"成为最后存活的一方，夺得界钥。";
+        public static string FiveVictory => content!=null?content.FiveVictory:"五子连线";
+        public static string SurvivalVictory => content!=null?content.SurvivalVictory:"最后存活";
         public static string ItemDescription(ItemType item) => content!=null&&content.ItemDescriptions.Length>=4?content.ItemDescriptions[(int)item-1]:item == ItemType.PassWall ? "穿墙：本回合穿过升起的机关墙，并忽略传送门。"
             : item == ItemType.EmergencyStop ? "急停：下一次滑行可停在路径上的指定格，用后失效。"
             : item == ItemType.CollisionCapture ? "撞吃：本回合碰到敌棋时吃掉它，并停在该格。"
             : "破墙：本回合可停在机关墙或中心墙上，离开后墙恢复。";
-        public static string Player(PlayerColor color) => content!=null&&content.FactionNames.Length>=4?content.FactionNames[(int)color]:new[] { "红方 · 赤炉", "蓝方 · 苍印", "绿方 · 苔庭", "黄方 · 金环" }[(int)color];
+        public static string Player(PlayerColor color) => content!=null&&content.FactionNames.Length>=4?content.FactionNames[(int)color]:new[] { "红方", "蓝方", "绿方", "黄方" }[(int)color];
         public static string Story(PlayerColor color) => content!=null&&content.FactionStories.Length>=4?content.FactionStories[(int)color]:"";
         public static Color Color(PlayerColor color) => new[] { new Color(1f,.42f,.36f), new Color(.4f,.68f,1f), new Color(.36f,.85f,.58f), new Color(1f,.84f,.36f) }[(int)color];
         public static string Item(ItemType item) => content!=null&&content.ItemNames.Length>=4?content.ItemNames[(int)item-1]:item == ItemType.PassWall ? "穿墙" : item == ItemType.EmergencyStop ? "急停" : item == ItemType.CollisionCapture ? "撞吃" : "破墙";

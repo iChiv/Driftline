@@ -22,7 +22,10 @@ MonoBehaviour:
   - "\u6E7F\u51B7\u9057\u8FF9"
   PresentationPrefab: {fileID: 6132492759208478292, guid: f395149fa11c391409a0959ca312f37e, type: 3}
   PiecePrefab: {fileID: 7222009819054313258, guid: 752dffe76245d5d4c9ef733e6d5d3d8e, type: 3}
-  BackgroundColor: {r: 0.035, g: 0.065, b: 0.11, a: 1}
+  BackgroundColor: {r: 0.025, g: 0.025, b: 0.05, a: 1}
+  BackgroundMaterial: {fileID: 2100000, guid: e245bb36d955f63478911bf41958f74b, type: 2}
+  BackgroundTop: {r: 0.09, g: 0.07, b: 0.15, a: 1}
+  BackgroundHaze: {r: 0.102000006, g: 0.0828, b: 0.154, a: 1}
   AmbientColor: {r: 0.48, g: 0.57, b: 0.68, a: 1}
   OverviewDistance: 32.5
   FramingTarget: {x: 1.7, y: 0, z: -1.2}

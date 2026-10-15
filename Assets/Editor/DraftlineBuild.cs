@@ -8,6 +8,43 @@ namespace Draftline.EditorTools
     /// <summary>One-click development build for the Windows portfolio demo.</summary>
     public static class DraftlineBuild
     {
+        [MenuItem("Driftline/Build Windows Localization And Walls")]
+        public static void BuildWindowsLocalizationWalls()
+            => BuildWindowsPackage("LocalizationWalls","Driftline-LocalizationWalls");
+
+        [MenuItem("Driftline/Build Windows Health and Portals")]
+        public static void BuildWindowsHealthPortals()
+            => BuildWindowsPackage("HealthPortals","Driftline-HealthPortals");
+
+        [MenuItem("Driftline/Build Windows Minimal UI")]
+        public static void BuildWindowsMinimalUI()
+            => BuildWindowsPackage("MinimalUI","Driftline-MinimalUI");
+
+        [MenuItem("Driftline/Build Windows Environment And Settings")]
+        public static void BuildWindowsEnvironmentSettings()
+            => BuildWindowsPackage("EnvironmentSettings","Driftline-EnvironmentSettings");
+
+        private static void BuildWindowsPackage(string version,string executable)
+        {
+            if (EditorApplication.isPlaying) throw new System.InvalidOperationException("Build in Edit Mode.");
+            AssetDatabase.SaveAssets();
+            UnityEditor.SceneManagement.EditorSceneManager.SaveOpenScenes();
+            var directory = "Builds/"+version;
+            Directory.CreateDirectory(directory);
+            var report = BuildPipeline.BuildPlayer(new[] { "Assets/Scenes/SampleScene.unity" },
+                directory + "/"+executable+".exe", BuildTarget.StandaloneWindows64, BuildOptions.Development);
+            if (report.summary.result == BuildResult.Succeeded)
+                File.Copy("Assets/UI/Fonts/LICENSE.txt", directory + "/SourceHanSans-LICENSE.txt", true);
+            Directory.CreateDirectory("Docs/Validation/"+version);
+            File.WriteAllText("Docs/Validation/"+version+"/build.json", Newtonsoft.Json.JsonConvert.SerializeObject(new
+            {
+                result = report.summary.result.ToString(), bytes = report.summary.totalSize,
+                errors = report.summary.totalErrors, warnings = report.summary.totalWarnings
+            }));
+            AssetDatabase.SaveAssets();
+            if (report.summary.result != BuildResult.Succeeded) Debug.LogError(version+" build failed: " + report.summary.result);
+        }
+
         [MenuItem("Driftline/Build Windows Battlefields V2")]
         public static void BuildWindowsBattlefields()
         {

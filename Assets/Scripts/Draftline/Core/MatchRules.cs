@@ -10,6 +10,8 @@ namespace Draftline.Core
     /// </summary>
     public sealed class MatchRules
     {
+        public const int StartingHealth = 5;
+        public const int MaxPiecesOnBoard = 8;
         private static readonly SlideDirection[] Directions =
             { SlideDirection.Up, SlideDirection.Down, SlideDirection.Left, SlideDirection.Right };
         private static readonly ItemType[] ItemWeights =
@@ -42,7 +44,7 @@ namespace Draftline.Core
                 var player = new PlayerState { Color = playerColor, Active = active.Contains(playerColor) };
                 State.Players[color] = player;
                 if (!player.Active) continue;
-                for (var pieceIndex = 0; pieceIndex < 10; pieceIndex++)
+                for (var pieceIndex = 0; pieceIndex < MaxPiecesOnBoard; pieceIndex++)
                 {
                     State.Pieces.Add(new PieceState
                     {
@@ -110,7 +112,8 @@ namespace Draftline.Core
         public bool CanDeploy(PlayerColor color)
         {
             var player = State.Players[(int)color];
-            if (!player.Active || player.Eliminated || HandCount(color) == 0) return false;
+            if (!player.Active || player.Eliminated || player.Health <= 0 || HandCount(color) == 0 ||
+                State.Pieces.Count(p=>p.OnBoard&&p.Owner==color)>=MaxPiecesOnBoard) return false;
             var spawn = Board.SpawnOf(color);
             if (PieceAt(spawn) != null) return false;
             var candidate = new PieceState { Id = -1, Owner = color, Position = spawn, OnBoard = true };
@@ -201,7 +204,7 @@ namespace Draftline.Core
         public SlidePlan PlanSlide(PieceState piece, SlideDirection direction, bool useActiveEffects = true)
         {
             var plan = new SlidePlan();
-            if (piece == null || !piece.OnBoard) return plan;
+            if (piece == null || !piece.OnBoard || !BoardLayout.Contains(piece.Position)) return plan;
             var position = piece.Position;
             var visited = new HashSet<GridPosition> { position };
             DirectionDelta(direction, out var columns, out var rows);
@@ -234,7 +237,13 @@ namespace Draftline.Core
                 if (cell.Kind == CellKind.Portal && !(useActiveEffects && State.PassWallActive))
                 {
                     var exit = Board.PortalExit(next);
-                    if (PieceAt(exit, piece.Id) != null || visited.Contains(exit)) break;
+                    var mouth = Board.PortalMouth(exit);
+                    // A portal is an atomic passage. Validate the actual landing cell
+                    // before entering, including collision items: a blocked exit never
+                    // spills onto the portal tile or out through its rear side.
+                    if (PieceAt(exit, piece.Id) != null || PieceAt(mouth,piece.Id) != null ||
+                        !BoardLayout.Contains(mouth) || !CanEnter(Board.CellAt(mouth),mouth,piece.Owner,useActiveEffects) ||
+                        visited.Contains(exit) || visited.Contains(mouth)) break;
                     visited.Add(next);
                     visited.Add(exit);
                     plan.Steps.Add(new SlideStep { Position = next, PortalEntry = true });
@@ -242,20 +251,10 @@ namespace Draftline.Core
                     var exitItem = ItemAt(exit);
                     if (exitItem != null) exitStep.PickupItemId = exitItem.Id;
                     plan.Steps.Add(exitStep);
-                    // Official rule: after the portal, step one cell onward in the slide
-                    // direction and stop there; only if that cell is blocked does the
-                    // piece stay on the exit portal cell.
-                    var beyond = exit.Offset(columns, rows);
-                    if (BoardLayout.Contains(beyond) &&
-                        CanEnter(Board.CellAt(beyond), beyond, piece.Owner, useActiveEffects) &&
-                        PieceAt(beyond, piece.Id) == null && !visited.Contains(beyond))
-                    {
-                        visited.Add(beyond);
-                        var beyondStep = new SlideStep { Position = beyond };
-                        var beyondItem = ItemAt(beyond);
-                        if (beyondItem != null) beyondStep.PickupItemId = beyondItem.Id;
-                        plan.Steps.Add(beyondStep);
-                    }
+                    var landing = new SlideStep { Position = mouth };
+                    var landingItem = ItemAt(mouth);
+                    if (landingItem != null) landing.PickupItemId = landingItem.Id;
+                    plan.Steps.Add(landing);
                     break;
                 }
 
@@ -286,6 +285,8 @@ namespace Draftline.Core
                 return Reject("Emergency Stop is not active.", out error);
             if (stopIndex.HasValue && (stopIndex.Value < 0 || stopIndex.Value >= planned.Steps.Count))
                 return Reject("Stop cell is outside this slide.", out error);
+            if(stopIndex.HasValue && (planned.Steps[stopIndex.Value].PortalEntry||planned.Steps[stopIndex.Value].PortalExit))
+                return Reject("Cannot stop on a portal.",out error);
 
             applied = new SlidePlan();
             var lastIndex = stopIndex ?? planned.Steps.Count - 1;
@@ -308,6 +309,7 @@ namespace Draftline.Core
             });
 
             State.RemainingSlides--;
+            if (CheckEliminations()) { error = null; return true; }
             if (State.RemainingSlides == 0)
                 ResolveTurn();
             else if (!Directions.Any(candidate => PlanSlide(piece, candidate).IsLegal))
@@ -425,6 +427,20 @@ namespace Draftline.Core
                    (cell.Kind == CellKind.RotatingWallSlot && !IsWall(position));
         }
 
+        private IEnumerable<GridPosition> ConnectedNeighbors(GridPosition position)
+        {
+            foreach(var direction in Directions)
+            {
+                DirectionDelta(direction,out var columns,out var rows);
+                var adjacent=position.Offset(columns,rows);
+                if(!BoardLayout.Contains(adjacent))continue;
+                yield return adjacent;
+                if(Board.CellAt(adjacent).Kind!=CellKind.Portal || Board.PortalMouth(adjacent)!=position || PieceAt(adjacent)!=null)continue;
+                var exit=Board.PortalExit(adjacent);
+                if(PieceAt(exit)==null)yield return Board.PortalMouth(exit);
+            }
+        }
+
         public List<List<PieceState>> FindDeadBlocks()
         {
             var visited = new HashSet<int>();
@@ -439,11 +455,9 @@ namespace Draftline.Core
                 {
                     var piece = pending.Pop();
                     block.Add(piece);
-                    foreach (var direction in Directions)
+                    foreach (var adjacent in ConnectedNeighbors(piece.Position))
                     {
-                        DirectionDelta(direction, out var columns, out var rows);
-                        var adjacent = piece.Position.Offset(columns, rows);
-                        var neighbor = BoardLayout.Contains(adjacent) ? PieceAt(adjacent) : null;
+                        var neighbor = PieceAt(adjacent);
                         if (neighbor != null && neighbor.Owner == piece.Owner && visited.Add(neighbor.Id))
                             pending.Push(neighbor);
                     }
@@ -451,11 +465,9 @@ namespace Draftline.Core
 
                 var liberties = new HashSet<GridPosition>();
                 foreach (var piece in block)
-                    foreach (var direction in Directions)
+                    foreach (var adjacent in ConnectedNeighbors(piece.Position))
                     {
-                        DirectionDelta(direction, out var columns, out var rows);
-                        var adjacent = piece.Position.Offset(columns, rows);
-                        if (BoardLayout.Contains(adjacent) && PieceAt(adjacent) == null && GivesLiberty(adjacent))
+                        if (PieceAt(adjacent) == null && GivesLiberty(adjacent))
                             liberties.Add(adjacent);
                     }
                 if (liberties.Count == 0) dead.Add(block);
@@ -482,23 +494,33 @@ namespace Draftline.Core
         {
             if (piece == null || !piece.OnBoard) return;
             piece.OnBoard = false;
-            piece.Gone = true;
-            State.Players[(int)piece.Owner].Consumed++;
+            // Captures cost health; the piece returns to its reusable eight-piece pool.
+            piece.Gone = false;
+            var player = State.Players[(int)piece.Owner];
+            player.Consumed++;
+            player.Health = Math.Max(0, player.Health - 1);
             events.Add(new MatchEvent { Type = MatchEventType.PieceCaptured, Player = piece.Owner,
-                PieceId = piece.Id, Position = piece.Position, Cause = cause });
+                PieceId = piece.Id, Position = piece.Position, Cause = cause, Value = player.Health });
         }
 
         private bool CheckEliminations()
         {
             foreach (var player in State.Players)
             {
-                if (!player.Active || player.Eliminated || player.Consumed < 10) continue;
+                if (!player.Active || player.Eliminated || player.Health > 0) continue;
                 player.Eliminated = true;
-                foreach (var piece in State.Pieces.Where(piece => piece.Owner == player.Color && piece.OnBoard))
-                    piece.OnBoard = false;
+                foreach (var piece in State.Pieces.Where(piece => piece.Owner == player.Color))
+                { piece.OnBoard = false; piece.Gone = true; }
                 AddEvent(MatchEventType.PlayerEliminated, player.Color);
             }
             var survivors = State.Players.Where(player => player.Active && !player.Eliminated).ToArray();
+            if (survivors.Length == 0)
+            {
+                State.Phase = MatchPhase.GameOver;
+                State.Winner = null;
+                AddEvent(MatchEventType.Draw, State.CurrentPlayer);
+                return true;
+            }
             if (survivors.Length != 1) return false;
             Win(survivors[0].Color);
             return true;

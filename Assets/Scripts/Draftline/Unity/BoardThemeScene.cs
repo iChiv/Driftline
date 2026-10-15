@@ -37,7 +37,7 @@ namespace Draftline.Unity
                 foreach(var wall in entry.Root.GetComponentsInChildren<ThemeMovingWall>(true))
                 {
                     var driver=drivers.FirstOrDefault(r=>BoardCoordinates.TryFromWorld(r.transform.position,out var p)&&p==new GridPosition(wall.Column,wall.Row));
-                    wall.Bind(driver);
+                    if(driver!=null)wall.Bind(driver,controller!=null?controller.WallRestPosition(driver):driver.transform.position,controller!=null?controller.WallRestScale(driver):driver.transform.localScale);
                 }
             }
             ActiveTheme=theme;
@@ -45,7 +45,9 @@ namespace Draftline.Unity
             RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Flat;
             RenderSettings.ambientLight=theme.AmbientColor;
             RenderSettings.fog=false;
-            if(Camera.main!=null){Camera.main.clearFlags=CameraClearFlags.SolidColor;Camera.main.backgroundColor=theme.BackgroundColor;}
+            var backdrop=GetComponent<ThemeBackdrop>();
+            if(backdrop!=null)backdrop.Apply(theme);
+            else if(Camera.main!=null){Camera.main.clearFlags=CameraClearFlags.SolidColor;Camera.main.backgroundColor=theme.BackgroundColor;}
             return theme;
         }
         [ContextMenu("Preview Selected Theme")]

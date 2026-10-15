@@ -15,7 +15,7 @@ namespace Draftline.Unity
     public sealed class DraftlineLanRoom : MonoBehaviour
     {
         private const string RequestChannel = "driftline.request.v2", StateChannel = "driftline.state.v2", AckChannel = "driftline.ack.v2", DiceChannel = "driftline.dice.v2";
-        private const string Contract = "board19-v03-scenes-4";
+        private const string Contract = "board19-health5-pieces8-portals-5";
         public NetworkManager Network;
         public UnityTransport Transport;
         public bool FillWithComputers = true;
@@ -25,7 +25,11 @@ namespace Draftline.Unity
         private readonly HashSet<string> accepted = new HashSet<string>();
         private string token = Guid.NewGuid().ToString("N"), sessionId, matchId, pendingId;
         private string lastAddress = "127.0.0.1";
-        private string hostAddresses = "";
+        public LanAddressOption[] HostAddresses {get;private set;}=Array.Empty<LanAddressOption>();
+        private int hostAddressIndex;
+        public string HostEndpoint => HostAddresses.Length>0?HostAddresses[hostAddressIndex].Address+":"+lastPort:"未找到局域网地址";
+        public void RefreshLocalAddresses(){HostAddresses=LanAddressUtility.Find();hostAddressIndex=0;}
+        public void SelectHostAddress(int index){if(index>=0&&index<HostAddresses.Length)hostAddressIndex=index;}
         private ushort lastPort = 7777;
         private int sequence, receivedSequence, lastSentRevision = -1, lastReceivedRevision = -1, seatsRequested = 2;
         private float pendingSince;
@@ -50,7 +54,8 @@ namespace Draftline.Unity
         {
             get
             {
-                var text = IsHost ? "房主地址：" + hostAddresses + " : " + lastPort : "房主：" + lastAddress + " : " + lastPort;
+                if(!IsNetworked)return "";
+                var text = IsHost ? "房主" : "房主：" + lastAddress + " : " + lastPort;
                 var theme=DraftlineThemeApplier.Load(DraftlineThemeApplier.CurrentId);
                 if(theme!=null)text+="\n棋盘主题："+theme.ThemeName+" · "+theme.EnvironmentNames[DraftlineThemeApplier.CurrentVariant];
                 foreach (var m in members.Values.OrderBy(m => m.Color))
@@ -106,7 +111,7 @@ namespace Draftline.Unity
             lanSession = true; seatsRequested = players; lastPort = port;
             sessionId = Guid.NewGuid().ToString("N"); matchId = "";
             controller.Session.Mode = GameMode.Lan;
-            hostAddresses = LocalAddresses();
+            RefreshLocalAddresses();
             Network.NetworkConfig.ConnectionData = Encoding.UTF8.GetBytes(JsonUtility.ToJson(new Hello { token = token }));
             Transport.SetConnectionData("127.0.0.1", port, "0.0.0.0");
             var ok = Network.StartHost();

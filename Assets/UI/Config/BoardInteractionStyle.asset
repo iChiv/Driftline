@@ -15,14 +15,16 @@ MonoBehaviour:
   TargetPrefab: {fileID: 6521383824410823754, guid: e8c593ce900c46c45ad5f3b8782c7498, type: 3}
   SelectionPrefab: {fileID: 6169714270787535752, guid: 7039dce55eac2944cb2c20f31ce6668b, type: 3}
   ContextMenuPrefab: {fileID: 3487621259986309694, guid: 4b391194e14708c4e9eb9431c3549055, type: 3}
+  StopTargetMesh: {fileID: 4300000, guid: ade123c606c1af0408e73a36924fb4ca, type: 2}
   ContextOffset: {x: 0, y: 1.9, z: 0}
   PathMaterial: {fileID: 2100000, guid: 7f8d9275d57b9a646a60b6d559e37a85, type: 2}
-  Normal: {r: 0.28, g: 0.9, b: 0.7, a: 1}
-  Stop: {r: 1, g: 0.73, b: 0.25, a: 1}
+  Normal: {r: 0.24, g: 0.96, b: 0.76, a: 1}
+  Stop: {r: 1, g: 0.73, b: 0.23, a: 1}
   Selected: {r: 1, g: 0.87, b: 0.47, a: 1}
   Hover: {r: 1, g: 1, b: 1, a: 1}
+  Danger: {r: 1, g: 0.32, b: 0.25, a: 1}
   TargetHeight: 0.7
   PathHeight: 0.72
-  PathWidth: 0.07
-  TargetScale: {x: 0.68, y: 0.06, z: 0.68}
+  PathWidth: 0.105
+  TargetScale: {x: 0.76, y: 0.06, z: 0.76}
   PointerHitRadius: 0.5

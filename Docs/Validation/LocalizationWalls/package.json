@@ -1,0 +1,19 @@
+{
+  "archive": "E:\\Projects\\ABIG\\Josef\\Project-3\\Driftline\\Builds\\Driftline-LocalizationWalls-Windows.zip",
+  "bytes": 63484111,
+  "sha256": "CEA3BD1AF5DB1219D2097A3FE67BF5569323C7BC9D04F1FB8D77FFBE0E3E3525",
+  "entries": 302,
+  "assemblies": [
+    {
+      "entry": "Driftline-LocalizationWalls_Data/Managed/Draftline.Unity.dll",
+      "sha256": "F9A0E590425A3ED3A6B510573E5F2B0E2E697155A66B5A64AF80AA927BC91212",
+      "matchesBuild": true
+    },
+    {
+      "entry": "Driftline-LocalizationWalls_Data/Managed/Draftline.Core.dll",
+      "sha256": "5C703137060733BF3DA9EE5ABF28A33E90269CC380EDE3DB9A412EFB73D05F28",
+      "matchesBuild": true
+    }
+  ],
+  "coreMatchesPrevious": true
+}

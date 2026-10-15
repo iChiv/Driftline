@@ -39,9 +39,12 @@ namespace Draftline.Core
                         if (!plan.IsLegal) continue;
                         var first = preview.State.EmergencyStopActive ? 0 : plan.Steps.Count - 1;
                         for (var i = first; i < plan.Steps.Count; i++)
+                        {
+                            if(plan.Steps[i].PortalEntry||plan.Steps[i].PortalExit)continue;
                             yield return new MatchCommand { Kind = MatchCommandKind.Slide, ExpectedRevision = state.Revision,
                                 PieceId = piece.Id, Direction = direction, Item = item,
                                 StopIndex = preview.State.EmergencyStopActive ? i : -1 };
+                        }
                     }
                 }
         }
@@ -112,7 +115,7 @@ namespace Draftline.Core
                 var mine = player.Color == actor;
                 var sign = mine ? 1d : -0.75d;
                 var pieces = s.Pieces.Where(p => p.OnBoard && p.Owner == player.Color).ToArray();
-                score += sign * (pieces.Length * 25 - player.Consumed * 75 + player.Items.Count * 8);
+                score += sign * (pieces.Length * 25 + player.Health * 100 + player.Items.Count * 8);
                 score -= sign * pieces.Count(p => dangerous.Contains(p.Id)) * 120;
                 foreach (var p in pieces)
                 {

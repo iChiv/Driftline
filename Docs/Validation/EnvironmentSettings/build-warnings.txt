@@ -1,0 +1,2 @@
+Script attached to 'MMDefaultPostProcessingProfile' in scene '' is missing or no valid script is attached.
+Script attached to 'MMDefaultPostProcessingVolume' in scene '' is missing or no valid script is attached.

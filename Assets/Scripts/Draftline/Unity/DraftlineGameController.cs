@@ -180,6 +180,8 @@ namespace Draftline.Unity
             wallBasePosition[renderer] = renderer.transform.position;
             wallBaseScale[renderer] = renderer.transform.localScale;
         }
+        public Vector3 WallRestPosition(Renderer renderer)=>wallBasePosition.TryGetValue(renderer,out var value)?value:renderer.transform.position;
+        public Vector3 WallRestScale(Renderer renderer)=>wallBaseScale.TryGetValue(renderer,out var value)?value:renderer.transform.localScale;
 
         private void StartLocalMatch()
         {
@@ -191,6 +193,7 @@ namespace Draftline.Unity
         {
             CancelPresentation();
             var selectedTheme=DraftlineThemeApplier.Apply(DraftlineThemeApplier.CurrentId);
+            DraftlineThemeApplier.SelectEnvironment(2);
             rules = new MatchRules(active);
             setupError = null;
             pendingStopDirection = null;
@@ -632,7 +635,7 @@ namespace Draftline.Unity
                 case MatchEventType.DiceRolled: return $"{player}方掷出 {matchEvent.Value} 点";
                 case MatchEventType.PieceDeployed: return $"{player}方出新棋（{matchEvent.Position}）";
                 case MatchEventType.PieceSlid: return $"{player}棋 {matchEvent.Origin} → {matchEvent.Position}";
-                case MatchEventType.PieceCaptured: return $"{player}棋被吃：{MatchExplanation.CaptureReason(matchEvent.Cause)}";
+                case MatchEventType.PieceCaptured: return $"{player}棋被吃：{MatchExplanation.CaptureReason(matchEvent.Cause)} · 生命 {matchEvent.Value}/{MatchRules.StartingHealth}";
                 case MatchEventType.ItemCollected: return $"{player}方拾取【{ItemName(matchEvent.Item)}】";
                 case MatchEventType.ItemActivated: return $"{player}方使用【{ItemName(matchEvent.Item)}】";
                 case MatchEventType.ItemSpawned: return $"出现道具【{ItemName(matchEvent.Item)}】";
@@ -640,6 +643,7 @@ namespace Draftline.Unity
                 case MatchEventType.NoMoves: return $"{player}方无合法移动，回合跳过";
                 case MatchEventType.PlayerEliminated: return $"{player}方出局";
                 case MatchEventType.Victory: return $"{player}方获胜！";
+                case MatchEventType.Draw: return "所有队伍生命耗尽 · 平局";
                 default: return null;
             }
         }

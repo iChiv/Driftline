@@ -1,0 +1,8 @@
+{
+  "Scope": "Standalone Windows graphical startup",
+  "AliveAfter12Seconds": true,
+  "RuntimeExceptions": 0,
+  "Width": 1280,
+  "Height": 720,
+  "Utc": "2026-10-15T08:27:48.1525413Z"
+}

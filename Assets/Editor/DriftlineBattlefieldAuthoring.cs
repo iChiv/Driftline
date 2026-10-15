@@ -140,7 +140,9 @@ namespace Draftline.EditorTools
         {
             for(int r=0;r<19;r++)for(int c=0;c<19;c++){
                 var pos=new GridPosition(c,r);if(board.CellAt(pos).Kind!=CellKind.RotatingWallSlot&&pos!=new GridPosition(9,9))continue;
-                var slot=Group(parent,"Lift socket "+c+","+r);slot.localPosition=BoardCoordinates.ToWorld(pos,.5f);
+                // Helpers take world coordinates. Build the assembly at the origin,
+                // then move its root so every child stays local to this socket.
+                var slot=Group(parent,"Lift socket "+c+","+r);
                 Box(slot,"Recess",new Vector3(0,.007f,0),new Vector3(.98f,.014f,.98f),wall);
                 var body=Group(slot,"Animated body");
                 if(id=="dungeon"||id=="forest"){
@@ -152,7 +154,8 @@ namespace Draftline.EditorTools
                     for(int i=0;i<3;i++)Box(body,"Linked plated top",new Vector3(0,.55f,-.30f+i*.30f),new Vector3(.94f,.065f,.285f),cap);
                     foreach(var sign in new[]{-1,1})Box(body,"Recessed lamp",new Vector3(sign*.35f,.592f,0),new Vector3(.07f,.012f,.64f),glow);
                 }
-                var binding=slot.gameObject.AddComponent<ThemeMovingWall>();binding.Column=c;binding.Row=r;binding.Body=body;body.gameObject.SetActive(pos==new GridPosition(9,9)||board.IsScheduledWall(pos,0));
+                var binding=slot.gameObject.AddComponent<ThemeMovingWall>();binding.Column=c;binding.Row=r;binding.Body=body;binding.GeometryVersion=1;body.gameObject.SetActive(pos==new GridPosition(9,9)||board.IsScheduledWall(pos,0));
+                slot.localPosition=BoardCoordinates.ToWorld(pos,.5f);
             }
         }
         static void Markings(Transform surface,string id,BoardLayout board,Material structure,Material accent)

@@ -38,7 +38,7 @@ namespace Draftline.Tests
         }
 
         [Test]
-        public void PortalExitStaysWhenTheAdjacentCellIsBlocked()
+        public void BlockedPortalMouthStopsBeforeTheEntrance()
         {
             var rules = new MatchRules(new[] { PlayerColor.Red, PlayerColor.Blue }, 14);
             ClearBoard(rules);
@@ -46,9 +46,9 @@ namespace Draftline.Tests
             rules.State.WallPhase = 1;
             Place(rules, PlayerColor.Blue, 7, 5); // 出口 (7,4) 沿下滑方向的相邻格被占。
             var plan = rules.PlanSlide(red, SlideDirection.Down);
-            Assert.AreEqual(new GridPosition(7, 4), plan.Destination,
-                "The piece stays on the portal exit when the adjacent cell is blocked.");
-            Assert.IsTrue(plan.Steps.Any(step => step.PortalExit));
+            Assert.AreEqual(new GridPosition(7, 13), plan.Destination,
+                "A blocked landing mouth prevents the entire teleport.");
+            Assert.IsFalse(plan.Steps.Any(step => step.PortalExit));
         }
 
         [Test]
@@ -174,7 +174,7 @@ namespace Draftline.Tests
             Assert.IsTrue(rules.TrySlide(SlideDirection.Right, null, out _, out error), error);
             Assert.AreEqual(new GridPosition(8, 7), red.Position);
             Assert.IsFalse(blue.OnBoard);
-            Assert.IsTrue(blue.Gone);
+            Assert.IsFalse(blue.Gone,"Captured pieces return to the deployable pool.");
             Assert.AreEqual(1, rules.State.Players[(int)PlayerColor.Blue].Consumed);
         }
 
@@ -193,7 +193,7 @@ namespace Draftline.Tests
             Assert.AreEqual(rules.State.CurrentPlayer, copy.State.CurrentPlayer);
             Assert.AreEqual(4, copy.State.DiceValue);
             Assert.AreEqual(red.Id, copy.State.SelectedPieceId);
-            Assert.AreEqual(40, copy.State.Pieces.Count);
+            Assert.AreEqual(32, copy.State.Pieces.Count);
             Assert.AreEqual(rules.State.Pieces.Count(piece => piece.OnBoard),
                 copy.State.Pieces.Count(piece => piece.OnBoard));
         }
@@ -311,7 +311,7 @@ namespace Draftline.Tests
             Assert.IsTrue(rules.TrySelectPiece(red.Id, out error), error);
             Assert.IsTrue(rules.TryActivateItem(ItemType.CollisionCapture, out error), error);
             Assert.IsTrue(rules.TrySlide(SlideDirection.Right, null, out _, out error), error);
-            Assert.IsTrue(blue.Gone && !blue.OnBoard, "The hit piece is removed during the slide.");
+            Assert.IsTrue(!blue.Gone && !blue.OnBoard, "The hit piece leaves the board and returns to its pool.");
             Assert.AreEqual(MatchPhase.Moving, rules.State.Phase);
             Assert.AreEqual(1, rules.State.RemainingSlides);
             Assert.AreEqual(PlayerColor.Red, rules.State.CurrentPlayer,
