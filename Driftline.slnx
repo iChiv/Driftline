@@ -16,4 +16,5 @@
   <Project Path="KinoBloom.Runtime.csproj" />
   <Project Path="Lofelt.NiceVibrations.Editor.csproj" />
   <Project Path="ToonyColorsPro.Demo.Editor.csproj" />
+  <Project Path="Draftline.Tests.PlayMode.csproj" />
 </Solution>

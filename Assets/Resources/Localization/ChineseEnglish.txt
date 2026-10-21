@@ -18,7 +18,7 @@ English|English
 绿方|Green
 黄方|Yellow
 电脑难度|AI difficulty
-玩家|Human
+玩家|Player
 电脑|Computer
 关闭|Off
 简单|Easy
@@ -219,3 +219,9 @@ English|English
 红方获胜\n五枚傀儡形成共鸣。|Red wins\nFive in a row.
 规则引导 / 可随时关闭，不提交任何棋局动作|How to play / Close at any time; the game stays unchanged
 棋盘四周藏着可点击的小机关 · 悬停探索|Explore the interactive scenery around the board
+点击桌面骰子，决定本回合滑行次数。|Click the die on the table to set your slides for this turn.
+点击己方棋子查看路径 · 点出生格 + 出子|Select one of your pieces to see its routes · Press + at your spawn to deploy
+点击路径上的金色停点 · 右键取消预览|Choose a gold stop marker on the route · Right-click to cancel the preview
+悬停查看路线，点击绿色终点或棋子旁箭头滑行。|Hover to inspect a route, then click a green endpoint or an arrow beside the piece to slide.
+道具 · 点目标确认|Items · Confirm a target
+{0} · 查看左侧说明|{0} · See the notes on the left
